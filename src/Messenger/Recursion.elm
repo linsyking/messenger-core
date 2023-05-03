@@ -5,7 +5,7 @@ module Messenger.Recursion exposing (RecBody)
 
 # Recursion
 
-This module provides the signature for the updater.
+This module provides the signature for the updater
 
 @docs RecBody
 
@@ -45,7 +45,7 @@ type alias Super d =
 
 {-| RecBody type.
 
-Pass this as an argument to the updater.
+Pass this as an argument to the updater
 
 -}
 type alias RecBody a b c d =
