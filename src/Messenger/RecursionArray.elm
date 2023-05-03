@@ -122,7 +122,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                             in
                             ( Array.push newObj lastObjs, ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
                     )
-                    ( Array.empty, ( [], finishedMsg ), env )
+                    ( Array.empty, ( [], [] ), env )
                     objs
         in
         updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs

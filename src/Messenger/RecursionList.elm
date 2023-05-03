@@ -121,7 +121,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                             in
                             ( lastObjs ++ [ newObj ], ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
                     )
-                    ( [], ( [], finishedMsg ), env )
+                    ( [], ( [], [] ), env )
                     objs
         in
         updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs
