@@ -9,8 +9,9 @@ General model is designed to be an abstract interface of scenes, layers, compone
 
   - a: data type
   - b: environment type
-  - c: message type
-  - d: render type
+  - c: init type
+  - d: message type
+  - e: render type
 
 @docs NamedGeneralModel, NamelessGeneralModel
 
@@ -22,20 +23,20 @@ General model is designed to be an abstract interface of scenes, layers, compone
 This has a name field.
 
 -}
-type alias NamedGeneralModel a b c d =
+type alias NamedGeneralModel a b c d e =
     { name : String
     , data : a
     , init : b -> c -> a
-    , update : b -> c -> a -> ( a, b )
-    , view : b -> a -> d
+    , update : b -> d -> a -> ( a, b )
+    , view : b -> a -> e
     }
 
 
 {-| General Model without name field.
 -}
-type alias NamelessGeneralModel a b c d =
+type alias NamelessGeneralModel a b c d e =
     { data : a
     , init : b -> c -> a
-    , update : b -> c -> a -> ( a, b )
-    , view : b -> a -> d
+    , update : b -> d -> a -> ( a, b )
+    , view : b -> a -> e
     }
