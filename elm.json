@@ -3,10 +3,13 @@
     "name": "linsyking/messenger-core",
     "summary": "Core library for Messenger.",
     "license": "BSD-3-Clause",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "exposed-modules": {
-        "Algorithms": [
+        "Definitions": [
             "Messenger.Recursion",
+            "Messenger.GeneralModel"
+        ],
+        "Algorithms": [
             "Messenger.RecursionArray",
             "Messenger.RecursionList"
         ]
