@@ -12,6 +12,7 @@ Array implementation for the recursion algorithm
 -}
 
 import Array exposing (Array)
+import Array.Extra exposing (insertAt)
 import Messenger.Recursion exposing (RecBody)
 
 
@@ -32,7 +33,7 @@ updateObjects rec env msg objs =
 
 updateOnce : RecBody a b c d -> c -> b -> Array a -> ( Array a, ( List ( d, b ), List b ), c )
 updateOnce rec env msg objs =
-    Array.foldl
+    Array.foldr
         (\ele ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv ) ->
             let
                 ( newObjs, newMsg, newEnv ) =
@@ -52,7 +53,7 @@ updateOnce rec env msg objs =
                 unfinishedMsg =
                     List.filter (\( x, _ ) -> not (rec.super x)) newMsg
             in
-            ( Array.push newObjs lastObjs, ( lastMsgUnfinished ++ unfinishedMsg, lastMsgFinished ++ finishedMsg ), newEnv )
+            ( insertAt 0 newObjs lastObjs, ( unfinishedMsg ++ lastMsgUnfinished, finishedMsg ++ lastMsgFinished ), newEnv )
         )
         ( Array.empty, ( [], [] ), env )
         objs
@@ -72,7 +73,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
     else
         let
             ( newObjs, ( newUnfinishedMsg, newFinishedMsg ), newEnv ) =
-                Array.foldl
+                Array.foldr
                     (\ele ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv ) ->
                         let
                             msgMatched =
@@ -88,14 +89,14 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                         in
                         if List.isEmpty msgMatched then
                             -- No need to update
-                            ( Array.push ele lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
+                            ( insertAt 0 ele lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
 
                         else
                             -- Need update
                             let
                                 -- Update the object with all messages in msgMatched
                                 ( newObj, ( newMsgUnfinished, newMsgFinished ), newEnv2 ) =
-                                    List.foldl
+                                    List.foldr
                                         (\msg ( lastObj2, ( lastMsgUnfinished2, lastMsgFinished2 ), lastEnv2 ) ->
                                             let
                                                 ( newEle, newMsgs, newEnv3 ) =
@@ -115,14 +116,14 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                                                 unfinishedMsgs =
                                                     List.filter (\( x, _ ) -> not (rec.super x)) newMsgs
                                             in
-                                            ( newEle, ( lastMsgUnfinished2 ++ unfinishedMsgs, lastMsgFinished2 ++ finishedMsgs ), newEnv3 )
+                                            ( newEle, ( unfinishedMsgs ++ lastMsgUnfinished2, finishedMsgs ++ lastMsgFinished2 ), newEnv3 )
                                         )
                                         ( ele, ( [], [] ), env )
                                         msgMatched
                             in
-                            ( Array.push newObj lastObjs, ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
+                            ( insertAt 0 newObj lastObjs, ( newMsgUnfinished ++ lastMsgUnfinished, newMsgFinished ++ lastMsgFinished ), newEnv2 )
                     )
                     ( Array.empty, ( [], [] ), env )
                     objs
         in
-        updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs
+        updateRemain rec newEnv ( newUnfinishedMsg, newFinishedMsg ++ finishedMsg ) newObjs

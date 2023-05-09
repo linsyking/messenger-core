@@ -31,7 +31,7 @@ updateObjects rec env msg objs =
 
 updateOnce : RecBody a b c d -> c -> b -> List a -> ( List a, ( List ( d, b ), List b ), c )
 updateOnce rec env msg objs =
-    List.foldl
+    List.foldr
         (\ele ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv ) ->
             let
                 ( newObj, newMsg, newEnv ) =
@@ -51,7 +51,7 @@ updateOnce rec env msg objs =
                 unfinishedMsg =
                     List.filter (\( x, _ ) -> not (rec.super x)) newMsg
             in
-            ( lastObjs ++ [ newObj ], ( lastMsgUnfinished ++ unfinishedMsg, lastMsgFinished ++ finishedMsg ), newEnv )
+            ( newObj :: lastObjs, ( unfinishedMsg ++ lastMsgUnfinished, finishedMsg ++ lastMsgFinished ), newEnv )
         )
         ( [], ( [], [] ), env )
         objs
@@ -71,7 +71,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
     else
         let
             ( newObjs, ( newUnfinishedMsg, newFinishedMsg ), newEnv ) =
-                List.foldl
+                List.foldr
                     (\ele ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv ) ->
                         let
                             msgMatched =
@@ -87,14 +87,14 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                         in
                         if List.isEmpty msgMatched then
                             -- No need to update
-                            ( lastObjs ++ [ ele ], ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
+                            ( ele :: lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
 
                         else
                             -- Need update
                             let
                                 -- Update the object with all messages in msgMatched
                                 ( newObj, ( newMsgUnfinished, newMsgFinished ), newEnv2 ) =
-                                    List.foldl
+                                    List.foldr
                                         (\msg ( lastObj2, ( lastMsgUnfinished2, lastMsgFinished2 ), lastEnv2 ) ->
                                             let
                                                 ( newEle, newMsgs, newEnv3 ) =
@@ -114,14 +114,14 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                                                 unfinishedMsgs =
                                                     List.filter (\( x, _ ) -> not (rec.super x)) newMsgs
                                             in
-                                            ( newEle, ( lastMsgUnfinished2 ++ unfinishedMsgs, lastMsgFinished2 ++ finishedMsgs ), newEnv3 )
+                                            ( newEle, ( unfinishedMsgs ++ lastMsgUnfinished2, finishedMsgs ++ lastMsgFinished2 ), newEnv3 )
                                         )
                                         ( ele, ( [], [] ), env )
                                         msgMatched
                             in
-                            ( lastObjs ++ [ newObj ], ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
+                            ( newObj :: lastObjs, ( newMsgUnfinished ++ lastMsgUnfinished, newMsgFinished ++ lastMsgFinished ), newEnv2 )
                     )
                     ( [], ( [], [] ), env )
                     objs
         in
-        updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs
+        updateRemain rec newEnv ( newUnfinishedMsg, newFinishedMsg ++ finishedMsg ) newObjs
