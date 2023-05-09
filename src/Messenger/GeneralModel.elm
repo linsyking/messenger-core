@@ -1,4 +1,4 @@
-module Messenger.GeneralModel exposing (NamedGeneralModel, NamelessGeneralModel)
+module Messenger.GeneralModel exposing (GeneralModel)
 
 {-|
 
@@ -11,32 +11,23 @@ General model is designed to be an abstract interface of scenes, layers, compone
   - b: environment type
   - c: init type
   - d: message type
-  - e: render type
+  - e: target type
+  - f: render type
 
-@docs NamedGeneralModel, NamelessGeneralModel
+@docs GeneralModel
 
 -}
 
 
-{-| Named General Model.
+{-| General Model.
 
 This has a name field.
 
 -}
-type alias NamedGeneralModel a b c d e =
+type alias GeneralModel a b c d e f =
     { name : String
     , data : a
     , init : b -> c -> a
-    , update : b -> d -> a -> ( a, b )
-    , view : b -> a -> e
-    }
-
-
-{-| General Model without name field.
--}
-type alias NamelessGeneralModel a b c d e =
-    { data : a
-    , init : b -> c -> a
-    , update : b -> d -> a -> ( a, b )
-    , view : b -> a -> e
+    , update : b -> d -> a -> ( a, List ( e, d ), b )
+    , view : b -> a -> f
     }
