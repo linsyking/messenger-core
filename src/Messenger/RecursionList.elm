@@ -51,7 +51,7 @@ updateOnce rec env msg objs =
                 unfinishedMsg =
                     List.filter (\( x, _ ) -> not (rec.super x)) newMsg
             in
-            ( newObj :: lastObjs, ( unfinishedMsg ++ lastMsgUnfinished, finishedMsg ++ lastMsgFinished ), newEnv )
+            ( newObj :: lastObjs, ( lastMsgUnfinished ++ unfinishedMsg, lastMsgFinished ++ finishedMsg ), newEnv )
         )
         ( [], ( [], [] ), env )
         objs
@@ -94,7 +94,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                             let
                                 -- Update the object with all messages in msgMatched
                                 ( newObj, ( newMsgUnfinished, newMsgFinished ), newEnv2 ) =
-                                    List.foldr
+                                    List.foldl
                                         (\msg ( lastObj2, ( lastMsgUnfinished2, lastMsgFinished2 ), lastEnv2 ) ->
                                             let
                                                 ( newEle, newMsgs, newEnv3 ) =
@@ -114,14 +114,14 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                                                 unfinishedMsgs =
                                                     List.filter (\( x, _ ) -> not (rec.super x)) newMsgs
                                             in
-                                            ( newEle, ( unfinishedMsgs ++ lastMsgUnfinished2, finishedMsgs ++ lastMsgFinished2 ), newEnv3 )
+                                            ( newEle, ( lastMsgUnfinished2 ++ unfinishedMsgs, lastMsgFinished2 ++ finishedMsgs ), newEnv3 )
                                         )
                                         ( ele, ( [], [] ), env )
                                         msgMatched
                             in
-                            ( newObj :: lastObjs, ( newMsgUnfinished ++ lastMsgUnfinished, newMsgFinished ++ lastMsgFinished ), newEnv2 )
+                            ( newObj :: lastObjs, ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
                     )
                     ( [], ( [], [] ), env )
                     objs
         in
-        updateRemain rec newEnv ( newUnfinishedMsg, newFinishedMsg ++ finishedMsg ) newObjs
+        updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs
