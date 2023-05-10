@@ -1,4 +1,7 @@
-module Messenger.RecursionList exposing (updateObjects)
+module Messenger.RecursionList exposing
+    ( updateObjects
+    , getObjectByIndex, getObjectIndices, getObjectIndex, getObjects, getObject, updateObjectByIndex, updateObjectsByTarget
+    )
 
 {-|
 
@@ -9,9 +12,15 @@ List implementation for the recursion algorithm
 
 @docs updateObjects
 
+
+## Tools
+
+@docs getObjectByIndex, getObjectIndices, getObjectIndex, getObjects, getObject, updateObjectByIndex, updateObjectsByTarget
+
 -}
 
-import Messenger.Recursion exposing (RecBody)
+import List.Extra
+import Messenger.Recursion exposing (Matcher, RecBody)
 
 
 {-| Recursively update all the objects in the List
@@ -57,12 +66,8 @@ updateOnce rec env msg objs =
         objs
 
 
-
-{-
-   Recursively update remaining objects
+{-| Recursively update remaining objects
 -}
-
-
 updateRemain : RecBody a b c d -> c -> ( List ( d, b ), List b ) -> List a -> ( List a, List b, c )
 updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
     if List.isEmpty unfinishedMsg then
@@ -125,3 +130,82 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                     objs
         in
         updateRemain rec newEnv ( newUnfinishedMsg, finishedMsg ++ newFinishedMsg ) newObjs
+
+
+{-| Get the object by index
+-}
+getObjectByIndex : Int -> List a -> Maybe a
+getObjectByIndex index objs =
+    if index < 0 then
+        Nothing
+
+    else
+        List.head (List.drop index objs)
+
+
+{-| Get the indices of the objects that match the target
+-}
+getObjectIndices : Matcher a d -> d -> List a -> List Int
+getObjectIndices matcher tar objs =
+    List.Extra.findIndices (\x -> matcher x tar) objs
+
+
+{-| Get the index of the object that matches the target (the first one)
+-}
+getObjectIndex : Matcher a d -> d -> List a -> Maybe Int
+getObjectIndex matcher tar objs =
+    List.Extra.findIndex (\x -> matcher x tar) objs
+
+
+{-| Get the objects that match the target
+-}
+getObjects : Matcher a d -> d -> List a -> List a
+getObjects matcher tar objs =
+    List.filter (\x -> matcher x tar) objs
+
+
+{-| Get the object that matches the target (the first one)
+-}
+getObject : Matcher a d -> d -> List a -> Maybe a
+getObject matcher tar objs =
+    List.Extra.find (\x -> matcher x tar) objs
+
+
+{-| Update the object by index
+-}
+updateObjectByIndex : RecBody a b c d -> c -> b -> Int -> List a -> ( List a, List ( d, b ), c )
+updateObjectByIndex rec env msg index objs =
+    case List.Extra.getAt index objs of
+        Nothing ->
+            ( objs, [], env )
+
+        Just obj ->
+            let
+                ( newObj, newMsg, newEnv ) =
+                    rec.update obj env msg
+            in
+            ( List.Extra.setAt index newObj objs, newMsg, newEnv )
+
+
+{-| Update all the objects that match the target
+-}
+updateObjectsByTarget : RecBody a b c d -> c -> b -> d -> List a -> ( List a, List ( d, b ), c )
+updateObjectsByTarget rec env msg tar objs =
+    let
+        ( newObjs, newMsg, newEnv ) =
+            List.foldl
+                (\obj ( lastObjs, lastMsg, lastEnv ) ->
+                    if rec.match obj tar then
+                        let
+                            ( newObj, newMsg2, newEnv2 ) =
+                                rec.update obj lastEnv msg
+                        in
+                        ( lastObjs ++ [ newObj ], lastMsg ++ newMsg2, newEnv2 )
+
+                    else
+                        ( lastObjs ++ [ obj ], lastMsg, lastEnv )
+                )
+                ( [], [], env )
+                objs
+    in
+    ( newObjs, newMsg, newEnv )

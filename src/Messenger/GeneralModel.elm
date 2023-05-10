@@ -1,4 +1,7 @@
-module Messenger.GeneralModel exposing (GeneralModel)
+module Messenger.GeneralModel exposing
+    ( GeneralModel
+    , viewModelList, viewModelArray
+    )
 
 {-|
 
@@ -15,8 +18,11 @@ General model is designed to be an abstract interface of scenes, layers, compone
   - f: render type
 
 @docs GeneralModel
+@docs viewModelList, viewModelArray
 
 -}
+
+import Array exposing (Array)
 
 
 {-| General Model.
@@ -31,3 +37,18 @@ type alias GeneralModel a b c d e f =
     , update : b -> d -> a -> ( a, List ( e, d ), b )
     , view : b -> a -> f
     }
+
+
+{-| View model list.
+-}
+viewModelList : b -> List (GeneralModel a b c d e f) -> List f
+viewModelList env models =
+    List.map (\model -> model.view env model.data) models
+
+
+{-| View model array.
+-}
+viewModelArray : b -> Array (GeneralModel a b c d e f) -> List f
+viewModelArray env models =
+    Array.toList models
+        |> List.map (\model -> model.view env model.data)

@@ -1,4 +1,7 @@
-module Messenger.Recursion exposing (RecBody)
+module Messenger.Recursion exposing
+    ( Updater, Matcher, Super
+    , RecBody
+    )
 
 {-|
 
@@ -7,38 +10,30 @@ module Messenger.Recursion exposing (RecBody)
 
 This module provides the signature for the updater
 
+@docs Updater, Matcher, Super
 @docs RecBody
 
 -}
 
-{- The updater
-   a: message sender (object)
-   b: message
-   c: environment messages
-   d: target
+
+{-| The updater
+a: message sender (object)
+b: message
+c: environment messages
+d: target
 -}
-
-
 type alias Updater a b c d =
     a -> c -> b -> ( a, List ( d, b ), c )
 
 
-
-{-
-   Return true if the target is the sender (second argument)
+{-| Return true if the target is the sender (second argument)
 -}
-
-
 type alias Matcher a d =
     a -> d -> Bool
 
 
-
-{-
-   Return true if the target is the parent
+{-| Return true if the target is the parent
 -}
-
-
 type alias Super d =
     d -> Bool
 
