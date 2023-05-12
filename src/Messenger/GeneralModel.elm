@@ -12,9 +12,10 @@ General model is designed to be an abstract interface of scenes, layers, compone
 
   - a: data type
   - b: environment type
-  - c: message type
-  - d: target type
-  - e: render type
+  - c: init type
+  - d: message type
+  - e: target type
+  - f: render type
 
 @docs GeneralModel
 @docs viewModelList, viewModelArray
@@ -29,24 +30,24 @@ import Array exposing (Array)
 This has a name field.
 
 -}
-type alias GeneralModel a b c d e =
+type alias GeneralModel a b d e f =
     { name : String
     , data : a
-    , update : b -> c -> a -> ( a, List ( d, c ), b )
-    , view : b -> a -> e
+    , update : b -> d -> a -> ( a, List ( e, d ), b )
+    , view : b -> a -> f
     }
 
 
 {-| View model list.
 -}
-viewModelList : b -> List (GeneralModel a b c d e) -> List e
+viewModelList : b -> List (GeneralModel a b d e f) -> List f
 viewModelList env models =
     List.map (\model -> model.view env model.data) models
 
 
 {-| View model array.
 -}
-viewModelArray : b -> Array (GeneralModel a b c d e) -> List e
+viewModelArray : b -> Array (GeneralModel a b d e f) -> List f
 viewModelArray env models =
     Array.toList models
         |> List.map (\model -> model.view env model.data)
