@@ -1,5 +1,5 @@
 module Messenger.RecursionArray exposing
-    ( updateObjects
+    ( updateObjects, updateObjectsWithTarget
     , getObjectIndices, getObjectIndex, getObjects, getObject, updateObjectByIndex, updateObjectsByTarget
     )
 
@@ -10,7 +10,7 @@ module Messenger.RecursionArray exposing
 
 Array implementation for the recursion algorithm
 
-@docs updateObjects
+@docs updateObjects, updateObjectsWithTarget
 
 
 ## Tools
@@ -33,6 +33,13 @@ updateObjects rec env msg objs =
             updateOnce rec env msg objs
     in
     updateRemain rec newEnv ( newMsgUnfinished, newMsgFinished ) newObjs
+
+
+{-| Recursively update all the objects in the Array, but also uses target
+-}
+updateObjectsWithTarget : RecBody a b c d -> c -> List ( d, b ) -> Array a -> ( Array a, List b, c )
+updateObjectsWithTarget rec env msgs objs =
+    updateRemain rec env ( msgs, [] ) objs
 
 
 
