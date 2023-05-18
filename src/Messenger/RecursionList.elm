@@ -31,7 +31,7 @@ updateObjects rec env msg objs =
         ( newObjs, ( newMsgUnfinished, newMsgFinished ), newEnv ) =
             updateOnce rec env msg objs
     in
-    updateRemain rec newEnv ( newMsgUnfinished, newMsgFinished ) newObjs
+    updateRemain rec (rec.clean newEnv) ( newMsgUnfinished, newMsgFinished ) newObjs
 
 
 {-| Recursively update all the objects in the List, but also uses target

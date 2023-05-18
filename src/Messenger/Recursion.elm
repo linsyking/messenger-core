@@ -1,5 +1,5 @@
 module Messenger.Recursion exposing
-    ( Updater, Matcher, Super
+    ( Updater, Matcher, Super, Cleaner
     , RecBody
     )
 
@@ -10,7 +10,7 @@ module Messenger.Recursion exposing
 
 This module provides the signature for the updater
 
-@docs Updater, Matcher, Super
+@docs Updater, Matcher, Super, Cleaner
 @docs RecBody
 
 -}
@@ -38,6 +38,12 @@ type alias Super d =
     d -> Bool
 
 
+{-| Clean the environment
+-}
+type alias Cleaner c =
+    c -> c
+
+
 {-| RecBody type.
 
 Pass this as an argument to the updater
@@ -47,4 +53,5 @@ type alias RecBody a b c d =
     { update : Updater a b c d
     , match : Matcher a d
     , super : Super d
+    , clean : Cleaner c
     }
