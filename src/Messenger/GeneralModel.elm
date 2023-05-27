@@ -12,7 +12,6 @@ General model is designed to be an abstract interface of scenes, layers, compone
 
   - a: data type
   - b: environment type
-  - c: init type
   - d: message type
   - e: target type
   - f: render type
