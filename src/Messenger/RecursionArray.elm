@@ -1,6 +1,6 @@
 module Messenger.RecursionArray exposing
     ( updateObjects, updateObjectsWithTarget
-    , getObjectIndices, getObjectIndex, getObjects, getObject, updateObjectByIndex, updateObjectsByTarget
+    , getObjectIndices, getObjectIndex, getObjects, getObject
     )
 
 {-|
@@ -15,7 +15,7 @@ Array implementation for the recursion algorithm
 
 ## Tools
 
-@docs getObjectIndices, getObjectIndex, getObjects, getObject, updateObjectByIndex, updateObjectsByTarget
+@docs getObjectIndices, getObjectIndex, getObjects, getObject
 
 -}
 
@@ -26,11 +26,11 @@ import Messenger.Recursion exposing (Matcher, RecBody)
 
 {-| Recursively update all the objects in the List
 -}
-updateObjects : RecBody a b c d -> c -> b -> Array a -> ( Array a, List b, c )
-updateObjects rec env msg objs =
+updateObjects : RecBody a b c d -> c -> Array a -> ( Array a, List b, c )
+updateObjects rec env objs =
     let
         ( newObjs, ( newMsgUnfinished, newMsgFinished ), newEnv ) =
-            updateOnce rec env msg objs
+            updateOnce rec env objs
     in
     updateRemain rec (rec.clean newEnv) ( newMsgUnfinished, newMsgFinished ) newObjs
 
@@ -46,13 +46,13 @@ updateObjectsWithTarget rec env msgs objs =
 -- Below are all helper functions
 
 
-updateOnce : RecBody a b c d -> c -> b -> Array a -> ( Array a, ( List ( d, b ), List b ), c )
-updateOnce rec env msg objs =
+updateOnce : RecBody a b c d -> c -> Array a -> ( Array a, ( List ( d, b ), List b ), c )
+updateOnce rec env objs =
     Array.foldr
         (\ele ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv ) ->
             let
                 ( newObj, newMsg, newEnv ) =
-                    rec.update ele lastEnv msg
+                    rec.update ele lastEnv
 
                 finishedMsg =
                     List.filterMap
@@ -115,7 +115,7 @@ updateRemain rec env ( unfinishedMsg, finishedMsg ) objs =
                                         (\msg ( lastObj2, ( lastMsgUnfinished2, lastMsgFinished2 ), lastEnv2 ) ->
                                             let
                                                 ( newEle, newMsgs, newEnv3 ) =
-                                                    rec.update lastObj2 lastEnv2 msg
+                                                    rec.updaterec lastObj2 lastEnv2 msg
 
                                                 finishedMsgs =
                                                     List.filterMap
@@ -201,43 +201,3 @@ getObjects matcher tar objs =
 getObject : Matcher a d -> d -> Array a -> Maybe a
 getObject matcher tar objs =
     Array.get 0 <| getObjects matcher tar objs
-
-
-{-| Update the object by index
--}
-updateObjectByIndex : RecBody a b c d -> c -> b -> Int -> Array a -> ( Array a, List ( d, b ), c )
-updateObjectByIndex rec env msg index objs =
-    case Array.get index objs of
-        Nothing ->
-            ( objs, [], env )
-
-        Just obj ->
-            let
-                ( newObj, newMsg, newEnv ) =
-                    rec.update obj env msg
-            in
-            ( Array.set index newObj objs, newMsg, newEnv )
-
-
-{-| Update all the objects that match the target
--}
-updateObjectsByTarget : RecBody a b c d -> c -> b -> d -> Array a -> ( Array a, List ( d, b ), c )
-updateObjectsByTarget rec env msg tar objs =
-    let
-        ( newObjs, newMsg, newEnv ) =
-            Array.foldl
-                (\obj ( lastObjs, lastMsg, lastEnv ) ->
-                    if rec.match obj tar then
-                        let
-                            ( newObj, newMsg2, newEnv2 ) =
-                                rec.update obj lastEnv msg
-                        in
-                        ( Array.push newObj lastObjs, lastMsg ++ newMsg2, newEnv2 )
-
-                    else
-                        ( Array.push obj lastObjs, lastMsg, lastEnv )
-                )
-                ( Array.empty, [], env )
-                objs
-    in
-    ( newObjs, newMsg, newEnv )
