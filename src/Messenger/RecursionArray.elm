@@ -31,8 +31,11 @@ updateObjects rec env objs =
     let
         ( newObjs, ( newMsgUnfinished, newMsgFinished ), newEnv ) =
             updateOnce rec env objs
+
+        ( resObj, resMsg, resEnv ) =
+            updateRemain rec (rec.clean newEnv) ( newMsgUnfinished, newMsgFinished ) newObjs
     in
-    updateRemain rec (rec.clean newEnv) ( newMsgUnfinished, newMsgFinished ) newObjs
+    ( resObj, resMsg, rec.patch env resEnv )
 
 
 {-| Recursively update all the objects in the Array, but also uses target
