@@ -1,5 +1,23 @@
 # Changelog
 
+## 8.0.0
+
+### Features
+
+- Move Messenger libraries to core
+
+## 7.0.0
+
+### Fix
+
+- Add patcher
+
+## 6.0.0
+
+### Features
+
+- Add `updaterec`, which splits update functions into two
+
 ## 5.0.0
 
 ### Features
