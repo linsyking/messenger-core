@@ -5,7 +5,6 @@ import Browser.Events exposing (onKeyDown, onKeyUp, onMouseDown, onMouseMove, on
 import Json.Decode as Decode
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
-import Messenger.Tools.Browser exposing (promptReceiver)
 import Messenger.UserConfig exposing (UserConfig)
 import Time
 
@@ -43,5 +42,5 @@ subscriptions config _ _ =
         , onMouseDown (Decode.map3 (\b x y -> MouseDown b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseUp (Decode.map2 (\x y -> MouseUp ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseMove (Decode.map2 (\x y -> MouseMove ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
-        , promptReceiver (\p -> Prompt p.name p.result)
+        , config.ports.promptReceiver (\p -> Prompt p.name p.result)
         ]

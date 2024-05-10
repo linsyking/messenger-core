@@ -12,12 +12,10 @@ import Dict
 import Messenger.Audio.Audio exposing (loadAudio, stopAudio)
 import Messenger.Base exposing (Env, WorldEvent(..))
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
-import Messenger.LocalStorage exposing (sendInfo)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (SceneStorage, existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (SceneOutputMsg(..), unroll)
-import Messenger.Tools.Browser exposing (alert, prompt)
 import Messenger.UserConfig exposing (UserConfig)
 import Set
 import Task
@@ -83,17 +81,17 @@ gameUpdate config scenes evnt model =
                                 ( { lastModel | audiorepo = stopAudio lastModel.audiorepo name }, lastCmds, lastAudioCmds )
 
                             SOMAlert text ->
-                                ( lastModel, lastCmds ++ [ alert text ], lastAudioCmds )
+                                ( lastModel, lastCmds ++ [ config.ports.alert text ], lastAudioCmds )
 
                             SOMPrompt name title ->
-                                ( lastModel, lastCmds ++ [ prompt { name = name, title = title } ], lastAudioCmds )
+                                ( lastModel, lastCmds ++ [ config.ports.prompt { name = name, title = title } ], lastAudioCmds )
 
                             SOMSaveUserData ->
                                 let
                                     encodedGD =
                                         config.globalDataCodec.encode lastModel.currentGlobalData
                                 in
-                                ( lastModel, lastCmds ++ [ sendInfo encodedGD ], lastAudioCmds )
+                                ( lastModel, lastCmds ++ [ config.ports.sendInfo encodedGD ], lastAudioCmds )
                     )
                     ( timeUpdatedModel, [], [] )
                     som
@@ -125,7 +123,7 @@ update config scenes _ msg model =
     in
     case msg of
         TextureLoaded name Nothing ->
-            ( model, alert ("Failed to load sprite " ++ name), Audio.cmdNone )
+            ( model, config.ports.alert ("Failed to load sprite " ++ name), Audio.cmdNone )
 
         TextureLoaded name (Just t) ->
             let
@@ -178,7 +176,7 @@ update config scenes _ msg model =
 
                 Err _ ->
                     ( model
-                    , alert ("Failed to load audio " ++ name)
+                    , config.ports.alert ("Failed to load audio " ++ name)
                     , Audio.cmdNone
                     )
 
@@ -223,7 +221,7 @@ update config scenes _ msg model =
         KeyDown 112 ->
             if config.debug then
                 -- F1
-                ( model, prompt { name = "load", title = "Enter the scene you want to load" }, Audio.cmdNone )
+                ( model, config.ports.prompt { name = "load", title = "Enter the scene you want to load" }, Audio.cmdNone )
 
             else
                 gameUpdate config scenes msg model
@@ -231,7 +229,7 @@ update config scenes _ msg model =
         KeyDown 113 ->
             if config.debug then
                 -- F2
-                ( model, prompt { name = "setVolume", title = "Set volume (0-1)" }, Audio.cmdNone )
+                ( model, config.ports.prompt { name = "setVolume", title = "Set volume (0-1)" }, Audio.cmdNone )
 
             else
                 gameUpdate config scenes msg model
@@ -259,7 +257,7 @@ update config scenes _ msg model =
                 )
 
             else
-                ( model, alert "Scene not found!", Audio.cmdNone )
+                ( model, config.ports.alert "Scene not found!", Audio.cmdNone )
 
         Prompt "setVolume" result ->
             let
@@ -275,7 +273,7 @@ update config scenes _ msg model =
                     ( { model | currentGlobalData = newGd }, Cmd.none, Audio.cmdNone )
 
                 Nothing ->
-                    ( model, alert "Not a number", Audio.cmdNone )
+                    ( model, config.ports.alert "Not a number", Audio.cmdNone )
 
         Tick x ->
             let

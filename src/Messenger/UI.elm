@@ -1,7 +1,6 @@
 module Messenger.UI exposing (..)
 
 import Audio
-import Messenger.Audio.Audio exposing (audioPortFromJS, audioPortToJS)
 import Messenger.Base exposing (Flags, WorldEvent)
 import Messenger.Model exposing (Model, audio)
 import Messenger.Scene.Loader exposing (SceneStorage)
@@ -34,5 +33,5 @@ genMain input =
         , subscriptions = subscriptions input.config
         , view = view input.config
         , audio = audio
-        , audioPort = { toJS = audioPortToJS, fromJS = audioPortFromJS }
+        , audioPort = { toJS = input.config.ports.audioPortToJS, fromJS = input.config.ports.audioPortFromJS }
         }
