@@ -32,10 +32,6 @@ This module is very important because it can calculate the correct position of t
 import Messenger.Base exposing (GlobalData)
 
 
-
-{- The scale is by default 16:9 -}
-
-
 plScale : GlobalData a -> Float
 plScale gd =
     gd.internalData.virtualWidth / gd.internalData.virtualHeight

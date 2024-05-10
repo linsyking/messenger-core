@@ -1,4 +1,41 @@
-module Messenger.Component.Component exposing (..)
+module Messenger.Component.Component exposing
+    ( AbstractComponent
+    , AbstractPortableComponent
+    , ConcretePortableComponent
+    , ConcreteUserComponent
+    , addSceneMsgtoSOM
+    , genComponent
+    , translatePortableComponent
+    , updateComponents
+    , updateComponentsWithTarget
+    , viewComponents
+    )
+
+{-|
+
+
+# Component
+
+A component is an object that you may put in your layers.
+
+There are two types of components:
+
+- Portable components
+- User components
+
+## Portable components
+
+These are components that might be provided by an elm package.
+
+There are some limitations for portable components:
+
+- They cannot change scene
+
+## User components
+
+These are components that you users can create with custom **basedata**.
+
+-}
 
 import Canvas exposing (Renderable, group)
 import Messenger.Base exposing (Env, WorldEvent)
