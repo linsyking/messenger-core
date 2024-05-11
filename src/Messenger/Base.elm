@@ -76,6 +76,7 @@ It is mainly used for display and reading/writing some localstorage data.
   - `extraHTML` is used to render extra HTML tags. Be careful to use this.
   - `windowVisibility` records whether users stay in this tab/window.
   - `pressedKeys` records the keycodes that are be pressed now.
+  - `pressedMouseButtons` records the mouse buttons that are pressed now.
 
 -}
 type alias GlobalData userdata =
@@ -85,6 +86,7 @@ type alias GlobalData userdata =
     , currentTimeStamp : Time.Posix
     , windowVisibility : Visibility
     , mousePos : ( Float, Float )
+    , pressedMouseButtons : Set Int
     , pressedKeys : Set Int
     , extraHTML : Maybe (Html WorldEvent)
     , volume : Float

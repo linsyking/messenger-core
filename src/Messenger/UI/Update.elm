@@ -228,10 +228,24 @@ update config scenes _ msg model =
             ( { model | currentGlobalData = { gd | mousePos = mp } }, Cmd.none, Audio.cmdNone )
 
         MouseDown e pos ->
-            gameUpdate config scenes (MouseDown e <| fromMouseToVirtual model.currentGlobalData pos) model
+            let
+                newPressedMouseButtons =
+                    Set.insert e gd.pressedMouseButtons
+
+                newModel =
+                    { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+            in
+            gameUpdate config scenes (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
         MouseUp e pos ->
-            gameUpdate config scenes (MouseUp e <| fromMouseToVirtual model.currentGlobalData pos) model
+            let
+                newPressedMouseButtons =
+                    Set.remove e gd.pressedMouseButtons
+
+                newModel =
+                    { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+            in
+            gameUpdate config scenes (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
         KeyDown 112 ->
             if config.debug then
