@@ -2,7 +2,7 @@ module Messenger.Layer.Layer exposing (..)
 
 import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, WorldEvent)
-import Messenger.GeneralModel exposing (MAbstractGeneralModel, MConcreteGeneralModel, Msg, abstract)
+import Messenger.GeneralModel exposing (MAbstractGeneralModel, MConcreteGeneralModel, Msg, MsgBase, abstract)
 import Messenger.Scene.Scene exposing (SceneOutputMsg)
 
 
@@ -22,6 +22,32 @@ type alias AbstractLayer cdata userdata tar msg scenemsg =
 genLayer : ConcreteLayer data cdata userdata tar msg scenemsg -> Env cdata userdata -> msg -> AbstractLayer cdata userdata tar msg scenemsg
 genLayer conlayer =
     abstract <| addEmptyBData conlayer
+
+
+type alias BasicUpdater data cdata userdata tar msg scenemsg =
+    Env cdata userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+
+
+type alias Distributor data cdata userdata tar msg scenemsg cmsgpacker =
+    Env cdata userdata -> WorldEvent -> data -> ( data, ( List (Msg tar msg (SceneOutputMsg scenemsg userdata)), cmsgpacker ), Env cdata userdata )
+
+
+type alias Handler data cdata userdata tar msg scenemsg cmsg =
+    Env cdata userdata -> MsgBase cmsg (SceneOutputMsg scenemsg userdata) -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+
+
+handleComponentsList : Env cdata userdata -> List (MsgBase cmsg (SceneOutputMsg scenemsg userdata)) -> data -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> Handler data cdata userdata tar msg scenemsg cmsg -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+handleComponentsList lastEnv compMsgs lastData lastLayerMsgs handler =
+    List.foldl
+        (\cm ( d, m, e ) ->
+            let
+                ( d2, m2, e2 ) =
+                    handler e cm d
+            in
+            ( d2, m ++ m2, e2 )
+        )
+        ( lastData, lastLayerMsgs, lastEnv )
+        compMsgs
 
 
 addEmptyBData : ConcreteLayer data cdata userdata tar msg scenemsg -> MConcreteGeneralModel data cdata userdata tar msg () scenemsg

@@ -5,12 +5,13 @@ module Messenger.Component.Component exposing
     , ConcreteUserComponent
     , PortableMsgCodec
     , PortableTarCodec
-    , addSceneMsgtoSOM
     , genComponent
     , genComponentsRenderList
     , translatePortableComponent
     , updateComponents
     , updateComponentsWithTarget
+    , updatePortableComponents
+    , updatePortableComponentsWithTarget
     , viewComponents
     , viewComponentsRenderList
     )
@@ -54,7 +55,7 @@ import Canvas exposing (Renderable, group)
 import Messenger.Base exposing (Env, WorldEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg(..), MsgBase(..), abstract, unroll)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
-import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
+import Messenger.Scene.Scene exposing (SceneOutputMsg(..), addCommonData, noCommonData)
 
 
 {-| ConcreteUserComponent
@@ -151,29 +152,34 @@ genMsgDecoder msgcodec tarcodec sMsgM =
             Other (tarcodec.decode othertar) (msgcodec.decode smsg)
 
 
-addSceneMsgtoSOM : SceneOutputMsg () userdata -> Maybe (SceneOutputMsg scenemsg userdata)
-addSceneMsgtoSOM sommsg =
-    case sommsg of
-        SOMChangeScene _ ->
-            Nothing
+addSceneMsgtoPortable : MsgBase msg (SceneOutputMsg () userdata) -> Maybe (MsgBase msg (SceneOutputMsg scenemsg userdata))
+addSceneMsgtoPortable msg =
+    case msg of
+        SOMMsg sommsg ->
+            case sommsg of
+                SOMChangeScene _ ->
+                    Nothing
 
-        SOMPlayAudio n u o ->
-            Just (SOMPlayAudio n u o)
+                SOMPlayAudio n u o ->
+                    Just <| SOMMsg <| SOMPlayAudio n u o
 
-        SOMAlert a ->
-            Just (SOMAlert a)
+                SOMAlert a ->
+                    Just <| SOMMsg <| SOMAlert a
 
-        SOMStopAudio n ->
-            Just (SOMStopAudio n)
+                SOMStopAudio n ->
+                    Just <| SOMMsg <| SOMStopAudio n
 
-        SOMSetVolume v ->
-            Just (SOMSetVolume v)
+                SOMSetVolume v ->
+                    Just <| SOMMsg <| SOMSetVolume v
 
-        SOMPrompt n t ->
-            Just (SOMPrompt n t)
+                SOMPrompt n t ->
+                    Just <| SOMMsg <| SOMPrompt n t
 
-        SOMSaveUserData ->
-            Just SOMSaveUserData
+                SOMSaveUserData ->
+                    Just <| SOMMsg <| SOMSaveUserData
+
+        OtherMsg othermsg ->
+            Just <| OtherMsg othermsg
 
 
 type alias AbstractComponent cdata userdata tar msg bdata scenemsg =
@@ -194,9 +200,39 @@ updateComponents env evt comps =
     updateObjects env evt comps
 
 
+updatePortableComponents : Env cdata userdata -> WorldEvent -> List (AbstractPortableComponent userdata tar msg) -> ( List (AbstractPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+updatePortableComponents env evt pcomps =
+    let
+        ( newpcomps, newMsg, ( newEnv, newBlock ) ) =
+            updateObjects (noCommonData env) evt pcomps
+
+        newEnvC =
+            addCommonData env.commonData newEnv
+
+        newMsgfilterd =
+            List.filterMap addSceneMsgtoPortable newMsg
+    in
+    ( newpcomps, newMsgfilterd, ( newEnvC, newBlock ) )
+
+
 updateComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
 updateComponentsWithTarget env msgs comps =
     updateObjectsWithTarget env msgs comps
+
+
+updatePortableComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg () userdata)) -> List (AbstractPortableComponent userdata tar msg) -> ( List (AbstractPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+updatePortableComponentsWithTarget env msgs pcomps =
+    let
+        ( newpcomps, newMsg, newEnv ) =
+            updateObjectsWithTarget (noCommonData env) msgs pcomps
+
+        newEnvC =
+            addCommonData env.commonData newEnv
+
+        newMsgfilterd =
+            List.filterMap addSceneMsgtoPortable newMsg
+    in
+    ( newpcomps, newMsgfilterd, newEnvC )
 
 
 genComponentsRenderList : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> List ( Renderable, Int )
