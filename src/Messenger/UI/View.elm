@@ -1,4 +1,4 @@
-module Messenger.UI.View exposing (..)
+module Messenger.UI.View exposing (view)
 
 {-|
 
