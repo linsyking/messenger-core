@@ -106,19 +106,18 @@ type alias PortableTarCodec specifictar generaltar =
 
 
 genMsgDecoder : PortableMsgCodec specificmsg generalmsg -> PortableTarCodec specifictar generaltar -> MsgDecoder specifictar specificmsg generaltar generalmsg som
-genMsgDecoder msgcodec tarcodec =
-    \sMsgM ->
-        case sMsgM of
-            Parent x ->
-                case x of
-                    OtherMsg othermsg ->
-                        Parent <| OtherMsg <| msgcodec.decode othermsg
+genMsgDecoder msgcodec tarcodec sMsgM =
+    case sMsgM of
+        Parent x ->
+            case x of
+                OtherMsg othermsg ->
+                    Parent <| OtherMsg <| msgcodec.decode othermsg
 
-                    SOMMsg som ->
-                        Parent <| SOMMsg som
+                SOMMsg som ->
+                    Parent <| SOMMsg som
 
-            Other othertar smsg ->
-                Other (tarcodec.decode othertar) (msgcodec.decode smsg)
+        Other othertar smsg ->
+            Other (tarcodec.decode othertar) (msgcodec.decode smsg)
 
 
 addSceneMsgtoSOM : SceneOutputMsg () userdata -> Maybe (SceneOutputMsg scenemsg userdata)
