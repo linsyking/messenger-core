@@ -30,14 +30,14 @@ import Messenger.Coordinate.Coordinates exposing (lengthToReal, posToReal)
 {-| Render Text. Black color, left top align.
 -}
 renderText : GlobalData a -> Float -> String -> String -> ( Float, Float ) -> Renderable
-renderText gd size s ft pos =
-    renderTextWithStyle gd size s ft "" pos
+renderText gd size content font pos =
+    renderTextWithStyle gd size content font "" pos
 
 
 {-| Render Text. Black color, left top align.
 -}
 renderTextWithStyle : GlobalData a -> Float -> String -> String -> String -> ( Float, Float ) -> Renderable
-renderTextWithStyle gd size s ft style ( x, y ) =
+renderTextWithStyle gd size content ft style ( x, y ) =
     let
         rx =
             lengthToReal gd size
@@ -52,22 +52,22 @@ renderTextWithStyle gd size s ft style ( x, y ) =
         , baseLine Top
         ]
         ( dsx, dsy )
-        s
+        content
 
 
 {-| renderTextWithColor
 Render colorful texts.
 -}
 renderTextWithColor : GlobalData a -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
-renderTextWithColor gd size s ft col pos =
-    renderTextWithColorStyle gd size s ft col "" pos
+renderTextWithColor gd size content font color position =
+    renderTextWithColorStyle gd size content font color "" position
 
 
 {-| renderTextWithColor
 Render colorful texts.
 -}
 renderTextWithColorStyle : GlobalData a -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
-renderTextWithColorStyle gd size s ft col style ( x, y ) =
+renderTextWithColorStyle gd size content ft color style ( x, y ) =
     let
         rx =
             lengthToReal gd size
@@ -78,26 +78,26 @@ renderTextWithColorStyle gd size s ft col style ( x, y ) =
     text
         [ font { style = style, size = floor rx, family = ft }
         , align Start
-        , fill col
+        , fill color
         , baseLine Top
         ]
         ( dsx, dsy )
-        s
+        content
 
 
 {-| renderTextWithColorAlign
 Render texts with color and align.
 -}
 renderTextWithColorCenter : GlobalData a -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
-renderTextWithColorCenter gd size s ft col pos =
-    renderTextWithColorCenterStyle gd size s ft col "" pos
+renderTextWithColorCenter gd size content font color position =
+    renderTextWithColorCenterStyle gd size content font color "" position
 
 
 {-| renderTextWithColorAlign
 Render texts with color and align.
 -}
 renderTextWithColorCenterStyle : GlobalData a -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
-renderTextWithColorCenterStyle gd size s ft col style ( x, y ) =
+renderTextWithColorCenterStyle gd size content ft color style ( x, y ) =
     let
         rx =
             lengthToReal gd size
@@ -108,24 +108,24 @@ renderTextWithColorCenterStyle gd size s ft col style ( x, y ) =
     text
         [ font { style = style, size = floor rx, family = ft }
         , align Center
-        , fill col
+        , fill color
         , baseLine Middle
         ]
         ( dsx, dsy )
-        s
+        content
 
 
 {-| Render texts with color, align and baseline.
 -}
 renderTextWithColorAlignBaseline : GlobalData a -> Float -> String -> String -> Color -> TextAlign -> TextBaseLine -> ( Float, Float ) -> Renderable
-renderTextWithColorAlignBaseline gd size s ft col al bl pos =
-    renderTextWithColorAlignBaselineStyle gd size s ft col al bl "" pos
+renderTextWithColorAlignBaseline gd size content font color align baseline position =
+    renderTextWithColorAlignBaselineStyle gd size content font color align baseline "" position
 
 
 {-| Render texts with color, align and baseline.
 -}
 renderTextWithColorAlignBaselineStyle : GlobalData a -> Float -> String -> String -> Color -> TextAlign -> TextBaseLine -> String -> ( Float, Float ) -> Renderable
-renderTextWithColorAlignBaselineStyle gd size s ft col al bl style ( x, y ) =
+renderTextWithColorAlignBaselineStyle gd size content ft color al bl style ( x, y ) =
     let
         rx =
             lengthToReal gd size
@@ -136,24 +136,24 @@ renderTextWithColorAlignBaselineStyle gd size s ft col al bl style ( x, y ) =
     text
         [ font { style = style, size = floor rx, family = ft }
         , align al
-        , fill col
+        , fill color
         , baseLine bl
         ]
         ( dsx, dsy )
-        s
+        content
 
 
 {-| Use customized settings to render texts.
 -}
 renderTextWithSettings : GlobalData a -> Float -> String -> String -> List Setting -> ( Float, Float ) -> Renderable
-renderTextWithSettings gd size str ft settings pos =
-    renderTextWithSettingsStyle gd size str ft settings "" pos
+renderTextWithSettings gd size content font settings pos =
+    renderTextWithSettingsStyle gd size content font settings "" pos
 
 
 {-| Use customized settings to render texts.
 -}
 renderTextWithSettingsStyle : GlobalData a -> Float -> String -> String -> List Setting -> String -> ( Float, Float ) -> Renderable
-renderTextWithSettingsStyle gd size str ft settings style ( x, y ) =
+renderTextWithSettingsStyle gd size content ft settings style ( x, y ) =
     let
         rx =
             lengthToReal gd size
@@ -164,4 +164,4 @@ renderTextWithSettingsStyle gd size str ft settings style ( x, y ) =
     text
         (font { style = style, size = floor rx, family = ft } :: settings)
         ( dsx, dsy )
-        str
+        content

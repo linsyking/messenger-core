@@ -5,13 +5,34 @@
     "license": "BSD-3-Clause",
     "version": "7.0.0",
     "exposed-modules": {
-        "Definitions": [
+        "Base": [
+            "Messenger.Base",
             "Messenger.Recursion",
             "Messenger.GeneralModel"
         ],
         "UI": [
             "Messenger.UI",
             "Messenger.UserConfig"
+        ],
+        "Lib":[
+            "Messenger.Tools.KeyCode",
+            "Messenger.Tools.RNG",
+            "Messenger.Scene.Scene",
+            "Messenger.Scene.RawScene",
+            "Messenger.Scene.LayeredScene",
+            "Messenger.Scene.Transition",
+            "Messenger.Scene.Transitions.Base",
+            "Messenger.Scene.Transitions.Fade",
+            "Messenger.Scene.Transitions.Scroll",
+            "Messenger.Render.Shape",
+            "Messenger.Render.Sprite",
+            "Messenger.Render.SpriteSheet",
+            "Messenger.Render.Text",
+            "Messenger.Layer.Layer",
+            "Messenger.Coordinate.HTML",
+            "Messenger.Coordinate.Coordinates",
+            "Messenger.Component.Component",
+            "Messenger.Audio.Base"
         ]
     },
     "elm-version": "0.19.0 <= v < 0.20.0",

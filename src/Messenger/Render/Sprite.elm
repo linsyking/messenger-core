@@ -25,14 +25,14 @@ import Messenger.Resources.Base exposing (igetSprite)
 {-| Render a single sprite.
 -}
 renderSprite : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
-renderSprite gd ls p size name =
+renderSprite gd settings position size name =
     let
         dst =
             gd.internalData.sprites
     in
     case igetSprite name dst of
         Just t ->
-            renderSprite_ gd ls p size t
+            renderSprite_ gd settings position size t
 
         Nothing ->
             empty
@@ -41,21 +41,21 @@ renderSprite gd ls p size name =
 {-| Render a single sprite with crop.
 -}
 renderSpriteCropped : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> { x : Float, y : Float, width : Float, height : Float } -> String -> Renderable
-renderSpriteCropped gd ls p size spconf name =
+renderSpriteCropped gd settings position size spconf name =
     let
         dst =
             gd.internalData.sprites
     in
     case igetSprite name dst of
         Just t ->
-            renderSprite_ gd ls p size (sprite spconf t)
+            renderSprite_ gd settings position size (sprite spconf t)
 
         Nothing ->
             empty
 
 
 renderSprite_ : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
-renderSprite_ gd ls p ( w, h ) t =
+renderSprite_ gd settings position ( w, h ) t =
     let
         text_dim =
             dimensions t
@@ -79,7 +79,7 @@ renderSprite_ gd ls p ( w, h ) t =
             rh / text_height
 
         ( newx, newy ) =
-            posToReal gd p
+            posToReal gd position
     in
     if w > 0 && h > 0 then
         texture
@@ -87,7 +87,7 @@ renderSprite_ gd ls p ( w, h ) t =
                 [ translate newx newy
                 , scale width_s height_s
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -98,7 +98,7 @@ renderSprite_ gd ls p ( w, h ) t =
                 [ translate newx newy
                 , scale width_s width_s
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -109,7 +109,7 @@ renderSprite_ gd ls p ( w, h ) t =
                 [ translate newx newy
                 , scale height_s height_s
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -117,7 +117,7 @@ renderSprite_ gd ls p ( w, h ) t =
     else
         -- All <= 0
         texture
-            ls
+            settings
             ( newx, newy )
             t
 
@@ -130,21 +130,21 @@ The first argument is the reverse flag. Sent true to make the sprite being rende
 
 -}
 renderSpriteWithRev : Bool -> GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
-renderSpriteWithRev rev gd ls p size name =
+renderSpriteWithRev rev gd settings position size name =
     if not rev then
-        renderSprite gd ls p size name
+        renderSprite gd settings position size name
 
     else
         case igetSprite name gd.internalData.sprites of
             Just t ->
-                renderSpriteWithRev_ gd ls p size t
+                renderSpriteWithRev_ gd settings position size t
 
             Nothing ->
                 empty
 
 
 renderSpriteWithRev_ : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
-renderSpriteWithRev_ gd ls p ( w, h ) t =
+renderSpriteWithRev_ gd settings position ( w, h ) t =
     let
         text_dim =
             dimensions t
@@ -168,7 +168,7 @@ renderSpriteWithRev_ gd ls p ( w, h ) t =
             rh / text_height
 
         ( newx, newy ) =
-            posToReal gd p
+            posToReal gd position
     in
     if w > 0 && h > 0 then
         texture
@@ -177,7 +177,7 @@ renderSpriteWithRev_ gd ls p ( w, h ) t =
                 , scale -width_s height_s
                 , translate -text_width 0
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -189,7 +189,7 @@ renderSpriteWithRev_ gd ls p ( w, h ) t =
                 , scale -width_s width_s
                 , translate -text_width 0
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -201,7 +201,7 @@ renderSpriteWithRev_ gd ls p ( w, h ) t =
                 , scale -height_s height_s
                 , translate -text_width 0
                 ]
-                :: ls
+                :: settings
             )
             ( 0, 0 )
             t
@@ -209,6 +209,6 @@ renderSpriteWithRev_ gd ls p ( w, h ) t =
     else
         -- All <= 0
         texture
-            ls
+            settings
             ( newx, newy )
             t
