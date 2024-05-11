@@ -3,6 +3,8 @@ module Messenger.Component.Component exposing
     , AbstractPortableComponent
     , ConcretePortableComponent
     , ConcreteUserComponent
+    , PortableMsgCodec
+    , PortableTarCodec
     , addSceneMsgtoSOM
     , genComponent
     , genComponentsRenderList
@@ -43,7 +45,7 @@ These are components that you users can create with custom **basedata**.
 
 import Canvas exposing (Renderable, group)
 import Messenger.Base exposing (Env, WorldEvent)
-import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase, abstract, unroll)
+import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg(..), MsgBase(..), abstract, unroll)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
 import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
 
@@ -61,26 +63,62 @@ type alias ConcretePortableComponent data userdata tar msg =
     }
 
 
-translatePortableComponent : ConcretePortableComponent data userdata tar msg -> ConcreteUserComponent data () userdata tar msg () ()
-translatePortableComponent pcomp =
-    { init = \env msg -> ( pcomp.init env msg, () )
+translatePortableComponent : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> ConcreteUserComponent data () userdata gtar gmsg () ()
+translatePortableComponent pcomp msgcodec tarcodec =
+    let
+        msgMDecoder =
+            genMsgDecoder msgcodec tarcodec
+    in
+    { init = \env gmsg -> ( pcomp.init env <| msgcodec.encode gmsg, () )
     , update =
         \env evt data () ->
             let
                 ( resData, resMsg, resEnv ) =
                     pcomp.update env evt data
             in
-            ( ( resData, () ), resMsg, resEnv )
+            ( ( resData, () ), List.map msgMDecoder resMsg, resEnv )
     , updaterec =
-        \env msg data () ->
+        \env gmsg data () ->
             let
                 ( resData, resMsg, resEnv ) =
-                    pcomp.updaterec env msg data
+                    pcomp.updaterec env (msgcodec.encode gmsg) data
             in
-            ( ( resData, () ), resMsg, resEnv )
+            ( ( resData, () ), List.map msgMDecoder resMsg, resEnv )
     , view = \env data () -> pcomp.view env data
-    , matcher = \data () tar -> pcomp.matcher data tar
+    , matcher = \data () gtar -> pcomp.matcher data <| tarcodec.encode gtar
     }
+
+
+type alias MsgDecoder specifictar specificmsg generaltar generalmsg som =
+    Msg specifictar specificmsg som -> Msg generaltar generalmsg som
+
+
+type alias PortableMsgCodec specificmsg generalmsg =
+    { encode : generalmsg -> specificmsg
+    , decode : specificmsg -> generalmsg
+    }
+
+
+type alias PortableTarCodec specifictar generaltar =
+    { encode : generaltar -> specifictar
+    , decode : specifictar -> generaltar
+    }
+
+
+genMsgDecoder : PortableMsgCodec specificmsg generalmsg -> PortableTarCodec specifictar generaltar -> MsgDecoder specifictar specificmsg generaltar generalmsg som
+genMsgDecoder msgcodec tarcodec =
+    \sMsgM ->
+        case sMsgM of
+            Parent x ->
+                case x of
+                    OtherMsg othermsg ->
+                        Parent <| OtherMsg <| msgcodec.decode othermsg
+
+                    SOMMsg som ->
+                        Parent <| SOMMsg som
+
+            Other othertar smsg ->
+                Other (tarcodec.decode othertar) (msgcodec.decode smsg)
 
 
 addSceneMsgtoSOM : SceneOutputMsg () userdata -> Maybe (SceneOutputMsg scenemsg userdata)
