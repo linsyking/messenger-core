@@ -7,6 +7,7 @@ module Messenger.Component.Component exposing
     , PortableTarCodec
     , genComponent
     , genComponentsRenderList
+    , genPortableComponent
     , translatePortableComponent
     , updateComponents
     , updateComponentsWithTarget
@@ -193,6 +194,11 @@ type alias AbstractPortableComponent userdata tar msg =
 genComponent : ConcreteUserComponent data cdata userdata tar msg bdata scenemsg -> Env cdata userdata -> msg -> AbstractComponent cdata userdata tar msg bdata scenemsg
 genComponent concomp =
     abstract concomp
+
+
+genPortableComponent : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> Env cdata userdata -> gmsg -> AbstractPortableComponent userdata gtar gmsg
+genPortableComponent conpcomp mcodec tcodec env =
+    abstract (translatePortableComponent conpcomp mcodec tcodec) <| noCommonData env
 
 
 updateComponents : Env cdata userdata -> WorldEvent -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
