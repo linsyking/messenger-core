@@ -28,9 +28,9 @@ import Messenger.Scene.Scene exposing (SceneOutputMsg, abstract, addCommonData, 
 
 {-| LayeredSceneData
 
-    - `renderSettings` is used in `group` while viewing the layers as a whole.
-    - `commonData` is the common data for the whole scene.
-    - `layers` are the layers of the scene with type `AbstractLayer`.
+    - `renderSettings` is used in `group` while viewing the layers as a whole
+    - `commonData` is the common data for the whole scene
+    - `layers` are the layers of the scene with type `AbstractLayer`
 
 -}
 type alias LayeredSceneData cdata userdata tar msg scenemsg =

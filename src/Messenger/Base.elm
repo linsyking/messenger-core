@@ -70,13 +70,13 @@ It won't be reset if you change the scene.
 
 It is mainly used for display and reading/writing some localstorage data.
 
-  - `globalTime` records the past frames number since the game started.
-  - `sceneStartTime` records the past frames number since this scene started.
-  - `userdata` records the data that users set to save.
-  - `extraHTML` is used to render extra HTML tags. Be careful to use this.
-  - `windowVisibility` records whether users stay in this tab/window.
-  - `pressedKeys` records the keycodes that are be pressed now.
-  - `pressedMouseButtons` records the mouse buttons that are pressed now.
+  - `globalTime` records the past frames number since the game started
+  - `sceneStartTime` records the past frames number since this scene started
+  - `userdata` records the data that users set to save
+  - `extraHTML` is used to render extra HTML tags. Be careful to use this
+  - `windowVisibility` records whether users stay in this tab/window
+  - `pressedKeys` records the keycodes that are be pressed now
+  - `pressedMouseButtons` records the mouse buttons that are pressed now
 
 -}
 type alias GlobalData userdata =
