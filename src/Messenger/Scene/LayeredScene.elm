@@ -70,8 +70,9 @@ viewLayeredScene env { renderSettings, commonData, layers } =
 {-| genLayeredScene
 
 This creates a layered scene.
-- `init` creates the initial layered scene from env data and init msg.
-- `settingsFunc` is a user provided function to modify `renderSettings` each time the scene updates. If you don't need `settingsFunc`, simply provide a `func _ _ _ = settings`
+
+  - `init` creates the initial layered scene from env data and init msg.
+  - `settingsFunc` is a user provided function to modify `renderSettings` each time the scene updates. If you don't need `settingsFunc`, simply provide a `func _ _ _ = settings`
 
 -}
 genLayeredScene : (Env () userdata -> Maybe scenemsg -> LayeredSceneData cdata userdata tar msg scenemsg) -> (Env () userdata -> WorldEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting) -> SceneStorage userdata scenemsg
