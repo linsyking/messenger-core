@@ -1,5 +1,16 @@
 module Messenger.UI exposing (..)
 
+{-|
+
+
+# User Interface
+
+Top-level user interface to the Messenger engine.
+
+@docs Input, Output, genMain
+
+-}
+
 import Audio
 import Messenger.Base exposing (Flags, WorldEvent)
 import Messenger.Model exposing (Model, audio)
@@ -11,20 +22,22 @@ import Messenger.UI.View exposing (view)
 import Messenger.UserConfig exposing (UserConfig)
 
 
-type alias Scenes userdata scenemsg =
-    List ( String, SceneStorage userdata scenemsg )
-
-
+{-| The input to the Messenger UI.
+-}
 type alias Input userdata scenemsg =
     { config : UserConfig userdata scenemsg
-    , allScenes : Scenes userdata scenemsg
+    , allScenes : List ( String, SceneStorage userdata scenemsg )
     }
 
 
+{-| The output of the Messenger UI.
+-}
 type alias Output userdata scenemsg =
     Program Flags (Audio.Model WorldEvent (Model userdata scenemsg)) (Audio.Msg WorldEvent)
 
 
+{-| Generate the main program (output) from input.
+-}
 genMain : Input userdata scenemsg -> Output userdata scenemsg
 genMain input =
     Audio.elementWithAudio

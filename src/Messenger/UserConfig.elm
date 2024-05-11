@@ -1,4 +1,13 @@
-module Messenger.UserConfig exposing (..)
+module Messenger.UserConfig exposing (UserConfig, PortDefs, coloredBackground, transparentBackground)
+
+{-|
+
+
+# User Configuration
+
+@docs UserConfig, PortDefs, coloredBackground, transparentBackground
+
+-}
 
 import Audio
 import Browser.Events exposing (Visibility(..))
@@ -11,6 +20,8 @@ import Messenger.Base exposing (GlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet)
 
 
+{-| User Configuration for the messenger.
+-}
 type alias UserConfig userdata scenemsg =
     { initScene : String
     , initSceneMsg : Maybe scenemsg
@@ -31,6 +42,8 @@ type alias UserConfig userdata scenemsg =
     }
 
 
+{-| The ports that the user must provide to the messenger.
+-}
 type alias PortDefs =
     { sendInfo : String -> Cmd WorldEvent
     , audioPortToJS : Encode.Value -> Cmd (Audio.Msg WorldEvent)
@@ -41,11 +54,15 @@ type alias PortDefs =
     }
 
 
+{-| A transparent background. You should use this for release.
+-}
 transparentBackground : GlobalData userdata -> Renderable
 transparentBackground gd =
     Canvas.clear ( 0, 0 ) gd.internalData.realWidth gd.internalData.realHeight
 
 
+{-| A colored background.
+-}
 coloredBackground : Color -> GlobalData userdata -> Renderable
 coloredBackground color gd =
     Canvas.shapes

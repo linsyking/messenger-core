@@ -35,11 +35,18 @@ These are components that might be provided by an elm package.
 There are some limitations for portable components:
 
   - They cannot change scene
+  - You need to use a codec to translate the messages and targets
 
 
 ## User components
 
 These are components that you users can create with custom **basedata**.
+
+Basedata is the data that components with the same type can share.
+
+For example, you may want a game component to have some common properties like position, velocity, etc.
+
+In this case, your basedata would be a record with these properties.
 
 -}
 
@@ -50,10 +57,21 @@ import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
 import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
 
 
+{-| ConcreteUserComponent
+-}
 type alias ConcreteUserComponent data cdata userdata tar msg bdata scenemsg =
     ConcreteGeneralModel data (Env cdata userdata) WorldEvent tar msg ( Renderable, Int ) bdata (SceneOutputMsg scenemsg userdata)
 
 
+{-| ConcretePortableComponent
+
+Used when createing a portable component.
+
+Use `translatePortableComponent` to create a `ConcreteUserComponent` from a `ConcretePortableComponent`.
+
+The `scenemsg` type is replaced by `()` because you cannot send changescene message.
+
+-}
 type alias ConcretePortableComponent data userdata tar msg =
     { init : Env () userdata -> msg -> data
     , update : Env () userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg () userdata)), ( Env () userdata, Bool ) )
@@ -63,6 +81,11 @@ type alias ConcretePortableComponent data userdata tar msg =
     }
 
 
+{-| Translate a `ConcretePortableComponent` to a `ConcreteUserComponent`.
+
+This will add an empty basedata (unit) and upcast target and messages to the generalized type.
+
+-}
 translatePortableComponent : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> ConcreteUserComponent data () userdata gtar gmsg () ()
 translatePortableComponent pcomp msgcodec tarcodec =
     let
@@ -89,22 +112,30 @@ translatePortableComponent pcomp msgcodec tarcodec =
     }
 
 
+{-| Msg decoder
+-}
 type alias MsgDecoder specifictar specificmsg generaltar generalmsg som =
     Msg specifictar specificmsg som -> Msg generaltar generalmsg som
 
 
+{-| Portable Component Message Codec
+-}
 type alias PortableMsgCodec specificmsg generalmsg =
     { encode : generalmsg -> specificmsg
     , decode : specificmsg -> generalmsg
     }
 
 
+{-| Portable Component Target Codec
+-}
 type alias PortableTarCodec specifictar generaltar =
     { encode : generaltar -> specifictar
     , decode : specifictar -> generaltar
     }
 
 
+{-| Generate a message decoder
+-}
 genMsgDecoder : PortableMsgCodec specificmsg generalmsg -> PortableTarCodec specifictar generaltar -> MsgDecoder specifictar specificmsg generaltar generalmsg som
 genMsgDecoder msgcodec tarcodec sMsgM =
     case sMsgM of
