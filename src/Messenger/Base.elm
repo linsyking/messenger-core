@@ -1,4 +1,23 @@
-module Messenger.Base exposing (..)
+module Messenger.Base exposing
+    ( WorldEvent(..)
+    , GlobalData, InternalData
+    , Env
+    , Flags
+    )
+
+{-|
+
+
+# Base Module
+
+Some Basic Data Types for the game
+
+@docs WorldEvent
+@docs GlobalData, InternalData
+@docs Env
+@docs Flags
+
+-}
 
 import Audio
 import Browser.Events exposing (Visibility)
@@ -10,15 +29,20 @@ import Set exposing (Set)
 import Time
 
 
-{-| Msg
+{-| World Event
 
-This is the msg data for main.
+This is the World Event for the game.
+Users can get outside information throught the events.
 
 `Tick` records the time.
 
 `KeyDown`, `KeyUp` records the keyboard events
 
+`MouseDown`, `MouseUp` records the button code and position when mouse up and down
+
 `MouseWheel` records the wheel event for mouse, it can be also used for touchpad
+
+**Note: Do Not use MouseMove Event to get mouse position. Use Globaldata instead.**
 
 -}
 type WorldEvent
@@ -40,21 +64,18 @@ type WorldEvent
 
 {-| GlobalData
 
-GD is the data that doesn't change during the game.
+GlobalData is the data that doesn't change during the game.
 
 It won't be reset if you change the scene.
 
 It is mainly used for display and reading/writing some localstorage data.
 
-`browserViewPort` records the browser size.
-
-`sprites` records all the sprites(images).
-
-`localstorage` records the data that we save in localstorage.
-
-`extraHTML` is used to render extra HTML tags. Be careful to use this.
-
-`windowVisibility` records whether users stay in this tab/window
+  - `globalTime` records the past frames number since the game started.
+  - `sceneStartTime` records the past frames number since this scene started.
+  - `userdata` records the data that users set to save.
+  - `extraHTML` is used to render extra HTML tags. Be careful to use this.
+  - `windowVisibility` records whether users stay in this tab/window.
+  - `pressedKeys` records the keycodes that are be pressed now.
 
 -}
 type alias GlobalData userdata =
@@ -72,12 +93,28 @@ type alias GlobalData userdata =
     }
 
 
+{-| Environment
+
+Environment is provided to users almost all the time.
+
+It stores GlobalData and CommonData (Similar to GlobalData but just for one scene),
+so you can get and modify them through the Env.
+
+-}
 type alias Env common userdata =
     { globalData : GlobalData userdata
     , commonData : common
     }
 
 
+{-| Internal GlobalData
+
+Basically users do not need to get or modify them.
+
+  - `browserViewPort` records the browser size.
+  - `sprites` records all the sprites(images).
+
+-}
 type alias InternalData =
     { browserViewPort : ( Float, Float )
     , realWidth : Float
@@ -93,8 +130,9 @@ type alias InternalData =
 {-| Flags
 
 The main flags.
+Get info from js script.
 
-Get info from js script
+**Learn more about flags [here](https://guide.elm-lang.org/interop/flags)**
 
 -}
 type alias Flags =

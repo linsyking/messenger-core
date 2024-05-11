@@ -1,4 +1,7 @@
-module Messenger.UI exposing (..)
+module Messenger.UI exposing
+    ( Input, Output
+    , genMain
+    )
 
 {-|
 
@@ -7,7 +10,8 @@ module Messenger.UI exposing (..)
 
 Top-level user interface to the Messenger engine.
 
-@docs Input, Output, genMain
+@docs Input, Output
+@docs genMain
 
 -}
 
@@ -37,6 +41,9 @@ type alias Output userdata scenemsg =
 
 
 {-| Generate the main program (output) from input.
+
+**Use this for your main function**
+
 -}
 genMain : Input userdata scenemsg -> Output userdata scenemsg
 genMain input =

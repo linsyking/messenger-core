@@ -1,13 +1,34 @@
-module Messenger.GeneralModel exposing (..)
+module Messenger.GeneralModel exposing
+    ( Msg(..), MsgBase(..)
+    , ConcreteGeneralModel, AbstractGeneralModel(..)
+    , MConcreteGeneralModel, MAbstractGeneralModel
+    , unroll, abstract
+    , viewModelList
+    )
 
 {-|
 
 
 # General Model
 
-General model is designed to be an abstract interface of layers, components, game components, etc..
+General model is designed to be an abstract interface of layers, components, etc..
 
-@docs GeneralModel
+A Gernel model has the ability to:
+
+  - specialize its own data types
+  - share some data types with objects in the same type
+  - be initialized by some inputs
+  - be updated by event and msgs
+  - be updated in a list of same type objects
+  - send msg to the objects in the same type
+  - send msg to the parent object
+  - render itself
+  - identify itself by a matcher
+
+@docs Msg, MsgBase
+@docs ConcreteGeneralModel, AbstractGeneralModel
+@docs MConcreteGeneralModel, MAbstractGeneralModel
+@docs unroll, abstract
 @docs viewModelList
 
 -}
@@ -17,19 +38,34 @@ import Messenger.Base exposing (Env, WorldEvent)
 import Messenger.Scene.Scene exposing (SceneOutputMsg)
 
 
+{-| MsgBase
+
+Used when sending a msg to parent object.
+
+Using **SOMMsg** when sending a `SceneOutputMsg`, which will be directedly handled by Top-level.
+
+-}
 type MsgBase othermsg sommsg
     = SOMMsg sommsg
     | OtherMsg othermsg
 
 
+{-| Msg
+
+The Basic Msg Model.
+
+Using **Other** when sending msg to objects in the same type.
+Make sure the `othertar` can pass the matcher of target object.
+
+-}
 type Msg othertar msg sommsg
     = Parent (MsgBase msg sommsg)
     | Other othertar msg
 
 
-{-| General Model.
+{-| Concrete General Model.
 
-This has a name field.
+Users deal with the fields in concrete model.
 
 -}
 type alias ConcreteGeneralModel data env event tar msg ren bdata sommsg =
@@ -41,6 +77,11 @@ type alias ConcreteGeneralModel data env event tar msg ren bdata sommsg =
     }
 
 
+{-| Unrolled Abstract General Model.
+
+the unrolled abstract model. Used internally.
+
+-}
 type alias UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg =
     { update : env -> event -> ( AbstractGeneralModel env event tar msg ren bdata sommsg, List (Msg tar msg sommsg), ( env, Bool ) )
     , updaterec : env -> msg -> ( AbstractGeneralModel env event tar msg ren bdata sommsg, List (Msg tar msg sommsg), env )
@@ -50,15 +91,28 @@ type alias UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg =
     }
 
 
+{-| Rolled Abstract General Model.
+
+Cannot be directedly modified.
+Used for storage.
+
+-}
 type AbstractGeneralModel env event tar msg ren bdata sommsg
     = Roll (UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg)
 
 
+{-| Unroll a rolled abstract model.
+-}
 unroll : AbstractGeneralModel env event tar msg ren bdata sommsg -> UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg
 unroll (Roll un) =
     un
 
 
+{-| Abstract a concrete model to an abstract model.
+
+Initialize it with env and msg.
+
+-}
 abstract : ConcreteGeneralModel data env event tar msg ren bdata sommsg -> env -> msg -> AbstractGeneralModel env event tar msg ren bdata sommsg
 abstract conmodel initEnv initMsg =
     let
@@ -107,10 +161,14 @@ abstract conmodel initEnv initMsg =
     abstractRec init_d init_bd
 
 
+{-| Specialized Concrete Model for Messenger
+-}
 type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
     ConcreteGeneralModel data (Env common userdata) WorldEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
 
 
+{-| Specialized Abstract Model for Messenger
+-}
 type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
     AbstractGeneralModel (Env common userdata) WorldEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
 

@@ -1,4 +1,15 @@
-module Messenger.UI.Subscription exposing (..)
+module Messenger.UI.Subscription exposing (subscriptions)
+
+{-|
+
+
+# Game Subscriptions
+
+The subscriptions for the game
+
+@docs subscriptions
+
+-}
 
 import Audio exposing (AudioData)
 import Browser.Events exposing (onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp, onResize, onVisibilityChange)
@@ -9,6 +20,11 @@ import Messenger.UserConfig exposing (UserConfig)
 import Time
 
 
+{-| Subscriptions
+
+The subscriptions for the game
+
+-}
 subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Sub WorldEvent
 subscriptions config _ _ =
     Sub.batch

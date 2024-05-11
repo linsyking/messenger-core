@@ -1,9 +1,13 @@
 module Messenger.UI.View exposing (..)
 
-{-| view
+{-|
 
-Canvas viewer
-You can change the mouse style here.
+
+# Game Update
+
+View the game via Canvas
+
+@docs view
 
 -}
 
@@ -21,6 +25,11 @@ import Messenger.Scene.Transition exposing (makeTransition)
 import Messenger.UserConfig exposing (UserConfig)
 
 
+{-| view
+
+view function of the game
+
+-}
 view : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
 view config _ model =
     let

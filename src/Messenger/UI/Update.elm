@@ -1,8 +1,13 @@
-module Messenger.UI.Update exposing (..)
+module Messenger.UI.Update exposing (update)
 
-{-| This is the update function for updating the model.
+{-|
 
-If you add some SceneOutputMsg, you have to add corresponding updating logic here.
+
+# Game Update
+
+Update the game
+
+@docs update
 
 -}
 
@@ -22,6 +27,11 @@ import Task
 import Time
 
 
+{-| gameUpdate
+
+main logic for updating the game
+
+-}
 gameUpdate : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
     if List.length (Dict.keys model.currentGlobalData.internalData.sprites) < List.length config.allTexture then
@@ -115,6 +125,11 @@ gameUpdate config scenes evnt model =
         )
 
 
+{-| Update
+
+update function for the game
+
+-}
 update : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 update config scenes _ msg model =
     let

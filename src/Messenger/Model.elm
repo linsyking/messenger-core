@@ -1,6 +1,13 @@
-module Messenger.Model exposing (Model, updateSceneTime, resetSceneStartTime, audio)
+module Messenger.Model exposing
+    ( Model
+    , updateSceneTime, resetSceneStartTime
+    , audio
+    )
 
-{-| Model
+{-|
+
+
+# Model
 
 This is the main model data.
 
@@ -8,7 +15,9 @@ Those data is **not** exposed to the scene.
 
 We only use it in the main update.
 
-@docs Model, updateSceneTime, resetSceneStartTime, audio
+@docs Model
+@docs updateSceneTime, resetSceneStartTime
+@docs audio
 
 -}
 
@@ -20,6 +29,8 @@ import Messenger.Scene.Scene exposing (MAbstractScene)
 import Messenger.Scene.Transitions.Base exposing (Transition)
 
 
+{-| The model for the game
+-}
 type alias Model userdata scenemsg =
     { currentScene : MAbstractScene userdata scenemsg
     , currentGlobalData : GlobalData userdata

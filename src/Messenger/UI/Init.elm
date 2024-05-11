@@ -1,4 +1,15 @@
-module Messenger.UI.Init exposing (..)
+module Messenger.UI.Init exposing (init)
+
+{-|
+
+
+# Game Init
+
+Initialize the game
+
+@docs init
+
+-}
 
 import Audio exposing (AudioCmd)
 import Browser.Events exposing (Visibility(..))
@@ -13,6 +24,8 @@ import Messenger.UserConfig exposing (UserConfig)
 import Time exposing (millisToPosix)
 
 
+{-| Empty Scene
+-}
 emptyScene : MAbstractScene userdata scenemsg
 emptyScene =
     let
@@ -30,6 +43,8 @@ emptyScene =
     abstractRec ()
 
 
+{-| Empty InternalData
+-}
 emptyInternalData : InternalData
 emptyInternalData =
     { browserViewPort = ( 0, 0 )
@@ -43,11 +58,15 @@ emptyInternalData =
     }
 
 
+{-| Empty GlobalData
+-}
 emptyGlobalData : UserConfig userdata scenemsg -> GlobalData userdata
 emptyGlobalData config =
     config.globalDataCodec.decode ""
 
 
+{-| Initial model
+-}
 initModel : UserConfig userdata scenemsg -> Model userdata scenemsg
 initModel config =
     { currentScene = emptyScene
@@ -57,6 +76,11 @@ initModel config =
     }
 
 
+{-| Init
+
+The Init function for the game
+
+-}
 init : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 init config scenes flags =
     let
