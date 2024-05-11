@@ -1,4 +1,4 @@
-module Messenger.Scene.Transition exposing (..)
+module Messenger.Scene.Transition exposing (makeTransition)
 
 {-|
 

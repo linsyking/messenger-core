@@ -1,11 +1,8 @@
-module Messenger.Tools.KeyCode exposing
-    ( arrowUp, arrowDown, arrowLeft, arrowRight, space, escape, enter, backspace, tab, shift, ctrl, alt, capsLock
-    , mouseLeftButton, mouseMidButton, mouseRightButton
-    )
+module Messenger.Tools.KeyCode exposing (arrowUp, arrowDown, arrowLeft, arrowRight, space, escape, enter, backspace, tab, shift, ctrl, alt, capsLock, mouseLeftButton, mouseMidButton, mouseRightButton)
 
 {-| Common key codes
 
-@docs arrowUp, arrowDown, arrowLeft, arrowRight, space, escape, enter, backspace, tab, shift, ctrl, alt, capsLock
+@docs arrowUp, arrowDown, arrowLeft, arrowRight, space, escape, enter, backspace, tab, shift, ctrl, alt, capsLock, mouseLeftButton, mouseMidButton, mouseRightButton
 
 -}
 

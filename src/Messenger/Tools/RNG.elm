@@ -7,8 +7,6 @@ module Messenger.Tools.RNG exposing (genRandomInt, genRandomListInt)
 
 Sample RNG module.
 
-You can add your own RNG generators here.
-
 The seed is often given by the current tick.
 
 @docs genRandomInt, genRandomListInt

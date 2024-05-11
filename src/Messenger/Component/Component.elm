@@ -1,20 +1,19 @@
 module Messenger.Component.Component exposing
-    ( AbstractComponent
-    , AbstractPortableComponent
+    ( AbstractPortableComponent
     , ConcretePortableComponent
-    , ConcreteUserComponent
     , PortableMsgCodec
     , PortableTarCodec
-    , genComponent
-    , genComponentsRenderList
     , genPortableComponent
-    , translatePortableComponent
-    , updateComponents
-    , updateComponentsWithTarget
     , updatePortableComponents
     , updatePortableComponentsWithTarget
+    , translatePortableComponent
+    , AbstractComponent
+    , ConcreteUserComponent
+    , genComponent
+    , updateComponents
+    , updateComponentsWithTarget
+    , genComponentsRenderList, viewComponentsRenderList
     , viewComponents
-    , viewComponentsRenderList
     )
 
 {-|
@@ -36,8 +35,20 @@ These are components that might be provided by an elm package.
 
 There are some limitations for portable components:
 
+  - They don't have the base data
+  - They cannot get the common data
   - They cannot change scene
-  - You need to use a codec to translate the messages and targets
+  - You need to set the msg and target type for every dependent portable component
+  - You need to provide a codec in the layer to translate the messages and targets
+
+@docs AbstractPortableComponent
+@docs ConcretePortableComponent
+@docs PortableMsgCodec
+@docs PortableTarCodec
+@docs genPortableComponent
+@docs updatePortableComponents
+@docs updatePortableComponentsWithTarget
+@docs translatePortableComponent
 
 
 ## User components
@@ -49,6 +60,18 @@ Basedata is the data that components with the same type can share.
 For example, you may want a game component to have some common properties like position, velocity, etc.
 
 In this case, your basedata would be a record with these properties.
+
+@docs AbstractComponent
+@docs ConcreteUserComponent
+@docs genComponent
+@docs updateComponents
+@docs updateComponentsWithTarget
+
+
+## View components
+
+@docs genComponentsRenderList, viewComponentsRenderList
+@docs viewComponents
 
 -}
 
@@ -183,29 +206,60 @@ addSceneMsgtoPortable msg =
             Just <| OtherMsg othermsg
 
 
+{-| AbstractComponent
+-}
 type alias AbstractComponent cdata userdata tar msg bdata scenemsg =
     AbstractGeneralModel (Env cdata userdata) WorldEvent tar msg ( Renderable, Int ) bdata (SceneOutputMsg scenemsg userdata)
 
 
+{-| AbstractPortableComponent
+
+Abstract component with common data, base data, and scene msg set to unit type.
+
+This means you cannot send scene msg from a portable component.
+
+-}
 type alias AbstractPortableComponent userdata tar msg =
     AbstractComponent () userdata tar msg () ()
 
 
+{-| genComponent
+
+Generate abstract user component from concrete component.
+
+-}
 genComponent : ConcreteUserComponent data cdata userdata tar msg bdata scenemsg -> Env cdata userdata -> msg -> AbstractComponent cdata userdata tar msg bdata scenemsg
 genComponent concomp =
     abstract concomp
 
 
+{-| genPortableComponent
+
+Generate abstract portable component from concrete component.
+
+-}
 genPortableComponent : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> Env cdata userdata -> gmsg -> AbstractPortableComponent userdata gtar gmsg
 genPortableComponent conpcomp mcodec tcodec env =
     abstract (translatePortableComponent conpcomp mcodec tcodec) <| noCommonData env
 
 
+{-| updateComponents
+
+Update a list of abstract user components.
+
+-}
 updateComponents : Env cdata userdata -> WorldEvent -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
 updateComponents env evt comps =
     updateObjects env evt comps
 
 
+{-| updatePortableComponents
+
+Update a list of abstract portable components.
+
+**you don't need to give a Env without commondata**
+
+-}
 updatePortableComponents : Env cdata userdata -> WorldEvent -> List (AbstractPortableComponent userdata tar msg) -> ( List (AbstractPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
 updatePortableComponents env evt pcomps =
     let
@@ -221,11 +275,23 @@ updatePortableComponents env evt pcomps =
     ( newpcomps, newMsgfilterd, ( newEnvC, newBlock ) )
 
 
+{-| updateComponentsWithTarget
+
+Update a list of abstract user components with targeted msgs.
+
+-}
 updateComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
 updateComponentsWithTarget env msgs comps =
     updateObjectsWithTarget env msgs comps
 
 
+{-| updatePortableComponentsWithTarget
+
+Update a list of abstract portable components with target msgs.
+
+**you don't need to give a Env without commondata**
+
+-}
 updatePortableComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg () userdata)) -> List (AbstractPortableComponent userdata tar msg) -> ( List (AbstractPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
 updatePortableComponentsWithTarget env msgs pcomps =
     let
@@ -241,11 +307,25 @@ updatePortableComponentsWithTarget env msgs pcomps =
     ( newpcomps, newMsgfilterd, newEnvC )
 
 
+{-| generate render list for one list of components
+
+Useful when there are several component lists
+
+the output should be used as the input of `viewComponentsRenderList`
+
+-}
 genComponentsRenderList : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> List ( Renderable, Int )
 genComponentsRenderList env compls =
     List.map (\comp -> (unroll comp).view env) compls
 
 
+{-| view the render list of components
+
+Useful when there are several component lists
+
+the input should be generated by several `genComponentsRenderList`
+
+-}
 viewComponentsRenderList : List ( Renderable, Int ) -> Renderable
 viewComponentsRenderList previews =
     group [] <|
@@ -253,6 +333,13 @@ viewComponentsRenderList previews =
             List.sortBy (\( _, n ) -> n) previews
 
 
+{-| viewComponents
+
+View one list of abstract components.
+
+Used when there is only one list of components
+
+-}
 viewComponents : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> Renderable
 viewComponents env compls =
     viewComponentsRenderList <| genComponentsRenderList env compls

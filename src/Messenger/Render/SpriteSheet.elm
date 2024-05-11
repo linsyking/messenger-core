@@ -28,6 +28,12 @@ type alias SingleSprite =
 
 
 {-| SpriteSheet
+
+Users should both name the sprite sheets and every single sprite.
+Using it by **format: "sheet\_name.sprite\_name"**
+
+Sprite sheets are useful when managing the art resourses or making frame-by-frame animations.
+
 -}
 type alias SpriteSheet =
     Dict String (List ( String, SingleSprite ))
