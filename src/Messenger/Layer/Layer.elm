@@ -80,7 +80,7 @@ type alias BasicUpdater data cdata userdata tar msg scenemsg =
 
 {-| Distributor Type
 
-A distributor is used to generate sveral list of Component Msgs for corresponding components list.
+A distributor is used to generate several list of Component Msgs for corresponding components list.
 
 The `cmsgpacker` is a custom type to store the component msgs and their targets.
 
