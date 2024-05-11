@@ -215,8 +215,8 @@ update config scenes _ msg model =
         MouseDown e pos ->
             gameUpdate config scenes (MouseDown e <| fromMouseToVirtual model.currentGlobalData pos) model
 
-        MouseUp pos ->
-            gameUpdate config scenes (MouseUp <| fromMouseToVirtual model.currentGlobalData pos) model
+        MouseUp e pos ->
+            gameUpdate config scenes (MouseUp e <| fromMouseToVirtual model.currentGlobalData pos) model
 
         KeyDown 112 ->
             if config.debug then

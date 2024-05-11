@@ -31,7 +31,7 @@ type WorldEvent
     | PlaySoundGotTime String AudioOption Audio.Source Time.Posix
     | TextureLoaded String (Maybe Texture)
     | MouseDown Int ( Float, Float )
-    | MouseUp ( Float, Float )
+    | MouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
     | MouseWheel Int
     | Prompt String String

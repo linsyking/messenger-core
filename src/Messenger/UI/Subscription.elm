@@ -40,7 +40,7 @@ subscriptions config _ _ =
         , onResize (\w h -> NewWindowSize ( toFloat w, toFloat h ))
         , onVisibilityChange (\v -> WindowVisibility v)
         , onMouseDown (Decode.map3 (\b x y -> MouseDown b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
-        , onMouseUp (Decode.map2 (\x y -> MouseUp ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
+        , onMouseUp (Decode.map3 (\b x y -> MouseUp b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseMove (Decode.map2 (\x y -> MouseMove ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , config.ports.promptReceiver (\p -> Prompt p.name p.result)
         ]

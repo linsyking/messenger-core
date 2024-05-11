@@ -21,6 +21,17 @@ import Messenger.Render.SpriteSheet exposing (SpriteSheet)
 
 
 {-| User Configuration for the messenger.
+
+`userdata` is a custom type which can store any data in the game.
+you can **save your own global data** and **implement local storage** here.
+
+`scenemsg` is another custom type which represents the message type you wants
+to send to a scene when switching scenes.
+
+  - `initScene` represents the scene you get start
+  - `initSceneMsg` represents the message to initialize the start scene
+  - `globalDataCodec`
+
 -}
 type alias UserConfig userdata scenemsg =
     { initScene : String
@@ -43,6 +54,9 @@ type alias UserConfig userdata scenemsg =
 
 
 {-| The ports that the user must provide to the messenger.
+
+template: port <port name> : <Type Annotation>
+
 -}
 type alias PortDefs =
     { sendInfo : String -> Cmd WorldEvent
