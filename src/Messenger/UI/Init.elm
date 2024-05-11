@@ -1,4 +1,4 @@
-module Messenger.UI.Init exposing (init)
+module Messenger.UI.Init exposing (init, emptyInternalData)
 
 {-|
 
@@ -7,7 +7,7 @@ module Messenger.UI.Init exposing (init)
 
 Initialize the game
 
-@docs init
+@docs init, emptyInternalData
 
 -}
 
