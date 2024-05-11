@@ -89,6 +89,7 @@ type alias GlobalData userdata =
     , pressedMouseButtons : Set Int
     , pressedKeys : Set Int
     , extraHTML : Maybe (Html WorldEvent)
+    , canvasAttributes : List (Html.Attribute WorldEvent)
     , volume : Float
     , userData : userdata
     , currentScene : String

@@ -42,10 +42,12 @@ view config _ model =
                 , height = floor model.currentGlobalData.internalData.realHeight
                 , textures = getTexture config
                 }
-                [ style "left" (String.fromFloat model.currentGlobalData.internalData.startLeft)
-                , style "top" (String.fromFloat model.currentGlobalData.internalData.startTop)
-                , style "position" "fixed"
-                ]
+                ([ style "left" (String.fromFloat model.currentGlobalData.internalData.startLeft)
+                 , style "top" (String.fromFloat model.currentGlobalData.internalData.startTop)
+                 , style "position" "fixed"
+                 ]
+                    ++ model.currentGlobalData.canvasAttributes
+                )
                 [ config.background model.currentGlobalData
                 , makeTransition model.currentGlobalData transitiondata <| (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
                 ]

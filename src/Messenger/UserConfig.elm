@@ -51,7 +51,7 @@ to send to a scene when switching scenes.
   - `timeInterval` determines the highest fps of the game, representing the interval
     between every two frames. More strictly speaking, it represents the interval between
     every two **Tick** events
-  - `ports` stores the ports that users must provide
+  - `ports` stores the ports that users must provide.
 
 -}
 type alias UserConfig userdata scenemsg =
