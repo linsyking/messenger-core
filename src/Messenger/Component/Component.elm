@@ -5,10 +5,12 @@ module Messenger.Component.Component exposing
     , ConcreteUserComponent
     , addSceneMsgtoSOM
     , genComponent
+    , genComponentsRenderList
     , translatePortableComponent
     , updateComponents
     , updateComponentsWithTarget
     , viewComponents
+    , viewComponentsRenderList
     )
 
 {-|
@@ -20,8 +22,9 @@ A component is an object that you may put in your layers.
 
 There are two types of components:
 
-- Portable components
-- User components
+  - Portable components
+  - User components
+
 
 ## Portable components
 
@@ -29,7 +32,8 @@ These are components that might be provided by an elm package.
 
 There are some limitations for portable components:
 
-- They cannot change scene
+  - They cannot change scene
+
 
 ## User components
 
@@ -127,12 +131,18 @@ updateComponentsWithTarget env msgs comps =
     updateObjectsWithTarget env msgs comps
 
 
-viewComponents : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> Renderable
-viewComponents env compls =
-    let
-        previews =
-            List.map (\comp -> (unroll comp).view env) compls
-    in
+genComponentsRenderList : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> List ( Renderable, Int )
+genComponentsRenderList env compls =
+    List.map (\comp -> (unroll comp).view env) compls
+
+
+viewComponentsRenderList : List ( Renderable, Int ) -> Renderable
+viewComponentsRenderList previews =
     group [] <|
         List.map (\( r, _ ) -> r) <|
             List.sortBy (\( _, n ) -> n) previews
+
+
+viewComponents : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> Renderable
+viewComponents env compls =
+    viewComponentsRenderList <| genComponentsRenderList env compls
