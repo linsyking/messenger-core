@@ -61,18 +61,26 @@ gameUpdate config scenes evnt model =
                         case singleSOM of
                             SOMChangeScene ( tm, name, Nothing ) ->
                                 --- Load new scene
-                                ( loadSceneByName name scenes tm lastModel
-                                    |> resetSceneStartTime
-                                , lastCmds
-                                , lastAudioCmds
-                                )
+                                if existScene name scenes then
+                                    ( loadSceneByName name scenes tm lastModel
+                                        |> resetSceneStartTime
+                                    , lastCmds
+                                    , lastAudioCmds
+                                    )
 
-                            SOMChangeScene ( tm, s, Just trans ) ->
+                                else
+                                    ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
+
+                            SOMChangeScene ( tm, name, Just trans ) ->
                                 --- Delayed Loading
-                                ( { lastModel | transition = Just ( trans, ( s, tm ) ) }
-                                , lastCmds
-                                , lastAudioCmds
-                                )
+                                if existScene name scenes then
+                                    ( { lastModel | transition = Just ( trans, ( name, tm ) ) }
+                                    , lastCmds
+                                    , lastAudioCmds
+                                    )
+
+                                else
+                                    ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
 
                             SOMPlayAudio name path opt ->
                                 ( lastModel, lastCmds, lastAudioCmds ++ [ Audio.loadAudio (SoundLoaded name opt) path ] )

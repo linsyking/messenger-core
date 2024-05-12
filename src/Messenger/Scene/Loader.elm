@@ -43,29 +43,29 @@ getScene i scenes =
 
 {-| load a Scene with init msg
 -}
-loadScene : Maybe (SceneStorage userdata scenemsg) -> Maybe scenemsg -> Model userdata scenemsg -> Model userdata scenemsg
+loadScene : SceneStorage userdata scenemsg -> Maybe scenemsg -> Model userdata scenemsg -> Model userdata scenemsg
 loadScene scenest smsg model =
-    case scenest of
-        Just s ->
-            let
-                env =
-                    Env model.currentGlobalData ()
-            in
-            { model | currentScene = s env smsg }
-
-        Nothing ->
-            model
+    let
+        env =
+            Env model.currentGlobalData ()
+    in
+    { model | currentScene = scenest env smsg }
 
 
 {-| load a Scene from storage by name
 -}
 loadSceneByName : String -> AllScenes userdata scenemsg -> Maybe scenemsg -> Model userdata scenemsg -> Model userdata scenemsg
 loadSceneByName name scenes smsg model =
-    let
-        newModel =
-            loadScene (getScene name scenes) smsg model
+    case getScene name scenes of
+        Just scenest ->
+            let
+                newModel =
+                    loadScene scenest smsg model
 
-        gd =
-            newModel.currentGlobalData
-    in
-    { newModel | currentGlobalData = { gd | currentScene = name } }
+                gd =
+                    newModel.currentGlobalData
+            in
+            { newModel | currentGlobalData = { gd | currentScene = name } }
+
+        Nothing ->
+            model
