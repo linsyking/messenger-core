@@ -11,8 +11,7 @@ Raw Scene is a scene without anything. Users can add whatever they like in the r
 
 -}
 
-import Messenger.Scene.Loader exposing (SceneStorage)
-import Messenger.Scene.Scene exposing (MConcreteScene, abstract)
+import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage, abstract)
 
 
 {-| generate a raw scene from a concrete scene
