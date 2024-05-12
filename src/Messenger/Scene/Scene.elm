@@ -2,8 +2,9 @@ module Messenger.Scene.Scene exposing
     ( AbstractScene(..)
     , MConcreteScene, MAbstractScene
     , unroll, abstract
-    , noCommonData, addCommonData
+    , removeCommonData, addCommonData
     , SceneOutputMsg(..)
+    , SceneStorage, AllScenes
     )
 
 {-|
@@ -16,8 +17,9 @@ Gerneral Model and Basic types for Scenes
 @docs AbstractScene
 @docs MConcreteScene, MAbstractScene
 @docs unroll, abstract
-@docs noCommonData, addCommonData
+@docs removeCommonData, addCommonData
 @docs SceneOutputMsg
+@docs SceneStorage, AllScenes
 
 -}
 
@@ -116,8 +118,8 @@ Useful when dealing with portable components by yourself.
 Most of the time it will not be used since it has been built into prepared update functions.
 
 -}
-noCommonData : Env cdata userdata -> Env () userdata
-noCommonData env =
+removeCommonData : Env cdata userdata -> Env () userdata
+removeCommonData env =
     { globalData = env.globalData
     , commonData = ()
     }
@@ -156,3 +158,18 @@ type SceneOutputMsg scenemsg userdata
     | SOMSetVolume Float
     | SOMPrompt String String -- name, title
     | SOMSaveUserData
+
+
+{-| SceneStorage
+
+The type used to store the scene data
+
+-}
+type alias SceneStorage userdata scenemsg =
+    Env () userdata -> Maybe scenemsg -> MAbstractScene userdata scenemsg
+
+
+{-| AllScenes
+-}
+type alias AllScenes userdata scenemsg =
+    List ( String, SceneStorage userdata scenemsg )

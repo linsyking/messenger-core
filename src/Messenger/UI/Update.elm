@@ -19,8 +19,8 @@ import Messenger.Base exposing (Env, WorldEvent(..))
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
-import Messenger.Scene.Loader exposing (SceneStorage, existScene, loadSceneByName)
-import Messenger.Scene.Scene exposing (SceneOutputMsg(..), unroll)
+import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
+import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..), unroll)
 import Messenger.UserConfig exposing (UserConfig)
 import Set
 import Task
@@ -32,7 +32,7 @@ import Time
 main logic for updating the game
 
 -}
-gameUpdate : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
     if List.length (Dict.keys model.currentGlobalData.internalData.sprites) < List.length config.allTexture then
         -- Still loading assets
@@ -130,7 +130,7 @@ gameUpdate config scenes evnt model =
 update function for the game
 
 -}
-update : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+update : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 update config scenes _ msg model =
     let
         gd =
@@ -218,11 +218,7 @@ update config scenes _ msg model =
             ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
 
         WindowVisibility v ->
-            let
-                newgd =
-                    { gd | windowVisibility = v, pressedKeys = Set.empty, pressedMouseButtons = Set.empty }
-            in
-            ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
+            ( { model | currentGlobalData = { gd | windowVisibility = v } }, Cmd.none, Audio.cmdNone )
 
         MouseMove ( px, py ) ->
             let

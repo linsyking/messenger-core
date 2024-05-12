@@ -18,7 +18,7 @@ Top-level user interface to the Messenger engine.
 import Audio
 import Messenger.Base exposing (Flags, WorldEvent)
 import Messenger.Model exposing (Model, audio)
-import Messenger.Scene.Loader exposing (SceneStorage)
+import Messenger.Scene.Scene exposing (AllScenes)
 import Messenger.UI.Init exposing (init)
 import Messenger.UI.Subscription exposing (subscriptions)
 import Messenger.UI.Update exposing (update)
@@ -30,7 +30,7 @@ import Messenger.UserConfig exposing (UserConfig)
 -}
 type alias Input userdata scenemsg =
     { config : UserConfig userdata scenemsg
-    , allScenes : List ( String, SceneStorage userdata scenemsg )
+    , allScenes : AllScenes userdata scenemsg
     }
 
 

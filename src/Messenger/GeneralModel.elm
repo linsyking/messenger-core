@@ -4,6 +4,7 @@ module Messenger.GeneralModel exposing
     , MConcreteGeneralModel, MAbstractGeneralModel
     , unroll, abstract
     , viewModelList
+    , Matcher
     )
 
 {-|
@@ -30,6 +31,7 @@ A Gernel model has the ability to:
 @docs MConcreteGeneralModel, MAbstractGeneralModel
 @docs unroll, abstract
 @docs viewModelList
+@docs Matcher
 
 -}
 
@@ -178,3 +180,9 @@ type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
 viewModelList : Env common userdata -> List (MAbstractGeneralModel common userdata tar msg bdata scenemsg) -> List Renderable
 viewModelList env models =
     List.reverse <| List.map (\model -> (unroll model).view env) models
+
+
+{-| A general matcher type sugar
+-}
+type alias Matcher data tar =
+    data -> tar -> Bool

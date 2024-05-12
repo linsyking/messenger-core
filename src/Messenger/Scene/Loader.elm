@@ -1,7 +1,4 @@
-module Messenger.Scene.Loader exposing
-    ( SceneStorage
-    , existScene, loadSceneByName
-    )
+module Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 
 {-|
 
@@ -10,28 +7,18 @@ module Messenger.Scene.Loader exposing
 
 Scene loader is used to find and load scenes.
 
-@docs SceneStorage
 @docs existScene, loadSceneByName
 
 -}
 
 import Messenger.Base exposing (Env)
 import Messenger.Model exposing (Model)
-import Messenger.Scene.Scene exposing (MAbstractScene)
-
-
-{-| SceneStorage
-
-The type used to store the scene data
-
--}
-type alias SceneStorage userdata scenemsg =
-    Env () userdata -> Maybe scenemsg -> MAbstractScene userdata scenemsg
+import Messenger.Scene.Scene exposing (AllScenes, SceneStorage)
 
 
 {-| Query whether a scene exists
 -}
-existScene : String -> List ( String, SceneStorage userdata scenemsg ) -> Bool
+existScene : String -> AllScenes userdata scenemsg -> Bool
 existScene i scenes =
     let
         tests =
@@ -47,7 +34,7 @@ existScene i scenes =
 
 {-| get a Scene from storage by name
 -}
-getScene : String -> List ( String, SceneStorage userdata scenemsg ) -> Maybe (SceneStorage userdata scenemsg)
+getScene : String -> AllScenes userdata scenemsg -> Maybe (SceneStorage userdata scenemsg)
 getScene i scenes =
     List.head <|
         List.map (\( _, s ) -> s) <|
@@ -72,7 +59,7 @@ loadScene scenest smsg model =
 
 {-| load a Scene from storage by name
 -}
-loadSceneByName : String -> List ( String, SceneStorage userdata scenemsg ) -> Maybe scenemsg -> Model userdata scenemsg -> Model userdata scenemsg
+loadSceneByName : String -> AllScenes userdata scenemsg -> Maybe scenemsg -> Model userdata scenemsg -> Model userdata scenemsg
 loadSceneByName name scenes smsg model =
     let
         newModel =

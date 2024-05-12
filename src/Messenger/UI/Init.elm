@@ -18,8 +18,8 @@ import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, InternalData, WorldEvent(..))
 import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
-import Messenger.Scene.Loader exposing (SceneStorage, loadSceneByName)
-import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
+import Messenger.Scene.Loader exposing (loadSceneByName)
+import Messenger.Scene.Scene exposing (AbstractScene(..), AllScenes, MAbstractScene, SceneOutputMsg)
 import Messenger.UserConfig exposing (UserConfig)
 import Time exposing (millisToPosix)
 
@@ -81,7 +81,7 @@ initModel config =
 The Init function for the game
 
 -}
-init : UserConfig userdata scenemsg -> List ( String, SceneStorage userdata scenemsg ) -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+init : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 init config scenes flags =
     let
         im =

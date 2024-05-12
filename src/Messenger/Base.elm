@@ -3,6 +3,7 @@ module Messenger.Base exposing
     , GlobalData, InternalData
     , Env
     , Flags
+    , removeCommonData, addCommonData
     )
 
 {-|
@@ -16,6 +17,7 @@ Some Basic Data Types for the game
 @docs GlobalData, InternalData
 @docs Env
 @docs Flags
+@docs removeCommonData, addCommonData
 
 -}
 
@@ -107,6 +109,29 @@ so you can get and modify them through the Env.
 type alias Env common userdata =
     { globalData : GlobalData userdata
     , commonData : common
+    }
+
+
+{-| Remove common data from environment.
+
+Useful when dealing with portable components by yourself.
+
+Most of the time it will not be used since it has been built into prepared update functions.
+
+-}
+removeCommonData : Env cdata userdata -> Env () userdata
+removeCommonData env =
+    { globalData = env.globalData
+    , commonData = ()
+    }
+
+
+{-| Add the common data to a Environment without common data.
+-}
+addCommonData : cdata -> Env () userdata -> Env cdata userdata
+addCommonData commonData env =
+    { globalData = env.globalData
+    , commonData = commonData
     }
 
 
