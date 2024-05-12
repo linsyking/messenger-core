@@ -1,4 +1,4 @@
-module Messenger.UI.Init exposing (init, emptyInternalData)
+module Messenger.UI.Init exposing (init)
 
 {-|
 
@@ -7,15 +7,14 @@ module Messenger.UI.Init exposing (init, emptyInternalData)
 
 Initialize the game
 
-@docs init, emptyInternalData
+@docs init
 
 -}
 
 import Audio exposing (AudioCmd)
 import Browser.Events exposing (Visibility(..))
 import Canvas
-import Dict
-import Messenger.Base exposing (Env, Flags, GlobalData, InternalData, WorldEvent(..))
+import Messenger.Base exposing (Env, Flags, GlobalData, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
@@ -43,26 +42,11 @@ emptyScene =
     abstractRec ()
 
 
-{-| Empty InternalData
--}
-emptyInternalData : InternalData
-emptyInternalData =
-    { browserViewPort = ( 0, 0 )
-    , realHeight = 0
-    , realWidth = 0
-    , startLeft = 0
-    , startTop = 0
-    , sprites = Dict.empty
-    , virtualWidth = 0
-    , virtualHeight = 0
-    }
-
-
 {-| Empty GlobalData
 -}
 emptyGlobalData : UserConfig userdata scenemsg -> GlobalData userdata
 emptyGlobalData config =
-    config.globalDataCodec.decode ""
+    userGlobalDataToGlobalData (config.globalDataCodec.decode "")
 
 
 {-| Initial model
@@ -91,31 +75,24 @@ init config scenes flags =
             loadSceneByName config.initScene scenes config.initSceneMsg { im | currentGlobalData = newgd }
 
         ( gw, gh ) =
-            maxHandW oldgd ( flags.windowWidth, flags.windowHeight )
+            maxHandW ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )
 
         ( fl, ft ) =
-            getStartPoint oldgd ( flags.windowWidth, flags.windowHeight )
-
-        oldIT =
-            { emptyInternalData
-                | virtualWidth = config.virtualSize.width
-                , virtualHeight = config.virtualSize.height
-            }
-
-        oldgd =
-            { initGlobalData | internalData = oldIT }
+            getStartPoint ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )
 
         newIT =
-            { oldIT
+            { emptyInternalData
                 | browserViewPort = ( flags.windowWidth, flags.windowHeight )
                 , realWidth = gw
                 , realHeight = gh
                 , startLeft = fl
                 , startTop = ft
+                , virtualWidth = config.virtualSize.width
+                , virtualHeight = config.virtualSize.height
             }
 
         initGlobalData =
-            config.globalDataCodec.decode flags.info
+            userGlobalDataToGlobalData (config.globalDataCodec.decode flags.info)
 
         newgd =
             { initGlobalData | currentTimeStamp = millisToPosix flags.timeStamp, internalData = newIT, currentScene = config.initScene }

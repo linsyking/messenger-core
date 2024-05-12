@@ -32,9 +32,9 @@ This module is very important because it can calculate the correct position of t
 import Messenger.Base exposing (GlobalData)
 
 
-plScale : GlobalData a -> Float
-plScale gd =
-    gd.internalData.virtualWidth / gd.internalData.virtualHeight
+plScale : ( Float, Float ) -> Float
+plScale ( vw, vh ) =
+    vw / vh
 
 
 
@@ -106,27 +106,27 @@ fromRealLength gd x =
 
 {-| maxHandW
 -}
-maxHandW : GlobalData a -> ( Float, Float ) -> ( Float, Float )
-maxHandW gd ( w, h ) =
-    if w / h > plScale gd then
-        ( h * plScale gd, h )
+maxHandW : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
+maxHandW vsize ( w, h ) =
+    if w / h > plScale vsize then
+        ( h * plScale vsize, h )
 
     else
-        ( w, w / plScale gd )
+        ( w, w / plScale vsize )
 
 
 {-| getStartPoint
 -}
-getStartPoint : GlobalData a -> ( Float, Float ) -> ( Float, Float )
-getStartPoint gd ( w, h ) =
+getStartPoint : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
+getStartPoint vsize ( w, h ) =
     let
         fw =
-            h * plScale gd
+            h * plScale vsize
 
         fh =
-            w / plScale gd
+            w / plScale vsize
     in
-    if w / h > plScale gd then
+    if w / h > plScale vsize then
         ( (w - fw) / 2, 0 )
 
     else

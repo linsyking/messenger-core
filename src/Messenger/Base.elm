@@ -4,6 +4,8 @@ module Messenger.Base exposing
     , Env
     , Flags
     , removeCommonData, addCommonData
+    , UserViewGlobalData
+    , emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
     )
 
 {-|
@@ -18,23 +20,26 @@ Some Basic Data Types for the game
 @docs Env
 @docs Flags
 @docs removeCommonData, addCommonData
+@docs UserViewGlobalData
+@docs emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
 
 -}
 
 import Audio
-import Browser.Events exposing (Visibility)
+import Browser.Events exposing (Visibility(..))
 import Canvas.Texture exposing (Texture)
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Messenger.Audio.Base exposing (AudioOption)
 import Set exposing (Set)
-import Time
+import Time exposing (millisToPosix)
 
 
 {-| World Event
 
 This is the World Event for the game.
-Users can get outside information throught the events.
+
+Users can get outside information through the events.
 
 `Tick` records the time.
 
@@ -95,6 +100,69 @@ type alias GlobalData userdata =
     , volume : Float
     , userData : userdata
     , currentScene : String
+    }
+
+
+{-| UserViewGlobalData
+
+This type is for user to use when initializing the messenger.
+
+-}
+type alias UserViewGlobalData userdata =
+    { sceneStartTime : Int
+    , globalTime : Int
+    , volume : Float
+    , extraHTML : Maybe (Html WorldEvent)
+    , canvasAttributes : List (Html.Attribute WorldEvent)
+    , userData : userdata
+    }
+
+
+{-| Empty InternalData
+-}
+emptyInternalData : InternalData
+emptyInternalData =
+    { browserViewPort = ( 0, 0 )
+    , realHeight = 0
+    , realWidth = 0
+    , startLeft = 0
+    , startTop = 0
+    , sprites = Dict.empty
+    , virtualWidth = 0
+    , virtualHeight = 0
+    }
+
+
+{-| Translate UserViewGlobalData to GlobalData
+-}
+userGlobalDataToGlobalData : UserViewGlobalData userdata -> GlobalData userdata
+userGlobalDataToGlobalData user =
+    { internalData = emptyInternalData
+    , currentTimeStamp = millisToPosix 0
+    , sceneStartTime = user.sceneStartTime
+    , globalTime = user.globalTime
+    , volume = user.volume
+    , windowVisibility = Visible
+    , pressedKeys = Set.empty
+    , pressedMouseButtons = Set.empty
+    , canvasAttributes = user.canvasAttributes
+    , mousePos = ( 0, 0 )
+    , extraHTML = user.extraHTML
+    , userData = user.userData
+    , currentScene = ""
+    }
+
+
+{-| Translate GlobalData to UserViewGlobalData
+-}
+globalDataToUserGlobalData : GlobalData userdata -> UserViewGlobalData userdata
+globalDataToUserGlobalData globalData =
+    { sceneStartTime = globalData.sceneStartTime
+    , globalTime = globalData.globalTime
+    , volume = globalData.volume
+    , extraHTML = globalData.extraHTML
+    , canvasAttributes = globalData.canvasAttributes
+    , userData = globalData.userData
     }
 
 

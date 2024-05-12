@@ -15,7 +15,7 @@ import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
 import Messenger.Audio.Audio exposing (loadAudio, stopAudio)
-import Messenger.Base exposing (Env, WorldEvent(..))
+import Messenger.Base exposing (Env, WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -107,7 +107,7 @@ gameUpdate config scenes evnt model =
                             SOMSaveUserData ->
                                 let
                                     encodedGD =
-                                        config.globalDataCodec.encode lastModel.currentGlobalData
+                                        config.globalDataCodec.encode (globalDataToUserGlobalData lastModel.currentGlobalData)
                                 in
                                 ( lastModel, lastCmds ++ [ config.ports.sendInfo encodedGD ], lastAudioCmds )
                     )
@@ -209,10 +209,10 @@ update config scenes _ msg model =
         NewWindowSize t ->
             let
                 ( gw, gh ) =
-                    maxHandW gd t
+                    maxHandW ( gd.internalData.virtualWidth, gd.internalData.virtualHeight ) t
 
                 ( fl, ft ) =
-                    getStartPoint gd t
+                    getStartPoint ( gd.internalData.virtualWidth, gd.internalData.virtualHeight ) t
 
                 oldIT =
                     gd.internalData

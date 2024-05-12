@@ -20,7 +20,7 @@ import Canvas.Settings
 import Color exposing (Color)
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Messenger.Base exposing (GlobalData, WorldEvent)
+import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet)
 
 
@@ -35,7 +35,8 @@ to send to a scene when switching scenes.
   - `initScene` represents the scene users get start
   - `initSceneMsg` represents the message to initialize the start scene
   - `globalDataCodec` is for local storage, users can encode the any data in global data
-    and user data to storage them, and decode them when reopen the game
+    and user data to storage them, and decode them when reopen the game.
+    This globalData is a subset of the real global data, removing all internal data structures
   - `virtualSize` represents how users want their game be virtual sized. In other words,
     users make their game in the virtual size, and the game will be resized due to the browser window size
     but keeping the aspect ratio
@@ -47,7 +48,7 @@ to send to a scene when switching scenes.
     **format: (name, path)**
   - `allSpriteSheets` stores all the sprite sheets users set for this game. users should both
     name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
-    Sprite sheets are useful when managing the art resourses or making frame-by-frame animations
+    Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
   - `timeInterval` determines the highest fps of the game, representing the interval
     between every two frames. More strictly speaking, it represents the interval between
     every two **Tick** events
@@ -58,8 +59,8 @@ type alias UserConfig userdata scenemsg =
     { initScene : String
     , initSceneMsg : Maybe scenemsg
     , globalDataCodec :
-        { encode : GlobalData userdata -> String
-        , decode : String -> GlobalData userdata
+        { encode : UserViewGlobalData userdata -> String
+        , decode : String -> UserViewGlobalData userdata
         }
     , virtualSize :
         { width : Float
