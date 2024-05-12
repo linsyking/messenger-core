@@ -20,11 +20,11 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 
 import Canvas exposing (Renderable, group)
 import Canvas.Settings exposing (Setting)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, WorldEvent, addCommonData, removeCommonData)
 import Messenger.GeneralModel exposing (MsgBase(..), viewModelList)
 import Messenger.Layer.Layer exposing (AbstractLayer)
 import Messenger.Recursion exposing (updateObjects)
-import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract, addCommonData, removeCommonData)
+import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract)
 
 
 {-| LayeredSceneData

@@ -2,10 +2,10 @@ module Messenger.Component.PortableComponent exposing
     ( ConcretePortableComponent
     , PortableMsgCodec
     , PortableTarCodec
-    , genPortableComponent
-    , translatePortableComponent
+    , genPortableComponentSpecific
+    , translatePortableComponentSpecific
     , PortableComponentInit, PortableComponentUpdate, PortableComponentUpdateRec, PortableComponentView
-    , PortableComponentStorage
+    , PortableComponentStorageSpecific
     )
 
 {-|
@@ -26,52 +26,52 @@ There are some limitations for portable components:
 @docs ConcretePortableComponent
 @docs PortableMsgCodec
 @docs PortableTarCodec
-@docs genPortableComponent
-@docs translatePortableComponent
+@docs genPortableComponentSpecific
+@docs translatePortableComponentSpecific
 
 
 # Type sugar
 
 @docs PortableComponentInit, PortableComponentUpdate, PortableComponentUpdateRec, PortableComponentView
-@docs PortableComponentStorage
+@docs PortableComponentStorageSpecific
 
 -}
 
 import Canvas exposing (Renderable)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, WorldEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
 import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)
-import Messenger.Scene.Scene exposing (SceneOutputMsg)
+import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
 
 
 {-| Portable component init type sugar
 -}
-type alias PortableComponentInit cdata userdata msg data =
-    Env cdata userdata -> msg -> data
+type alias PortableComponentInit userdata msg data =
+    Env () userdata -> msg -> data
 
 
 {-| Portable component update type sugar
 -}
-type alias PortableComponentUpdate cdata data userdata scenemsg tar msg =
-    Env cdata userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+type alias PortableComponentUpdate data userdata tar msg =
+    Env () userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg () userdata)), ( Env () userdata, Bool ) )
 
 
 {-| Portable component updaterec type sugar
 -}
-type alias PortableComponentUpdateRec cdata data userdata scenemsg tar msg =
-    Env cdata userdata -> msg -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+type alias PortableComponentUpdateRec data userdata tar msg =
+    Env () userdata -> msg -> data -> ( data, List (Msg tar msg (SceneOutputMsg () userdata)), Env () userdata )
 
 
 {-| Portable component view type sugar
 -}
-type alias PortableComponentView cdata userdata data =
-    Env cdata userdata -> data -> ( Renderable, Int )
+type alias PortableComponentView userdata data =
+    Env () userdata -> data -> ( Renderable, Int )
 
 
 {-| Portable component storage type sugar
 -}
-type alias PortableComponentStorage cdata userdata tar msg gtar gmsg bdata scenemsg =
-    PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
+type alias PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg =
+    PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> scenemsg -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
 
 
 {-| ConcretePortableComponent
@@ -83,44 +83,86 @@ Use `translatePortableComponent` to create a `ConcreteUserComponent` from a `Con
 The `scenemsg` type is replaced by `()` because you cannot send changescene message.
 
 -}
-type alias ConcretePortableComponent data cdata userdata tar msg scenemsg =
-    { init : PortableComponentInit cdata userdata msg data
-    , update : PortableComponentUpdate cdata data userdata scenemsg tar msg
-    , updaterec : PortableComponentUpdateRec cdata data userdata scenemsg tar msg
-    , view : PortableComponentView cdata userdata data
+type alias ConcretePortableComponent data userdata tar msg =
+    { init : PortableComponentInit userdata msg data
+    , update : PortableComponentUpdate data userdata tar msg
+    , updaterec : PortableComponentUpdateRec data userdata tar msg
+    , view : PortableComponentView userdata data
     , matcher : Matcher data tar
     }
 
 
-{-| Translate a `ConcretePortableComponent` to a `ConcreteUserComponent`.
+{-| Translate a `ConcretePortableComponent` to a specific `ConcreteUserComponent`.
+**Then you can treat it as a normal component in the declared type**
 
-This will add an empty basedata (unit) and upcast target and messages to the generalized type.
+This will add an empty basedata (unit) when init and upcast target and messages to the generalized type.
+
+You should also pass CommonData and SceneMsg with any value, which means you just need to match the data type.
 
 -}
-translatePortableComponent : ConcretePortableComponent data cdata userdata tar msg scenemsg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
-translatePortableComponent pcomp msgcodec tarcodec emptyBaseData =
+translatePortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> cdata -> scenemsg -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
+translatePortableComponentSpecific pcomp msgcodec tarcodec emptyBaseData _ _ =
     let
         msgMDecoder =
             genMsgDecoder msgcodec tarcodec
+
+        addSceneMsg : Msg gtar gmsg (SceneOutputMsg () userdata) -> Maybe (Msg gtar gmsg (SceneOutputMsg scenemsg userdata))
+        addSceneMsg msg =
+            case msg of
+                Parent x ->
+                    Maybe.map Parent <| addSceneMsgtoPortable x
+
+                Other a b ->
+                    Just <| Other a b
     in
-    { init = \env gmsg -> ( pcomp.init env <| msgcodec.encode gmsg, emptyBaseData )
+    { init = \env gmsg -> ( pcomp.init (removeCommonData env) (msgcodec.encode gmsg), emptyBaseData )
     , update =
         \env evt data baseData ->
             let
-                ( resData, resMsg, resEnv ) =
-                    pcomp.update env evt data
+                ( resData, resMsg, ( resEnv, resBlock ) ) =
+                    pcomp.update (removeCommonData env) evt data
             in
-            ( ( resData, baseData ), List.map msgMDecoder resMsg, resEnv )
+            ( ( resData, baseData ), List.filterMap addSceneMsg <| List.map msgMDecoder resMsg, ( addCommonData env.commonData resEnv, resBlock ) )
     , updaterec =
         \env gmsg data baseData ->
             let
                 ( resData, resMsg, resEnv ) =
-                    pcomp.updaterec env (msgcodec.encode gmsg) data
+                    pcomp.updaterec (removeCommonData env) (msgcodec.encode gmsg) data
             in
-            ( ( resData, baseData ), List.map msgMDecoder resMsg, resEnv )
-    , view = \env data _ -> pcomp.view env data
+            ( ( resData, baseData ), List.filterMap addSceneMsg <| List.map msgMDecoder resMsg, addCommonData env.commonData resEnv )
+    , view = \env data _ -> pcomp.view (removeCommonData env) data
     , matcher = \data _ gtar -> pcomp.matcher data <| tarcodec.encode gtar
     }
+
+
+addSceneMsgtoPortable : MsgBase msg (SceneOutputMsg () userdata) -> Maybe (MsgBase msg (SceneOutputMsg scenemsg userdata))
+addSceneMsgtoPortable msg =
+    case msg of
+        SOMMsg sommsg ->
+            case sommsg of
+                SOMChangeScene _ ->
+                    Nothing
+
+                SOMPlayAudio n u o ->
+                    Just <| SOMMsg <| SOMPlayAudio n u o
+
+                SOMAlert a ->
+                    Just <| SOMMsg <| SOMAlert a
+
+                SOMStopAudio n ->
+                    Just <| SOMMsg <| SOMStopAudio n
+
+                SOMSetVolume v ->
+                    Just <| SOMMsg <| SOMSetVolume v
+
+                SOMPrompt n t ->
+                    Just <| SOMMsg <| SOMPrompt n t
+
+                SOMSaveUserData ->
+                    Just <| SOMMsg <| SOMSaveUserData
+
+        OtherMsg othermsg ->
+            Just <| OtherMsg othermsg
 
 
 {-| Msg decoder
@@ -167,6 +209,6 @@ genMsgDecoder msgcodec tarcodec sMsgM =
 Generate abstract portable component from concrete component.
 
 -}
-genPortableComponent : ConcretePortableComponent data cdata userdata tar msg scenemsg -> PortableComponentStorage cdata userdata tar msg gtar gmsg bdata scenemsg
-genPortableComponent conpcomp mcodec tcodec emptyBaseData env =
-    abstract (translatePortableComponent conpcomp mcodec tcodec emptyBaseData) env
+genPortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg
+genPortableComponentSpecific conpcomp mcodec tcodec emptyBaseData scenemsg env =
+    abstract (translatePortableComponentSpecific conpcomp mcodec tcodec emptyBaseData env.commonData scenemsg) env

@@ -2,7 +2,6 @@ module Messenger.Scene.Scene exposing
     ( AbstractScene(..)
     , MConcreteScene, MAbstractScene
     , unroll, abstract
-    , removeCommonData, addCommonData
     , SceneOutputMsg(..)
     , SceneStorage, AllScenes
     )
@@ -17,7 +16,6 @@ Gerneral Model and Basic types for Scenes
 @docs AbstractScene
 @docs MConcreteScene, MAbstractScene
 @docs unroll, abstract
-@docs removeCommonData, addCommonData
 @docs SceneOutputMsg
 @docs SceneStorage, AllScenes
 
@@ -109,29 +107,6 @@ abstract conmodel initEnv initMsg =
                 }
     in
     abstractRec (conmodel.init initEnv initMsg)
-
-
-{-| Remove common data from environment.
-
-Useful when dealing with portable components by yourself.
-
-Most of the time it will not be used since it has been built into prepared update functions.
-
--}
-removeCommonData : Env cdata userdata -> Env () userdata
-removeCommonData env =
-    { globalData = env.globalData
-    , commonData = ()
-    }
-
-
-{-| Add the common data to a Environment without common data.
--}
-addCommonData : cdata -> Env () userdata -> Env cdata userdata
-addCommonData commonData env =
-    { globalData = env.globalData
-    , commonData = commonData
-    }
 
 
 {-| Scene Output Msg
