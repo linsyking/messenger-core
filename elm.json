@@ -32,6 +32,7 @@
             "Messenger.Coordinate.HTML",
             "Messenger.Coordinate.Coordinates",
             "Messenger.Component.Component",
+            "Messenger.Component.PortableComponent",
             "Messenger.Audio.Base"
         ]
     },
