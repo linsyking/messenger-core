@@ -98,13 +98,13 @@ type alias PortableComponentView userdata data =
 {-| Portable component storage as a specific component type sugar
 -}
 type alias PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg =
-    PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> scenemsg -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
+    PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> scenemsg -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
 
 
 {-| Portable component storage as general portable component type sugar
 -}
 type alias PortableComponentStorageGeneral cdata userdata tar msg gtar gmsg =
-    PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> Env cdata userdata -> gmsg -> AbstractGeneralPortableComponent userdata gtar gmsg
+    PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> Env cdata userdata -> gmsg -> AbstractGeneralPortableComponent userdata gtar gmsg
 
 
 {-| ConcretePortableComponent
@@ -145,8 +145,8 @@ This will add an empty basedata provided when init and upcast target and message
 You should also pass CommonData and SceneMsg with any value, which means you just need to match the data type.
 
 -}
-translatePortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> cdata -> scenemsg -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
-translatePortableComponentSpecific pcomp msgcodec tarcodec emptyBaseData _ _ =
+translatePortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> cdata -> scenemsg -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
+translatePortableComponentSpecific pcomp tarcodec msgcodec emptyBaseData _ _ =
     let
         msgMDecoder =
             genMsgDecoder msgcodec tarcodec
@@ -188,9 +188,9 @@ This will add an empty basedata (unit) when init and upcast target and messages 
 The commondata and scenemsg will also be set to unit type.
 
 -}
-translatePortableComponentGeneral : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> ConcreteUserComponent data () userdata gtar gmsg () ()
-translatePortableComponentGeneral pcomp msgcodec tarcodec =
-    translatePortableComponentSpecific pcomp msgcodec tarcodec () () ()
+translatePortableComponentGeneral : ConcretePortableComponent data userdata tar msg -> PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> ConcreteUserComponent data () userdata gtar gmsg () ()
+translatePortableComponentGeneral pcomp tarcodec msgcodec =
+    translatePortableComponentSpecific pcomp tarcodec msgcodec () () ()
 
 
 addSceneMsgtoPortable : MsgBase msg (SceneOutputMsg () userdata) -> Maybe (MsgBase msg (SceneOutputMsg scenemsg userdata))
@@ -272,8 +272,8 @@ Generate abstract component in a specific component type from concrete component
 
 -}
 genPortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg
-genPortableComponentSpecific conpcomp mcodec tcodec emptyBaseData scenemsg env =
-    abstract (translatePortableComponentSpecific conpcomp mcodec tcodec emptyBaseData env.commonData scenemsg) env
+genPortableComponentSpecific conpcomp tcodec mcodec emptyBaseData scenemsg env =
+    abstract (translatePortableComponentSpecific conpcomp tcodec mcodec emptyBaseData env.commonData scenemsg) env
 
 
 {-| genPortableComponentGeneral
@@ -284,8 +284,8 @@ Generate abstract component in general portable type from concrete component.
 
 -}
 genPortableComponentGeneral : ConcretePortableComponent data userdata tar msg -> PortableComponentStorageGeneral cdata userdata tar msg gtar gmsg
-genPortableComponentGeneral conpcomp mcodec tcodec env =
-    abstract (translatePortableComponentGeneral conpcomp mcodec tcodec) <| removeCommonData env
+genPortableComponentGeneral conpcomp tcodec mcodec env =
+    abstract (translatePortableComponentGeneral conpcomp tcodec mcodec) <| removeCommonData env
 
 
 
