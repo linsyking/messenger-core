@@ -15,8 +15,6 @@
             "Messenger.UserConfig"
         ],
         "Lib": [
-            "Messenger.Tools.KeyCode",
-            "Messenger.Tools.RNG",
             "Messenger.Scene.Scene",
             "Messenger.Scene.RawScene",
             "Messenger.Scene.LayeredScene",

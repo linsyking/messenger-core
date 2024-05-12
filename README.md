@@ -1,9 +1,13 @@
 # Messenger
 
-[Messenger](https://github.com/linsyking/Messenger) is a message-based (2D) game framework.
+[Messenger](https://github.com/linsyking/Messenger) is a message-based (2D) game engine.
 
-This library provides useful algorithms that are used in the messenger framework.
+This library provides core types and functions that messenger uses.
 
-## Core Mechanics
+## Features
 
-The recursion algorithm is used multiple times in the framework. It is the core of the message system.
+- Raw Scene
+- Layered Scene
+- Layer
+- Component
+- Portable component (experimental)
