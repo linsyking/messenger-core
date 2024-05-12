@@ -11,3 +11,5 @@ This library provides core types and functions that messenger uses.
 - Layer
 - Component
 - Portable component (experimental)
+
+For more details, please read the documentation in the main Messenger repository.
