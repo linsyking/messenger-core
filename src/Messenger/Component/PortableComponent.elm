@@ -4,8 +4,12 @@ module Messenger.Component.PortableComponent exposing
     , PortableTarCodec
     , genPortableComponentSpecific
     , translatePortableComponentSpecific
+    , AbstractGeneralPortableComponent
+    , genPortableComponentGeneral
+    , translatePortableComponentGeneral
+    , updatePortableComponents, updatePortableComponentsWithTarget
     , PortableComponentInit, PortableComponentUpdate, PortableComponentUpdateRec, PortableComponentView
-    , PortableComponentStorageSpecific
+    , PortableComponentStorageSpecific, PortableComponentStorageGeneral
     )
 
 {-|
@@ -23,17 +27,39 @@ There are some limitations for portable components:
   - You need to set the msg and target type for every dependent portable component
   - You need to provide a codec in the layer to translate the messages and targets
 
+A concrete portable component can generate two kinds of abstract component: **Specific Component** or **General Portable Component**.
+
 @docs ConcretePortableComponent
 @docs PortableMsgCodec
 @docs PortableTarCodec
+
+
+### Specific Component
+
+You can generate a general type of component from a concrete portable component, which means you can manage this component with a
+list of user components.
+
 @docs genPortableComponentSpecific
 @docs translatePortableComponentSpecific
+
+
+### General Portable Component
+
+You can generate a component in specific type from a concrete portable component, which means you can manage this component in a
+list for all general portable components generated in this type.
+
+**You should update this type of components by using specialized function provided.**
+
+@docs AbstractGeneralPortableComponent
+@docs genPortableComponentGeneral
+@docs translatePortableComponentGeneral
+@docs updatePortableComponents, updatePortableComponentsWithTarget
 
 
 # Type sugar
 
 @docs PortableComponentInit, PortableComponentUpdate, PortableComponentUpdateRec, PortableComponentView
-@docs PortableComponentStorageSpecific
+@docs PortableComponentStorageSpecific, PortableComponentStorageGeneral
 
 -}
 
@@ -41,6 +67,7 @@ import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, WorldEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
 import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)
+import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
 import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
 
 
@@ -68,10 +95,16 @@ type alias PortableComponentView userdata data =
     Env () userdata -> data -> ( Renderable, Int )
 
 
-{-| Portable component storage type sugar
+{-| Portable component storage as a specific component type sugar
 -}
 type alias PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg =
     PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> bdata -> scenemsg -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
+
+
+{-| Portable component storage as general portable component type sugar
+-}
+type alias PortableComponentStorageGeneral cdata userdata tar msg gtar gmsg =
+    PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> Env cdata userdata -> gmsg -> AbstractGeneralPortableComponent userdata gtar gmsg
 
 
 {-| ConcretePortableComponent
@@ -92,10 +125,22 @@ type alias ConcretePortableComponent data userdata tar msg =
     }
 
 
+{-| AbstractPortableComponent
+
+Abstract General Portable Component with common data, base data, and scene msg set to unit type.
+
+This means you cannot send scene msg from a portable component. And you cannot put a general portable
+component in a list of other user components.
+
+-}
+type alias AbstractGeneralPortableComponent userdata tar msg =
+    AbstractComponent () userdata tar msg () ()
+
+
 {-| Translate a `ConcretePortableComponent` to a specific `ConcreteUserComponent`.
 **Then you can treat it as a normal component in the declared type**
 
-This will add an empty basedata (unit) when init and upcast target and messages to the generalized type.
+This will add an empty basedata provided when init and upcast target and messages to the generalized type.
 
 You should also pass CommonData and SceneMsg with any value, which means you just need to match the data type.
 
@@ -133,6 +178,19 @@ translatePortableComponentSpecific pcomp msgcodec tarcodec emptyBaseData _ _ =
     , view = \env data _ -> pcomp.view (removeCommonData env) data
     , matcher = \data _ gtar -> pcomp.matcher data <| tarcodec.encode gtar
     }
+
+
+{-| Translate a `ConcretePortableComponent` to a special kind of `ConcreteUserComponent`.
+**Then you should treat it as a general portable component, in the same type of other general portable components **
+
+This will add an empty basedata (unit) when init and upcast target and messages to the generalized type.
+
+The commondata and scenemsg will also be set to unit type.
+
+-}
+translatePortableComponentGeneral : ConcretePortableComponent data userdata tar msg -> PortableMsgCodec msg gmsg -> PortableTarCodec tar gtar -> ConcreteUserComponent data () userdata gtar gmsg () ()
+translatePortableComponentGeneral pcomp msgcodec tarcodec =
+    translatePortableComponentSpecific pcomp msgcodec tarcodec () () ()
 
 
 addSceneMsgtoPortable : MsgBase msg (SceneOutputMsg () userdata) -> Maybe (MsgBase msg (SceneOutputMsg scenemsg userdata))
@@ -204,11 +262,79 @@ genMsgDecoder msgcodec tarcodec sMsgM =
             Other (tarcodec.decode othertar) (msgcodec.decode smsg)
 
 
-{-| genPortableComponent
 
-Generate abstract portable component from concrete component.
+--- Generator
+
+
+{-| genPortableComponentSpecific
+
+Generate abstract component in a specific component type from concrete component.
 
 -}
 genPortableComponentSpecific : ConcretePortableComponent data userdata tar msg -> PortableComponentStorageSpecific cdata userdata tar msg gtar gmsg bdata scenemsg
 genPortableComponentSpecific conpcomp mcodec tcodec emptyBaseData scenemsg env =
     abstract (translatePortableComponentSpecific conpcomp mcodec tcodec emptyBaseData env.commonData scenemsg) env
+
+
+{-| genPortableComponentGeneral
+
+Generate abstract component in general portable type from concrete component.
+
+**you don't need to give a Env without commondata**
+
+-}
+genPortableComponentGeneral : ConcretePortableComponent data userdata tar msg -> PortableComponentStorageGeneral cdata userdata tar msg gtar gmsg
+genPortableComponentGeneral conpcomp mcodec tcodec env =
+    abstract (translatePortableComponentGeneral conpcomp mcodec tcodec) <| removeCommonData env
+
+
+
+-- Updater for General Portable Components
+
+
+{-| updatePortableComponents
+
+Update a list of abstract general portable components.
+
+**Use this function instead of updateComponents to update general portable components!**
+
+**you don't need to give a Env without commondata**
+
+-}
+updatePortableComponents : Env cdata userdata -> WorldEvent -> List (AbstractGeneralPortableComponent userdata tar msg) -> ( List (AbstractGeneralPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+updatePortableComponents env evt pcomps =
+    let
+        ( newpcomps, newMsg, ( newEnv, newBlock ) ) =
+            updateObjects (removeCommonData env) evt pcomps
+
+        newEnvC =
+            addCommonData env.commonData newEnv
+
+        newMsgfilterd =
+            List.filterMap addSceneMsgtoPortable newMsg
+    in
+    ( newpcomps, newMsgfilterd, ( newEnvC, newBlock ) )
+
+
+{-| updatePortableComponentsWithTarget
+
+Update a list of abstract portable components with target msgs.
+
+**Use this function instead of updateComponentsWithTarget to update general portable components!**
+
+**you don't need to give a Env without commondata**
+
+-}
+updatePortableComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg () userdata)) -> List (AbstractGeneralPortableComponent userdata tar msg) -> ( List (AbstractGeneralPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+updatePortableComponentsWithTarget env msgs pcomps =
+    let
+        ( newpcomps, newMsg, newEnv ) =
+            updateObjectsWithTarget (removeCommonData env) msgs pcomps
+
+        newEnvC =
+            addCommonData env.commonData newEnv
+
+        newMsgfilterd =
+            List.filterMap addSceneMsgtoPortable newMsg
+    in
+    ( newpcomps, newMsgfilterd, newEnvC )
