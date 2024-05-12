@@ -6,7 +6,7 @@ module Messenger.Component.Component exposing
     , updateComponentsWithTarget
     , genComponentsRenderList, viewComponentsRenderList
     , viewComponents
-    , ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView
+    , ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
     , ComponentStorage
     )
 
@@ -48,7 +48,7 @@ In this case, your basedata would be a record with these properties.
 
 # Type sugar
 
-@docs ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView
+@docs ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
 @docs ComponentStorage
 
 -}
@@ -100,6 +100,12 @@ type alias ComponentStorage cdata userdata tar msg bdata scenemsg =
 -}
 type alias AbstractComponent cdata userdata tar msg bdata scenemsg =
     AbstractGeneralModel (Env cdata userdata) WorldEvent tar msg ( Renderable, Int ) bdata (SceneOutputMsg scenemsg userdata)
+
+
+{-| Component matcher type sugar
+-}
+type alias ComponentMatcher data bdata tar =
+    data -> bdata -> tar -> Bool
 
 
 {-| genComponent
