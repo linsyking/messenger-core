@@ -73,10 +73,10 @@ updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
                         newMsg
             in
             if block then
-                ( lastObjs ++ newObj :: restObjs, ( lastMsgUnfinished ++ unfinishedMsg, lastMsgFinished ++ finishedMsg ), ( lastEnv, block ) )
+                ( reverse restObjs ++ newObj :: lastObjs, ( lastMsgUnfinished ++ unfinishedMsg, lastMsgFinished ++ finishedMsg ), ( lastEnv, block ) )
 
             else
-                updateOne newEnv evt restObjs (lastObjs ++ [ newObj ]) (lastMsgUnfinished ++ unfinishedMsg) (lastMsgFinished ++ finishedMsg)
+                updateOne newEnv evt restObjs (newObj :: lastObjs) (lastMsgUnfinished ++ unfinishedMsg) (lastMsgFinished ++ finishedMsg)
 
         [] ->
             ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), ( lastEnv, False ) )
