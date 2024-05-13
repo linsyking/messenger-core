@@ -252,7 +252,14 @@ update config scenes _ msg model =
             ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
 
         WindowVisibility v ->
-            ( { model | currentGlobalData = { gd | windowVisibility = v } }, Cmd.none, Audio.cmdNone )
+            let
+                oldgd =
+                    model.currentGlobalData
+
+                newgd =
+                    { oldgd | windowVisibility = v, pressedKeys = Set.empty, pressedMouseButtons = Set.empty }
+            in
+            ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
 
         MouseMove ( px, py ) ->
             let
