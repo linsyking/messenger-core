@@ -4,6 +4,7 @@ module Messenger.Scene.Scene exposing
     , unroll, abstract
     , SceneOutputMsg(..)
     , SceneStorage, AllScenes
+    , SceneContext
     )
 
 {-|
@@ -18,6 +19,7 @@ Gerneral Model and Basic types for Scenes
 @docs unroll, abstract
 @docs SceneOutputMsg
 @docs SceneStorage, AllScenes
+@docs SceneContext
 
 -}
 
@@ -133,6 +135,8 @@ type SceneOutputMsg scenemsg userdata
     | SOMSetVolume Float
     | SOMPrompt String String -- name, title
     | SOMSaveUserData
+    | SOMSetContext (SceneContext userdata scenemsg)
+    | SOMGetContext (SceneContext userdata scenemsg -> userdata -> userdata)
 
 
 {-| SceneStorage
@@ -148,3 +152,12 @@ type alias SceneStorage userdata scenemsg =
 -}
 type alias AllScenes userdata scenemsg =
     List ( String, SceneStorage userdata scenemsg )
+
+
+{-| Scene Context
+-}
+type alias SceneContext userdata scenemsg =
+    { scene : MAbstractScene userdata scenemsg
+    , sceneStartTime : Int
+    , name : String
+    }

@@ -219,6 +219,12 @@ addSceneMsgtoPortable msg =
                 SOMSaveUserData ->
                     Just <| SOMMsg <| SOMSaveUserData
 
+                SOMSetContext _ ->
+                    Nothing
+
+                SOMGetContext _ ->
+                    Nothing
+
         OtherMsg othermsg ->
             Just <| OtherMsg othermsg
 

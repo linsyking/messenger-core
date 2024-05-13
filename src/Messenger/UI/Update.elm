@@ -110,6 +110,32 @@ gameUpdate config scenes evnt model =
                                         config.globalDataCodec.encode (globalDataToUserGlobalData lastModel.currentGlobalData)
                                 in
                                 ( lastModel, lastCmds ++ [ config.ports.sendInfo encodedGD ], lastAudioCmds )
+
+                            SOMSetContext ctx ->
+                                let
+                                    oldgd =
+                                        lastModel.currentGlobalData
+
+                                    newgd =
+                                        { oldgd | sceneStartTime = ctx.sceneStartTime, currentScene = ctx.name }
+
+                                    newModel =
+                                        { lastModel | currentGlobalData = newgd, currentScene = ctx.scene }
+                                in
+                                ( newModel, lastCmds, lastAudioCmds )
+
+                            SOMGetContext getter ->
+                                let
+                                    ctx =
+                                        { scene = lastModel.currentScene, sceneStartTime = oldgd.sceneStartTime, name = oldgd.currentScene }
+
+                                    oldgd =
+                                        lastModel.currentGlobalData
+
+                                    newgd =
+                                        { oldgd | userData = getter ctx oldgd.userData }
+                                in
+                                ( { lastModel | currentGlobalData = newgd }, lastCmds, lastAudioCmds )
                     )
                     ( timeUpdatedModel, [], [] )
                     som
