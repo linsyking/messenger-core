@@ -138,11 +138,7 @@ Judge whether the mouse position is in the rectangle.
 -}
 judgeMouseRect : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float ) -> Bool
 judgeMouseRect ( mx, my ) ( x, y ) ( w, h ) =
-    if x <= mx && mx <= x + w && y <= my && my <= y + h then
-        True
-
-    else
-        False
+    x <= mx && mx <= x + w && y <= my && my <= y + h
 
 
 {-| fromMouseToVirtual
