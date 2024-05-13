@@ -36,7 +36,7 @@ A Gernel model has the ability to:
 -}
 
 import Canvas exposing (Renderable)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, UserEvent)
 import Messenger.Scene.Scene exposing (SceneOutputMsg)
 
 
@@ -166,13 +166,13 @@ abstract conmodel initEnv initMsg =
 {-| Specialized Concrete Model for Messenger
 -}
 type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
-    ConcreteGeneralModel data (Env common userdata) WorldEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
+    ConcreteGeneralModel data (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
 
 
 {-| Specialized Abstract Model for Messenger
 -}
 type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
-    AbstractGeneralModel (Env common userdata) WorldEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
+    AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
 
 
 {-| View model list.

@@ -16,7 +16,7 @@ Raw Scene is a scene without anything. Users can add whatever they like in the r
 -}
 
 import Canvas exposing (Renderable)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, UserEvent)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg, SceneStorage, abstract)
 
 
@@ -29,7 +29,7 @@ type alias RawSceneInit data userdata scenemsg =
 {-| update type sugar
 -}
 type alias RawSceneUpdate data userdata scenemsg =
-    Env () userdata -> WorldEvent -> data -> ( data, List (SceneOutputMsg scenemsg userdata), Env () userdata )
+    Env () userdata -> UserEvent -> data -> ( data, List (SceneOutputMsg scenemsg userdata), Env () userdata )
 
 
 {-| view type sugar

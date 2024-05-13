@@ -28,12 +28,12 @@ The subscriptions for the game
 subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Sub WorldEvent
 subscriptions config _ _ =
     Sub.batch
-        [ Time.every config.timeInterval Tick --- Slow down the fps
+        [ Time.every config.timeInterval WTick --- Slow down the fps
         , onKeyDown
             (Decode.map2
                 (\x rep ->
                     if not rep then
-                        KeyDown x
+                        WKeyDown x
 
                     else
                         NullEvent
@@ -45,7 +45,7 @@ subscriptions config _ _ =
             (Decode.map2
                 (\x rep ->
                     if not rep then
-                        KeyUp x
+                        WKeyUp x
 
                     else
                         NullEvent
@@ -55,8 +55,8 @@ subscriptions config _ _ =
             )
         , onResize (\w h -> NewWindowSize ( toFloat w, toFloat h ))
         , onVisibilityChange (\v -> WindowVisibility v)
-        , onMouseDown (Decode.map3 (\b x y -> MouseDown b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
-        , onMouseUp (Decode.map3 (\b x y -> MouseUp b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
+        , onMouseDown (Decode.map3 (\b x y -> WMouseDown b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
+        , onMouseUp (Decode.map3 (\b x y -> WMouseUp b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseMove (Decode.map2 (\x y -> MouseMove ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , config.ports.promptReceiver (\p -> Prompt p.name p.result)
         ]

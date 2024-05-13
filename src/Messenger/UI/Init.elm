@@ -14,7 +14,7 @@ Initialize the game
 import Audio exposing (AudioCmd)
 import Browser.Events exposing (Visibility(..))
 import Canvas
-import Messenger.Base exposing (Env, Flags, GlobalData, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
+import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
@@ -30,7 +30,7 @@ emptyScene =
     let
         abstractRec _ =
             let
-                updates : Env () userdata -> WorldEvent -> ( MAbstractScene userdata scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
+                updates : Env () userdata -> UserEvent -> ( MAbstractScene userdata scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
                 updates env _ =
                     ( abstractRec (), [], env )
             in

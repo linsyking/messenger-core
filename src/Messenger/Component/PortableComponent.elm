@@ -64,7 +64,7 @@ list for all general portable components generated in this type.
 -}
 
 import Canvas exposing (Renderable)
-import Messenger.Base exposing (Env, WorldEvent, addCommonData, removeCommonData)
+import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
 import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
@@ -80,7 +80,7 @@ type alias PortableComponentInit userdata msg data =
 {-| Portable component update type sugar
 -}
 type alias PortableComponentUpdate data userdata tar msg =
-    Env () userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg () userdata)), ( Env () userdata, Bool ) )
+    Env () userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg () userdata)), ( Env () userdata, Bool ) )
 
 
 {-| Portable component updaterec type sugar
@@ -307,7 +307,7 @@ Update a list of abstract general portable components.
 **you don't need to give a Env without commondata**
 
 -}
-updatePortableComponents : Env cdata userdata -> WorldEvent -> List (AbstractGeneralPortableComponent userdata tar msg) -> ( List (AbstractGeneralPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+updatePortableComponents : Env cdata userdata -> UserEvent -> List (AbstractGeneralPortableComponent userdata tar msg) -> ( List (AbstractGeneralPortableComponent userdata tar msg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
 updatePortableComponents env evt pcomps =
     let
         ( newpcomps, newMsg, ( newEnv, newBlock ) ) =

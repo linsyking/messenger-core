@@ -15,7 +15,7 @@ import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
 import Messenger.Audio.Audio exposing (loadAudio, stopAudio)
-import Messenger.Base exposing (Env, WorldEvent(..), globalDataToUserGlobalData)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, globalDataToUserGlobalData)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -32,7 +32,7 @@ import Time
 main logic for updating the game
 
 -}
-gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
     if List.length (Dict.keys model.currentGlobalData.internalData.sprites) < List.length config.allTexture then
         -- Still loading assets
@@ -268,7 +268,7 @@ update config scenes _ msg model =
             in
             ( { model | currentGlobalData = { gd | mousePos = mp } }, Cmd.none, Audio.cmdNone )
 
-        MouseDown e pos ->
+        WMouseDown e pos ->
             let
                 newPressedMouseButtons =
                     Set.insert e gd.pressedMouseButtons
@@ -278,7 +278,7 @@ update config scenes _ msg model =
             in
             gameUpdate config scenes (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
-        MouseUp e pos ->
+        WMouseUp e pos ->
             let
                 newPressedMouseButtons =
                     Set.remove e gd.pressedMouseButtons
@@ -288,30 +288,30 @@ update config scenes _ msg model =
             in
             gameUpdate config scenes (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
-        KeyDown 112 ->
+        WKeyDown 112 ->
             if config.debug then
                 -- F1
                 ( model, config.ports.prompt { name = "load", title = "Enter the scene you want to load" }, Audio.cmdNone )
 
             else
-                gameUpdate config scenes msg model
+                gameUpdate config scenes (KeyDown 112) model
 
-        KeyDown 113 ->
+        WKeyDown 113 ->
             if config.debug then
                 -- F2
                 ( model, config.ports.prompt { name = "setVolume", title = "Set volume (0-1)" }, Audio.cmdNone )
 
             else
-                gameUpdate config scenes msg model
+                gameUpdate config scenes (KeyDown 113) model
 
-        KeyUp key ->
+        WKeyUp key ->
             let
                 newPressedKeys =
                     Set.remove key gd.pressedKeys
             in
             ( { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }, Cmd.none, Audio.cmdNone )
 
-        KeyDown key ->
+        WKeyDown key ->
             let
                 newPressedKeys =
                     Set.insert key gd.pressedKeys
@@ -345,7 +345,7 @@ update config scenes _ msg model =
                 Nothing ->
                     ( model, config.ports.alert "Not a number", Audio.cmdNone )
 
-        Tick x ->
+        WTick x ->
             let
                 newGD =
                     { gd | currentTimeStamp = x }
@@ -365,10 +365,15 @@ update config scenes _ msg model =
                         Nothing ->
                             trans
             in
-            gameUpdate config scenes msg { model | currentGlobalData = newGD, transition = newTrans }
+            gameUpdate config scenes (Tick x) { model | currentGlobalData = newGD, transition = newTrans }
 
         NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )
 
         _ ->
-            gameUpdate config scenes msg model
+            case eventFilter msg of
+                Just umsg ->
+                    gameUpdate config scenes umsg model
+
+                Nothing ->
+                    ( model, Cmd.none, Audio.cmdNone )

@@ -20,7 +20,7 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 
 import Canvas exposing (Renderable, group)
 import Canvas.Settings exposing (Setting)
-import Messenger.Base exposing (Env, WorldEvent, addCommonData, removeCommonData)
+import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.GeneralModel exposing (MsgBase(..), viewModelList)
 import Messenger.Layer.Layer exposing (AbstractLayer)
 import Messenger.Recursion exposing (updateObjects)
@@ -41,7 +41,7 @@ type alias LayeredSceneData cdata userdata tar msg scenemsg =
     }
 
 
-updateLayeredScene : (Env () userdata -> WorldEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting) -> Env () userdata -> WorldEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> ( LayeredSceneData cdata userdata tar msg scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
+updateLayeredScene : (Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting) -> Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> ( LayeredSceneData cdata userdata tar msg scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
 updateLayeredScene settingsFunc env evt lsd =
     let
         ( newLayers, newMsgs, ( newEnv, _ ) ) =
@@ -77,7 +77,7 @@ type alias LayeredSceneInit cdata userdata tar msg scenemsg =
 {-| settingsFunc type sugar
 -}
 type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
-    Env () userdata -> WorldEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting
+    Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting
 
 
 {-| genLayeredScene

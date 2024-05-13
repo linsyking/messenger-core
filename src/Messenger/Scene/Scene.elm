@@ -25,7 +25,7 @@ Gerneral Model and Basic types for Scenes
 
 import Canvas exposing (Renderable)
 import Messenger.Audio.Base exposing (AudioOption)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, UserEvent)
 import Messenger.Scene.Transitions.Base exposing (Transition)
 
 
@@ -65,13 +65,13 @@ type AbstractScene env event ren scenemsg userdata
 {-| Specialized Concrete scene for Messenger
 -}
 type alias MConcreteScene data userdata scenemsg =
-    ConcreteScene data (Env () userdata) WorldEvent Renderable scenemsg userdata
+    ConcreteScene data (Env () userdata) UserEvent Renderable scenemsg userdata
 
 
 {-| Specialized Abstract scene for Messenger
 -}
 type alias MAbstractScene userdata scenemsg =
-    AbstractScene (Env () userdata) WorldEvent Renderable scenemsg userdata
+    AbstractScene (Env () userdata) UserEvent Renderable scenemsg userdata
 
 
 {-| Unroll a rolled abstract scene.

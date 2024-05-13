@@ -32,7 +32,7 @@ Gerneral Model and Helper functions for Layers.
 -}
 
 import Canvas exposing (Renderable)
-import Messenger.Base exposing (Env, WorldEvent)
+import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (MAbstractGeneralModel, MConcreteGeneralModel, Matcher, Msg, MsgBase, abstract)
 import Messenger.Scene.Scene exposing (SceneOutputMsg)
 
@@ -46,7 +46,7 @@ type alias LayerInit cdata userdata msg data =
 {-| update type sugar
 -}
 type alias LayerUpdate cdata userdata tar msg scenemsg data =
-    Env cdata userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+    Env cdata userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
 
 
 {-| updaterec type sugar
@@ -109,7 +109,7 @@ Users can use it as the first step of the update process
 
 -}
 type alias BasicUpdater data cdata userdata tar msg scenemsg =
-    Env cdata userdata -> WorldEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+    Env cdata userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
 
 
 {-| Distributor Type
@@ -120,7 +120,7 @@ The `cmsgpacker` is a custom type to store the component msgs and their targets.
 
 -}
 type alias Distributor data cdata userdata tar msg scenemsg cmsgpacker =
-    Env cdata userdata -> WorldEvent -> data -> ( data, ( List (Msg tar msg (SceneOutputMsg scenemsg userdata)), cmsgpacker ), Env cdata userdata )
+    Env cdata userdata -> UserEvent -> data -> ( data, ( List (Msg tar msg (SceneOutputMsg scenemsg userdata)), cmsgpacker ), Env cdata userdata )
 
 
 {-| Handler Type

@@ -1,5 +1,6 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
+    , UserEvent(..), eventFilter
     , GlobalData, InternalData
     , Env
     , Flags
@@ -16,6 +17,7 @@ module Messenger.Base exposing
 Some Basic Data Types for the game
 
 @docs WorldEvent
+@docs UserEvent, eventFilter
 @docs GlobalData, InternalData
 @docs Env
 @docs Flags
@@ -39,34 +41,86 @@ import Time exposing (millisToPosix)
 
 This is the World Event for the game.
 
-Users can get outside information through the events.
+The events that messenger will receive from outside
 
-`Tick` records the time.
-
-`KeyDown`, `KeyUp` records the keyboard events
-
-`MouseDown`, `MouseUp` records the button code and position when mouse up and down
-
-`MouseWheel` records the wheel event for mouse, it can be also used for touchpad
-
-**Note: Do Not use MouseMove Event to get mouse position. Use Globaldata instead.**
+Basically users don't need to deal with the world events, they work with user events instead.
 
 -}
 type WorldEvent
-    = Tick Time.Posix
-    | KeyDown Int
-    | KeyUp Int
+    = WTick Time.Posix
+    | WKeyDown Int
+    | WKeyUp Int
     | NewWindowSize ( Float, Float )
     | WindowVisibility Visibility
     | SoundLoaded String AudioOption (Result Audio.LoadError Audio.Source)
     | PlaySoundGotTime String AudioOption Audio.Source Time.Posix
     | TextureLoaded String (Maybe Texture)
-    | MouseDown Int ( Float, Float )
-    | MouseUp Int ( Float, Float )
+    | WMouseDown Int ( Float, Float )
+    | WMouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
-    | MouseWheel Int
+    | WMouseWheel Int
     | Prompt String String
     | NullEvent
+
+
+{-| User Event
+
+This is the User Event for the game.
+
+Users can get outside information through these events.
+
+`Tick` records the time.
+
+`KeyDown`, `KeyUp` records the keyboard events.
+check all the keycodes [here](https://www.toptal.com/developers/keycode).
+
+`MouseDown`, `MouseUp` records the button code and position when mouse up and down.
+Mouse code 0 represents the left mouse button, 1 represents middle mouse button and 2 represents
+right mouse button.
+
+We have provide some key and mouse codes in messenger-extra.
+
+`MouseWheel` records the wheel event for mouse, positive value means sroll down while
+negative value means scroll up. It can be also used for touchpad.
+
+-}
+type UserEvent
+    = Tick Time.Posix
+    | KeyDown Int
+    | KeyUp Int
+    | MouseDown Int ( Float, Float )
+    | MouseUp Int ( Float, Float )
+    | MouseWheel Int
+
+
+{-| Event filter
+
+Change world events into user events.
+
+-}
+eventFilter : WorldEvent -> Maybe UserEvent
+eventFilter event =
+    case event of
+        WTick x ->
+            Just <| Tick x
+
+        WKeyDown x ->
+            Just <| KeyDown x
+
+        WKeyUp x ->
+            Just <| KeyUp x
+
+        WMouseDown x p ->
+            Just <| MouseDown x p
+
+        WMouseUp x p ->
+            Just <| MouseUp x p
+
+        WMouseWheel x ->
+            Just <| MouseWheel x
+
+        _ ->
+            Nothing
 
 
 {-| GlobalData

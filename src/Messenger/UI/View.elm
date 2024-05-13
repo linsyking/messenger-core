@@ -52,7 +52,7 @@ view config _ model =
                 , makeTransition model.currentGlobalData transitiondata <| (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
                 ]
     in
-    Html.div [ on "wheel" (Decode.map MouseWheel (Decode.field "deltaY" Decode.int)) ]
+    Html.div [ on "wheel" (Decode.map WMouseWheel (Decode.field "deltaY" Decode.int)) ]
         (case model.currentGlobalData.extraHTML of
             Just x ->
                 [ canvas, x ]
