@@ -104,7 +104,7 @@ gameUpdate config scenes evnt model =
                             SOMPrompt name title ->
                                 ( lastModel, lastCmds ++ [ config.ports.prompt { name = name, title = title } ], lastAudioCmds )
 
-                            SOMSaveUserData ->
+                            SOMSaveGlobalData ->
                                 let
                                     encodedGD =
                                         config.globalDataCodec.encode (globalDataToUserGlobalData lastModel.currentGlobalData)

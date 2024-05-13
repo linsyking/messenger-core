@@ -134,7 +134,7 @@ type SceneOutputMsg scenemsg userdata
     | SOMStopAudio String
     | SOMSetVolume Float
     | SOMPrompt String String -- name, title
-    | SOMSaveUserData
+    | SOMSaveGlobalData
     | SOMSetContext (SceneContext userdata scenemsg)
     | SOMGetContext (SceneContext userdata scenemsg -> userdata -> userdata)
 

@@ -216,8 +216,8 @@ addSceneMsgtoPortable msg =
                 SOMPrompt n t ->
                     Just <| SOMMsg <| SOMPrompt n t
 
-                SOMSaveUserData ->
-                    Just <| SOMMsg <| SOMSaveUserData
+                SOMSaveGlobalData ->
+                    Just <| SOMMsg <| SOMSaveGlobalData
 
                 SOMSetContext _ ->
                     Nothing
