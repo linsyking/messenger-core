@@ -3,7 +3,7 @@
     "name": "linsyking/messenger-core",
     "summary": "Core library for Messenger.",
     "license": "BSD-3-Clause",
-    "version": "8.2.3",
+    "version": "8.2.4",
     "exposed-modules": {
         "Base": [
             "Messenger.Base",
