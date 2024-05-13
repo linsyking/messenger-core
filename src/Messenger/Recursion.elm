@@ -78,7 +78,7 @@ updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
                 updateOne newEnv evt restObjs (lastObjs ++ [ newObj ]) (lastMsgUnfinished ++ unfinishedMsg) (lastMsgFinished ++ finishedMsg)
 
         [] ->
-            ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), ( lastEnv, True ) )
+            ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), ( lastEnv, False ) )
 
 
 updateOnce : env -> event -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), ( List (Msg tar msg sommsg), List (MsgBase msg sommsg) ), ( env, Bool ) )
