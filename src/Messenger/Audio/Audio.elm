@@ -27,10 +27,7 @@ import Messenger.Audio.Base exposing (AudioOption(..))
 import Time
 
 
-{-| loadAudio
-
-Load audio by name
-
+{-| Load audio by name.
 -}
 loadAudio : AudioRepo -> String -> Audio.Source -> AudioOption -> Time.Posix -> AudioRepo
 loadAudio repo name source opt t =
@@ -41,18 +38,14 @@ loadAudio repo name source opt t =
     filterrepo ++ [ ( name, source, ( opt, t ) ) ]
 
 
-{-| stopAudio
-
-Stop an audio by id
-
+{-| Stop an audio by id.
 -}
 stopAudio : AudioRepo -> String -> AudioRepo
 stopAudio repo s =
     List.filter (\( name, _, _ ) -> name /= s) repo
 
 
-{-| getAudio
-Change audio with config to real audio
+{-| Change audio with config to real audio.
 -}
 getAudio : AudioData -> AudioRepo -> List Audio.Audio
 getAudio ad repo =
@@ -72,10 +65,7 @@ getAudio ad repo =
         repo
 
 
-{-| AudioRepo
-
-Audio repository that stores all the audios.
-
+{-| Audio repository that stores all the audios.
 -}
 type alias AudioRepo =
     List ( String, Audio.Source, ( AudioOption, Time.Posix ) )

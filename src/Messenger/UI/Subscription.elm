@@ -20,10 +20,7 @@ import Messenger.UserConfig exposing (UserConfig)
 import Time
 
 
-{-| Subscriptions
-
-The subscriptions for the game
-
+{-| The subscriptions for the game.
 -}
 subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Sub WorldEvent
 subscriptions config _ _ =

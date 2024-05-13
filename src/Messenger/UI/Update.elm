@@ -27,10 +27,7 @@ import Task
 import Time
 
 
-{-| gameUpdate
-
-main logic for updating the game
-
+{-| Main logic for updating the game.
 -}
 gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
@@ -48,7 +45,7 @@ gameUpdate config scenes evnt model =
 
             timeUpdatedModel =
                 case evnt of
-                    Tick _ ->
+                    Tick ->
                         -- Tick event needs to update time
                         updateSceneTime updatedModel1
 
@@ -365,7 +362,7 @@ update config scenes _ msg model =
                         Nothing ->
                             trans
             in
-            gameUpdate config scenes (Tick x) { model | currentGlobalData = newGD, transition = newTrans }
+            gameUpdate config scenes Tick { model | currentGlobalData = newGD, transition = newTrans }
 
         NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )

@@ -122,9 +122,7 @@ renderSprite_ gd settings position ( w, h ) t =
             t
 
 
-{-| renderSpriteWithRev
-
-Render a single sprite with (possible) reverse.
+{-| Render a single sprite with (possible) reverse.
 
 The first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.
 

@@ -38,7 +38,7 @@ type alias RawSceneView userdata data =
     Env () userdata -> data -> Renderable
 
 
-{-| generate a raw scene from a concrete scene
+{-| Generate a raw scene from a concrete scene.
 -}
 genRawScene : MConcreteScene data userdata scenemsg -> SceneStorage userdata scenemsg
 genRawScene =

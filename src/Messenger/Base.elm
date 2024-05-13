@@ -85,7 +85,7 @@ negative value means scroll up. It can be also used for touchpad.
 
 -}
 type UserEvent
-    = Tick Time.Posix
+    = Tick
     | KeyDown Int
     | KeyUp Int
     | MouseDown Int ( Float, Float )
@@ -101,8 +101,8 @@ Change world events into user events.
 eventFilter : WorldEvent -> Maybe UserEvent
 eventFilter event =
     case event of
-        WTick x ->
-            Just <| Tick x
+        WTick _ ->
+            Just <| Tick
 
         WKeyDown x ->
             Just <| KeyDown x
@@ -157,10 +157,7 @@ type alias GlobalData userdata =
     }
 
 
-{-| UserViewGlobalData
-
-This type is for user to use when initializing the messenger.
-
+{-| This type is for user to use when initializing the messenger.
 -}
 type alias UserViewGlobalData userdata =
     { sceneStartTime : Int
@@ -277,9 +274,8 @@ type alias InternalData =
     }
 
 
-{-| Flags
+{-| The main flags.
 
-The main flags.
 Get info from js script.
 
 **Learn more about flags [here](https://guide.elm-lang.org/interop/flags)**

@@ -25,10 +25,7 @@ import Messenger.Scene.Transition exposing (makeTransition)
 import Messenger.UserConfig exposing (UserConfig)
 
 
-{-| view
-
-view function of the game
-
+{-| View function of the game.
 -}
 view : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
 view config _ model =

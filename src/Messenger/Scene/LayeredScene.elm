@@ -27,7 +27,7 @@ import Messenger.Recursion exposing (updateObjects)
 import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract)
 
 
-{-| LayeredSceneData
+{-| Layered Scene Data.
 
     - `renderSettings` is used in `group` while viewing the layers as a whole
     - `commonData` is the common data for the whole scene
@@ -80,9 +80,7 @@ type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
     Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting
 
 
-{-| genLayeredScene
-
-This creates a layered scene.
+{-| This creates a layered scene.
 
   - `init` creates the initial layered scene from env data and init msg.
   - `settingsFunc` is a user provided function to modify `renderSettings` each time the scene updates. If you don't need `settingsFunc`, simply provide a `func _ _ _ = settings`

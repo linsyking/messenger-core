@@ -16,7 +16,7 @@ import Messenger.Model exposing (Model)
 import Messenger.Scene.Scene exposing (AllScenes, SceneStorage)
 
 
-{-| Query whether a scene exists
+{-| Query whether a scene exists.
 -}
 existScene : String -> AllScenes userdata scenemsg -> Bool
 existScene i scenes =
@@ -32,7 +32,7 @@ existScene i scenes =
             False
 
 
-{-| get a Scene from storage by name
+{-| Get a scene from storage by name.
 -}
 getScene : String -> AllScenes userdata scenemsg -> Maybe (SceneStorage userdata scenemsg)
 getScene i scenes =

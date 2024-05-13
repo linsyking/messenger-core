@@ -60,10 +60,7 @@ initModel config =
     }
 
 
-{-| Init
-
-The Init function for the game
-
+{-| The Init function for the game.
 -}
 init : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 init config scenes flags =

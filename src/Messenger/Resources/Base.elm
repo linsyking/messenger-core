@@ -31,27 +31,21 @@ import Messenger.Base exposing (WorldEvent(..))
 import Messenger.UserConfig exposing (UserConfig)
 
 
-{-| getTexture
-
-Return all the textures.
-
+{-| Return all the textures.
 -}
 getTexture : UserConfig userdata scenemsg -> List (Texture.Source WorldEvent)
 getTexture config =
     List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) config.allTexture
 
 
-{-| saveSprite
+{-| Save the sprite.
 -}
 saveSprite : Dict String Texture -> String -> Texture -> Dict String Texture
 saveSprite dst name text =
     Dict.insert name text dst
 
 
-{-| igetSprite
-
-Get the texture by name.
-
+{-| Get the texture by name.
 -}
 igetSprite : String -> Dict String Texture -> Maybe Texture
 igetSprite name dst =

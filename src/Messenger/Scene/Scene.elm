@@ -43,7 +43,7 @@ type alias ConcreteScene data env event ren scenemsg userdata =
 
 {-| Unrolled Abstract Scene Model
 
-the unrolled abstract model. Used internally.
+The unrolled abstract model. Used internally.
 
 -}
 type alias UnrolledAbstractScene env event ren scenemsg userdata =
@@ -139,16 +139,13 @@ type SceneOutputMsg scenemsg userdata
     | SOMGetContext (SceneContext userdata scenemsg -> userdata -> userdata)
 
 
-{-| SceneStorage
-
-The type used to store the scene data
-
+{-| The type used to store the scene data.
 -}
 type alias SceneStorage userdata scenemsg =
     Env () userdata -> Maybe scenemsg -> MAbstractScene userdata scenemsg
 
 
-{-| AllScenes
+{-| All scenes type
 -}
 type alias AllScenes userdata scenemsg =
     List ( String, SceneStorage userdata scenemsg )

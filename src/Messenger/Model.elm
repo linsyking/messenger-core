@@ -39,7 +39,7 @@ type alias Model userdata scenemsg =
     }
 
 
-{-| update scene start time and global time
+{-| Update scene start time and global time
 -}
 updateSceneTime : Model userdata scenemsg -> Model userdata scenemsg
 updateSceneTime m =

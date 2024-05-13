@@ -1,7 +1,7 @@
 module Messenger.Layer.Layer exposing
     ( ConcreteLayer, AbstractLayer
     , genLayer
-    , BasicUpdater, Distributor, Handler
+    , Handler
     , handleComponentMsgs
     , LayerInit, LayerUpdate, LayerUpdateRec, LayerView
     , LayerStorage
@@ -24,7 +24,7 @@ Gerneral Model and Helper functions for Layers.
 
 ## Update
 
-@docs BasicUpdater, Distributor, Handler
+@docs Handler
 @docs handleComponentMsgs
 @docs LayerInit, LayerUpdate, LayerUpdateRec, LayerView
 @docs LayerStorage
@@ -101,42 +101,20 @@ genLayer conlayer =
     abstract <| addEmptyBData conlayer
 
 
-{-| Basic Update Type
-
-A basic updater type used to update the basic data of the layer with event.
-
-Users can use it as the first step of the update process
-
--}
-type alias BasicUpdater data cdata userdata tar msg scenemsg =
-    Env cdata userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
-
-
-{-| Distributor Type
-
-A distributor is used to generate several list of Component Msgs for corresponding components list.
-
-The `cmsgpacker` is a custom type to store the component msgs and their targets.
-
--}
-type alias Distributor data cdata userdata tar msg scenemsg cmsgpacker =
-    Env cdata userdata -> UserEvent -> data -> ( data, ( List (Msg tar msg (SceneOutputMsg scenemsg userdata)), cmsgpacker ), Env cdata userdata )
-
-
-{-| Handler Type
+{-| Handler Type.
 
 A handler is used to handle the Component Msg sent to the layer.
 
-**Make handler for every type of component msg**
+**Make handler for every type of component msg.**
 
 -}
 type alias Handler data cdata userdata tar msg scenemsg cmsg =
     Env cdata userdata -> MsgBase cmsg (SceneOutputMsg scenemsg userdata) -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
 
 
-{-| Handle a list of component msgs
+{-| Handle a list of component msgs.
 
-**Note that for several list of component msgs with different types, you may have to use this function repeatedly**
+**Note that for several list of component msgs with different types, you may have to use this function repeatedly.**
 
 -}
 handleComponentMsgs : Env cdata userdata -> List (MsgBase cmsg (SceneOutputMsg scenemsg userdata)) -> data -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> Handler data cdata userdata tar msg scenemsg cmsg -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
@@ -153,7 +131,7 @@ handleComponentMsgs lastEnv compMsgs lastData lastLayerMsgs handler =
         compMsgs
 
 
-{-| transfer layer into a general model
+{-| Translate layer into a general model.
 -}
 addEmptyBData : ConcreteLayer data cdata userdata tar msg scenemsg -> MConcreteGeneralModel data cdata userdata tar msg () scenemsg
 addEmptyBData mconnoB =

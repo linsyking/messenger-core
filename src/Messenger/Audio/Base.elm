@@ -10,10 +10,7 @@ module Messenger.Audio.Base exposing (AudioOption(..))
 -}
 
 
-{-| AudioOption
-
-You can play one audio once or loop it.
-
+{-| You can play one audio once or loop it.
 -}
 type AudioOption
     = ALoop
