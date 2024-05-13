@@ -179,7 +179,7 @@ type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
 -}
 viewModelList : Env common userdata -> List (MAbstractGeneralModel common userdata tar msg bdata scenemsg) -> List Renderable
 viewModelList env models =
-    List.reverse <| List.map (\model -> (unroll model).view env) models
+    List.map (\model -> (unroll model).view env) models
 
 
 {-| A general matcher type sugar

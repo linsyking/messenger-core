@@ -54,7 +54,6 @@ In this case, your basedata would be a record with these properties.
 -}
 
 import Canvas exposing (Renderable, group)
-import List exposing (reverse)
 import Messenger.Base exposing (Env, WorldEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase, abstract, unroll)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
@@ -148,7 +147,7 @@ the output should be used as the input of `viewComponentsRenderList`
 -}
 genComponentsRenderList : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> List ( Renderable, Int )
 genComponentsRenderList env compls =
-    reverse <| List.map (\comp -> (unroll comp).view env) compls
+    List.map (\comp -> (unroll comp).view env) compls
 
 
 {-| view the render list of components
