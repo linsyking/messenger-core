@@ -309,14 +309,14 @@ update config scenes _ msg model =
                 newPressedKeys =
                     Set.remove key gd.pressedKeys
             in
-            ( { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }, Cmd.none, Audio.cmdNone )
+            gameUpdate config scenes (KeyUp key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
 
         WKeyDown key ->
             let
                 newPressedKeys =
                     Set.insert key gd.pressedKeys
             in
-            ( { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }, Cmd.none, Audio.cmdNone )
+            gameUpdate config scenes (KeyDown key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
 
         Prompt "load" result ->
             if existScene result scenes then
