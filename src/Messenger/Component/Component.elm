@@ -80,6 +80,9 @@ type alias ComponentUpdateRec cdata data userdata scenemsg tar msg bdata =
 
 
 {-| Component view type sugar
+
+The second entry is the "z-index" of the component.
+
 -}
 type alias ComponentView cdata userdata data bdata =
     Env cdata userdata -> data -> bdata -> ( Renderable, Int )
