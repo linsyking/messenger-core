@@ -69,7 +69,7 @@ This is the User Event for the game.
 
 Users can get outside information through these events.
 
-`Tick` records the time.
+`Tick` is triggered every timeInterval.
 
 `KeyDown`, `KeyUp` records the keyboard events.
 check all the keycodes [here](https://www.toptal.com/developers/keycode).
