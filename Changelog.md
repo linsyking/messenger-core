@@ -1,5 +1,17 @@
 # Changelog
 
+## 9.1.0
+
+### Features
+
+- Scene Prototype helper types and function
+
+## 9.0.0
+
+### Features
+
+- Add Scene Context Management
+
 ## 8.0.0
 
 ### Features
