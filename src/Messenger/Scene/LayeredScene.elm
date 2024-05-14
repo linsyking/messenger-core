@@ -2,6 +2,7 @@ module Messenger.Scene.LayeredScene exposing
     ( LayeredSceneData
     , genLayeredScene
     , LayeredSceneInit, LayeredSceneSettingsFunc
+    , LayeredSceneProtoInit, LayeredSceneLevelInit, initCompose
     )
 
 {-|
@@ -15,6 +16,11 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 @docs LayeredSceneData
 @docs genLayeredScene
 @docs LayeredSceneInit, LayeredSceneSettingsFunc
+
+
+## Scene Prototype
+
+@docs LayeredSceneProtoInit, LayeredSceneLevelInit, initCompose
 
 -}
 
@@ -74,6 +80,18 @@ type alias LayeredSceneInit cdata userdata tar msg scenemsg =
     Env () userdata -> Maybe scenemsg -> LayeredSceneData cdata userdata tar msg scenemsg
 
 
+{-| init type sugar for levels
+-}
+type alias LayeredSceneLevelInit userdata scenemsg idata =
+    Env () userdata -> Maybe scenemsg -> Maybe idata
+
+
+{-| init type sugar for scene prototypes
+-}
+type alias LayeredSceneProtoInit cdata userdata tar msg scenemsg idata =
+    Env () userdata -> Maybe idata -> LayeredSceneData cdata userdata tar msg scenemsg
+
+
 {-| settingsFunc type sugar
 -}
 type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
@@ -93,3 +111,10 @@ genLayeredScene init settingsFunc =
         , update = updateLayeredScene settingsFunc
         , view = viewLayeredScene
         }
+
+
+{-| Compose LayeredSceneProtoInit with LayeredSceneLevelInit.
+-}
+initCompose : LayeredSceneProtoInit cdata userdata tar msg scenemsg idata -> LayeredSceneLevelInit userdata scenemsg idata -> LayeredSceneInit cdata userdata tar msg scenemsg
+initCompose pinit linit env msg =
+    pinit env <| linit env msg
