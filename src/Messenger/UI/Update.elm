@@ -250,11 +250,8 @@ update config scenes _ msg model =
 
         WindowVisibility v ->
             let
-                oldgd =
-                    model.currentGlobalData
-
                 newgd =
-                    { oldgd | windowVisibility = v, pressedKeys = Set.empty, pressedMouseButtons = Set.empty }
+                    { gd | windowVisibility = v, pressedKeys = Set.empty, pressedMouseButtons = Set.empty }
             in
             ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
 
@@ -345,7 +342,7 @@ update config scenes _ msg model =
         WTick x ->
             let
                 newGD =
-                    { gd | currentTimeStamp = x }
+                    { gd | currentTimeStamp = x, globalTime = gd.globalTime + 1 }
 
                 trans =
                     model.transition

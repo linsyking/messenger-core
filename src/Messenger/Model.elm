@@ -48,7 +48,7 @@ updateSceneTime m =
             m.currentGlobalData
 
         ngd =
-            { ogd | sceneStartTime = ogd.sceneStartTime + 1, globalTime = ogd.globalTime + 1 }
+            { ogd | sceneStartTime = ogd.sceneStartTime + 1 }
     in
     { m | currentGlobalData = ngd }
 
