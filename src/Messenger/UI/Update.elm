@@ -31,7 +31,7 @@ import Time
 -}
 gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
-    if loadedSpriteNum model.currentGlobalData < spriteNum config then
+    if loadedSpriteNum model.currentGlobalData < spriteNum config.allTexture config.allSpriteSheets then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 

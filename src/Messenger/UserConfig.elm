@@ -79,9 +79,9 @@ type alias UserConfig userdata scenemsg =
 
 {-| The number of sprites in the game.
 -}
-spriteNum : UserConfig userdata scenemsg -> Int
-spriteNum config =
-    List.length config.allTexture + spriteSheetSize config.allSpriteSheets
+spriteNum : List ( String, String ) -> SpriteSheet -> Int
+spriteNum textures spritesheet =
+    List.length textures + spriteSheetSize spritesheet
 
 
 {-| The ports that the user must provide to the messenger.
