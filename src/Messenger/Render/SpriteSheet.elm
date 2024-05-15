@@ -45,4 +45,4 @@ type alias SpriteSheet =
 -}
 spriteSheetSize : SpriteSheet -> Int
 spriteSheetSize sheet =
-    Dict.foldl (\_ v acc -> acc + List.length v) 0 sheet
+    Dict.foldl (\_ v acc -> acc + List.length v - 1) 0 sheet
