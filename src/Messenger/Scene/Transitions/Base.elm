@@ -25,7 +25,7 @@ type alias SingleTrans userdata =
 
 {-| Null Transition
 -}
-nullTransition : SingleTrans ls
+nullTransition : SingleTrans userdata
 nullTransition _ r _ =
     r
 

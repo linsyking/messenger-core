@@ -22,7 +22,7 @@ import Messenger.Scene.Transitions.Base exposing (SingleTrans)
 
 {-| Fade Out with Color
 -}
-fadeOut : Color -> SingleTrans ls
+fadeOut : Color -> SingleTrans userdata
 fadeOut color gd rd v =
     group []
         [ rd
@@ -34,7 +34,7 @@ fadeOut color gd rd v =
 
 {-| Fade In with Color
 -}
-fadeIn : Color -> SingleTrans ls
+fadeIn : Color -> SingleTrans userdata
 fadeIn color gd rd v =
     group []
         [ rd
@@ -46,21 +46,21 @@ fadeIn color gd rd v =
 
 {-| Fade Out with Black
 -}
-fadeOutBlack : SingleTrans ls
+fadeOutBlack : SingleTrans userdata
 fadeOutBlack =
     fadeOut Color.black
 
 
 {-| Fade In with Black
 -}
-fadeInBlack : SingleTrans ls
+fadeInBlack : SingleTrans userdata
 fadeInBlack =
     fadeIn Color.black
 
 
 {-| Fade Out with Renderable
 -}
-fadeOutWithRenderable : Renderable -> SingleTrans ls
+fadeOutWithRenderable : Renderable -> SingleTrans userdata
 fadeOutWithRenderable renderable _ rd v =
     group []
         [ rd
@@ -72,7 +72,7 @@ fadeOutWithRenderable renderable _ rd v =
 
 {-| Fade In with Renderable
 -}
-fadeInWithRenderable : Renderable -> SingleTrans ls
+fadeInWithRenderable : Renderable -> SingleTrans userdata
 fadeInWithRenderable renderable _ rd v =
     group []
         [ rd
