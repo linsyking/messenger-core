@@ -15,13 +15,13 @@ import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
 import Messenger.Audio.Audio exposing (loadAudio, stopAudio)
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, globalDataToUserGlobalData)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, globalDataToUserGlobalData, loadedSpriteNum)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..), unroll)
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UserConfig exposing (UserConfig, spriteNum)
 import Set
 import Task
 import Time
@@ -31,7 +31,7 @@ import Time
 -}
 gameUpdate : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate config scenes evnt model =
-    if List.length (Dict.keys model.currentGlobalData.internalData.sprites) < List.length config.allTexture then
+    if loadedSpriteNum model.currentGlobalData < spriteNum config then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 

@@ -1,6 +1,7 @@
 module Messenger.UserConfig exposing
     ( UserConfig, PortDefs
     , coloredBackground, transparentBackground
+    , spriteNum
     )
 
 {-|
@@ -10,6 +11,7 @@ module Messenger.UserConfig exposing
 
 @docs UserConfig, PortDefs
 @docs coloredBackground, transparentBackground
+@docs spriteNum
 
 -}
 
@@ -21,7 +23,7 @@ import Color exposing (Color)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
-import Messenger.Render.SpriteSheet exposing (SpriteSheet)
+import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
 
 
 {-| User Configuration for the messenger.
@@ -73,6 +75,13 @@ type alias UserConfig userdata scenemsg =
     , timeInterval : Float
     , ports : PortDefs
     }
+
+
+{-| The number of sprites in the game.
+-}
+spriteNum : UserConfig userdata scenemsg -> Int
+spriteNum config =
+    List.length config.allTexture + spriteSheetSize config.allSpriteSheets
 
 
 {-| The ports that the user must provide to the messenger.

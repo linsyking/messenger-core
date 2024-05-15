@@ -1,6 +1,7 @@
 module Messenger.Render.SpriteSheet exposing
     ( SingleSprite
     , SpriteSheet
+    , spriteSheetSize
     )
 
 {-|
@@ -10,6 +11,7 @@ module Messenger.Render.SpriteSheet exposing
 
 @docs SingleSprite
 @docs SpriteSheet
+@docs spriteSheetSize
 
 -}
 
@@ -37,3 +39,10 @@ Sprite sheets are useful when managing the art resourses or making frame-by-fram
 -}
 type alias SpriteSheet =
     Dict String (List ( String, SingleSprite ))
+
+
+{-| Get the total number of sprites in a sprite sheet.
+-}
+spriteSheetSize : SpriteSheet -> Int
+spriteSheetSize sheet =
+    Dict.foldl (\_ v acc -> acc + List.length v) 0 sheet
