@@ -56,28 +56,35 @@ gameUpdate config scenes evnt model =
                 List.foldl
                     (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
                         case singleSOM of
-                            SOMChangeScene ( tm, name, Nothing ) ->
-                                --- Load new scene
-                                if existScene name scenes then
-                                    ( loadSceneByName name scenes tm lastModel
-                                        |> resetSceneStartTime
-                                    , lastCmds
-                                    , lastAudioCmds
-                                    )
+                            SOMChangeScene ( tm, name, ptrans ) ->
+                                if lastModel.transition == Nothing then
+                                    case ptrans of
+                                        Just trans ->
+                                            -- Delayed Loading
+                                            if existScene name scenes then
+                                                ( { lastModel | transition = Just ( trans, ( name, tm ) ) }
+                                                , lastCmds
+                                                , lastAudioCmds
+                                                )
+
+                                            else
+                                                ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
+
+                                        Nothing ->
+                                            -- Load new scene
+                                            if existScene name scenes then
+                                                ( loadSceneByName name scenes tm lastModel
+                                                    |> resetSceneStartTime
+                                                , lastCmds
+                                                , lastAudioCmds
+                                                )
+
+                                            else
+                                                ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
 
                                 else
-                                    ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
-
-                            SOMChangeScene ( tm, name, Just trans ) ->
-                                --- Delayed Loading
-                                if existScene name scenes then
-                                    ( { lastModel | transition = Just ( trans, ( name, tm ) ) }
-                                    , lastCmds
-                                    , lastAudioCmds
-                                    )
-
-                                else
-                                    ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
+                                    -- In transition
+                                    ( lastModel, lastCmds, lastAudioCmds )
 
                             SOMPlayAudio name path opt ->
                                 ( lastModel, lastCmds, lastAudioCmds ++ [ Audio.loadAudio (SoundLoaded name opt) path ] )
