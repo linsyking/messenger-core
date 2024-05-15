@@ -1,7 +1,7 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..), eventFilter
-    , GlobalData, InternalData
+    , GlobalData, InternalData, loadedSpriteNum
     , Env
     , Flags
     , removeCommonData, addCommonData
@@ -18,7 +18,7 @@ Some Basic Data Types for the game
 
 @docs WorldEvent
 @docs UserEvent, eventFilter
-@docs GlobalData, InternalData
+@docs GlobalData, InternalData, loadedSpriteNum
 @docs Env
 @docs Flags
 @docs removeCommonData, addCommonData
@@ -167,6 +167,13 @@ type alias UserViewGlobalData userdata =
     , canvasAttributes : List (Html.Attribute WorldEvent)
     , userData : userdata
     }
+
+
+{-| Get the number of loaded sprites.
+-}
+loadedSpriteNum : GlobalData userdata -> Int
+loadedSpriteNum globalData =
+    Dict.size globalData.internalData.sprites
 
 
 {-| Empty InternalData
