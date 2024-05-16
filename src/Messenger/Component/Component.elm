@@ -122,7 +122,7 @@ updateComponents env evt comps =
 
 {-| Update a list of abstract user components with targeted msgs.
 -}
-updateComponentsWithTarget : Env cdata userdata -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+updateComponentsWithTarget : Env cdata userdata -> List ( tar, msg ) -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MsgBase msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
 updateComponentsWithTarget env msgs comps =
     updateObjectsWithTarget env msgs comps
 

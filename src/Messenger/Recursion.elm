@@ -31,7 +31,7 @@ updateObjects env evt objs =
 
 {-| Recursively update all the objects in the List, but also uses target
 -}
-updateObjectsWithTarget : env -> List (Msg tar msg sommsg) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), List (MsgBase msg sommsg), env )
+updateObjectsWithTarget : env -> List ( tar, msg ) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), List (MsgBase msg sommsg), env )
 updateObjectsWithTarget env msgs objs =
     updateRemain env ( msgs, [] ) objs
 
@@ -40,7 +40,7 @@ updateObjectsWithTarget env msgs objs =
 -- Below are some helper functions
 
 
-updateOne : env -> event -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List (Msg tar msg sommsg) -> List (MsgBase msg sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), ( List (Msg tar msg sommsg), List (MsgBase msg sommsg) ), ( env, Bool ) )
+updateOne : env -> event -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List ( tar, msg ) -> List (MsgBase msg sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), ( List ( tar, msg ), List (MsgBase msg sommsg) ), ( env, Bool ) )
 updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
     case objs of
         ele :: restObjs ->
@@ -61,14 +61,14 @@ updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
                         newMsg
 
                 unfinishedMsg =
-                    List.filter
+                    List.filterMap
                         (\m ->
                             case m of
                                 Parent _ ->
-                                    False
+                                    Nothing
 
-                                _ ->
-                                    True
+                                Other ot om ->
+                                    Just ( ot, om )
                         )
                         newMsg
             in
@@ -82,14 +82,14 @@ updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
             ( lastObjs, ( lastMsgUnfinished, lastMsgFinished ), ( lastEnv, False ) )
 
 
-updateOnce : env -> event -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), ( List (Msg tar msg sommsg), List (MsgBase msg sommsg) ), ( env, Bool ) )
+updateOnce : env -> event -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), ( List ( tar, msg ), List (MsgBase msg sommsg) ), ( env, Bool ) )
 updateOnce env evt objs =
     updateOne env evt (reverse objs) [] [] []
 
 
 {-| Recursively update remaining objects
 -}
-updateRemain : env -> ( List (Msg tar msg sommsg), List (MsgBase msg sommsg) ) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), List (MsgBase msg sommsg), env )
+updateRemain : env -> ( List ( tar, msg ), List (MsgBase msg sommsg) ) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), List (MsgBase msg sommsg), env )
 updateRemain env ( unfinishedMsg, finishedMsg ) objs =
     if List.isEmpty unfinishedMsg then
         ( objs, finishedMsg, env )
@@ -102,17 +102,12 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                         let
                             msgMatched =
                                 List.filterMap
-                                    (\ufmsg ->
-                                        case ufmsg of
-                                            Parent _ ->
-                                                Nothing
+                                    (\( tar, msg ) ->
+                                        if (unroll ele).matcher tar then
+                                            Just msg
 
-                                            Other tar msg ->
-                                                if (unroll ele).matcher tar then
-                                                    Just msg
-
-                                                else
-                                                    Nothing
+                                        else
+                                            Nothing
                                     )
                                     unfinishedMsg
                         in
@@ -144,14 +139,14 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                                                         newMsgs
 
                                                 unfinishedMsgs =
-                                                    List.filter
+                                                    List.filterMap
                                                         (\nmsg ->
                                                             case nmsg of
                                                                 Parent _ ->
-                                                                    False
+                                                                    Nothing
 
-                                                                Other _ _ ->
-                                                                    True
+                                                                Other ot om ->
+                                                                    Just ( ot, om )
                                                         )
                                                         newMsgs
                                             in
