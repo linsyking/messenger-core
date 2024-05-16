@@ -44,11 +44,11 @@ type alias Model userdata scenemsg =
 updateSceneTime : Model userdata scenemsg -> Model userdata scenemsg
 updateSceneTime m =
     let
-        ogd =
+        gd =
             m.currentGlobalData
 
         ngd =
-            { ogd | sceneStartTime = ogd.sceneStartTime + 1 }
+            { gd | sceneStartTime = gd.sceneStartTime + 1 }
     in
     { m | currentGlobalData = ngd }
 

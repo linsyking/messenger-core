@@ -67,8 +67,8 @@ updateOne lastEnv evt objs lastObjs lastMsgUnfinished lastMsgFinished =
                                 Parent _ ->
                                     Nothing
 
-                                Other ot om ->
-                                    Just ( ot, om )
+                                Other msg ->
+                                    Just msg
                         )
                         newMsg
             in
@@ -133,7 +133,7 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                                                                 Parent pmsg ->
                                                                     Just pmsg
 
-                                                                Other _ _ ->
+                                                                Other _ ->
                                                                     Nothing
                                                         )
                                                         newMsgs
@@ -145,8 +145,8 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                                                                 Parent _ ->
                                                                     Nothing
 
-                                                                Other ot om ->
-                                                                    Just ( ot, om )
+                                                                Other omsg ->
+                                                                    Just omsg
                                                         )
                                                         newMsgs
                                             in

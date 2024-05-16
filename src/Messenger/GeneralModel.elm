@@ -62,7 +62,7 @@ Make sure the `othertar` can pass the matcher of target object.
 -}
 type Msg othertar msg sommsg
     = Parent (MsgBase msg sommsg)
-    | Other othertar msg
+    | Other ( othertar, msg )
 
 
 {-| Concrete General Model.

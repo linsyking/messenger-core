@@ -56,7 +56,7 @@ gameUpdate config scenes evnt model =
                 List.foldl
                     (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
                         case singleSOM of
-                            SOMChangeScene ( tm, name, ptrans ) ->
+                            SOMChangeScene tm name ptrans ->
                                 if lastModel.transition == Nothing then
                                     case ptrans of
                                         Just trans ->
