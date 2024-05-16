@@ -33,8 +33,7 @@ Gerneral Model and Helper functions for Layers.
 
 import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel exposing (MAbstractGeneralModel, MConcreteGeneralModel, Matcher, Msg, MsgBase, abstract)
-import Messenger.Scene.Scene exposing (SceneOutputMsg)
+import Messenger.GeneralModel exposing (MAbstractGeneralModel, MConcreteGeneralModel, MMsg, MMsgBase, Matcher, abstract)
 
 
 {-| init type sugar
@@ -46,13 +45,13 @@ type alias LayerInit cdata userdata msg data =
 {-| update type sugar
 -}
 type alias LayerUpdate cdata userdata tar msg scenemsg data =
-    Env cdata userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+    Env cdata userdata -> UserEvent -> data -> ( data, List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) )
 
 
 {-| updaterec type sugar
 -}
 type alias LayerUpdateRec cdata userdata tar msg scenemsg data =
-    Env cdata userdata -> msg -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+    Env cdata userdata -> msg -> data -> ( data, List (MMsg tar msg scenemsg userdata), Env cdata userdata )
 
 
 {-| view type sugar
@@ -109,7 +108,7 @@ A handler is used to handle the Component Msg sent to the layer.
 
 -}
 type alias Handler data cdata userdata tar msg scenemsg cmsg =
-    Env cdata userdata -> MsgBase cmsg (SceneOutputMsg scenemsg userdata) -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+    Env cdata userdata -> MMsgBase cmsg scenemsg userdata -> data -> ( data, List (MMsg tar msg scenemsg userdata), Env cdata userdata )
 
 
 {-| Handle a list of component msgs.
@@ -117,7 +116,7 @@ type alias Handler data cdata userdata tar msg scenemsg cmsg =
 **Note that for several list of component msgs with different types, you may have to use this function repeatedly.**
 
 -}
-handleComponentMsgs : Env cdata userdata -> List (MsgBase cmsg (SceneOutputMsg scenemsg userdata)) -> data -> List (Msg tar msg (SceneOutputMsg scenemsg userdata)) -> Handler data cdata userdata tar msg scenemsg cmsg -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env cdata userdata )
+handleComponentMsgs : Env cdata userdata -> List (MMsgBase cmsg scenemsg userdata) -> data -> List (MMsg tar msg scenemsg userdata) -> Handler data cdata userdata tar msg scenemsg cmsg -> ( data, List (MMsg tar msg scenemsg userdata), Env cdata userdata )
 handleComponentMsgs lastEnv compMsgs lastData lastLayerMsgs handler =
     List.foldl
         (\cm ( d, m, e ) ->
