@@ -64,7 +64,7 @@ type alias LayerView cdata userdata data =
 {-| Layer Storage
 -}
 type alias LayerStorage cdata userdata tar msg scenemsg =
-    Env cdata userdata -> msg -> AbstractLayer cdata userdata tar msg scenemsg
+    msg -> Env cdata userdata -> AbstractLayer cdata userdata tar msg scenemsg
 
 
 {-| Concrete Layer Model

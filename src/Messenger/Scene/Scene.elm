@@ -86,8 +86,8 @@ unroll (Roll un) =
 Initialize it with env and msg.
 
 -}
-abstract : ConcreteScene data env event ren scenemsg userdata -> env -> Maybe scenemsg -> AbstractScene env event ren scenemsg userdata
-abstract conmodel initEnv initMsg =
+abstract : ConcreteScene data env event ren scenemsg userdata -> Maybe scenemsg -> env -> AbstractScene env event ren scenemsg userdata
+abstract conmodel initMsg initEnv =
     let
         abstractRec data =
             let
@@ -142,7 +142,7 @@ type SceneOutputMsg scenemsg userdata
 {-| The type used to store the scene data.
 -}
 type alias SceneStorage userdata scenemsg =
-    Env () userdata -> Maybe scenemsg -> MAbstractScene userdata scenemsg
+    Maybe scenemsg -> Env () userdata -> MAbstractScene userdata scenemsg
 
 
 {-| All scenes type

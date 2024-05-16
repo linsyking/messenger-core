@@ -1,5 +1,6 @@
 module Messenger.GeneralModel exposing
     ( Msg(..), MsgBase(..)
+    , MMsg, MMsgBase
     , ConcreteGeneralModel, AbstractGeneralModel(..)
     , MConcreteGeneralModel, MAbstractGeneralModel
     , unroll, abstract
@@ -27,6 +28,7 @@ A Gernel model has the ability to:
   - identify itself by a matcher
 
 @docs Msg, MsgBase
+@docs MMsg, MMsgBase
 @docs ConcreteGeneralModel, AbstractGeneralModel
 @docs MConcreteGeneralModel, MAbstractGeneralModel
 @docs unroll, abstract
@@ -52,9 +54,7 @@ type MsgBase othermsg sommsg
     | OtherMsg othermsg
 
 
-{-| Msg
-
-The Basic Msg Model.
+{-| The Basic Msg Model.
 
 Using **Other** when sending msg to objects in the same type.
 Make sure the `othertar` can pass the matcher of target object.
@@ -63,6 +63,18 @@ Make sure the `othertar` can pass the matcher of target object.
 type Msg othertar msg sommsg
     = Parent (MsgBase msg sommsg)
     | Other ( othertar, msg )
+
+
+{-| Messsenger MsgBase
+-}
+type alias MMsgBase othermsg scenemsg userdata =
+    MsgBase othermsg (SceneOutputMsg scenemsg userdata)
+
+
+{-| Messenger Msg
+-}
+type alias MMsg othertar msg scenemsg userdata =
+    Msg othertar msg (SceneOutputMsg scenemsg userdata)
 
 
 {-| Concrete General Model.
@@ -115,8 +127,8 @@ unroll (Roll un) =
 Initialize it with env and msg.
 
 -}
-abstract : ConcreteGeneralModel data env event tar msg ren bdata sommsg -> env -> msg -> AbstractGeneralModel env event tar msg ren bdata sommsg
-abstract conmodel initEnv initMsg =
+abstract : ConcreteGeneralModel data env event tar msg ren bdata sommsg -> msg -> env -> AbstractGeneralModel env event tar msg ren bdata sommsg
+abstract conmodel initMsg initEnv =
     let
         abstractRec : data -> bdata -> AbstractGeneralModel env event tar msg ren bdata sommsg
         abstractRec data base =

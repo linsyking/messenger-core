@@ -7,7 +7,7 @@ module Messenger.Component.Component exposing
     , genComponentsRenderList, viewComponentsRenderList
     , viewComponents
     , ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
-    , ComponentStorage
+    , ComponentStorage, LevelComponentStorage
     )
 
 {-|
@@ -44,7 +44,7 @@ In this case, your basedata would be a record with these properties.
 # Type sugar
 
 @docs ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
-@docs ComponentStorage
+@docs ComponentStorage, LevelComponentStorage
 
 -}
 
@@ -91,7 +91,13 @@ type alias ComponentView cdata userdata data bdata =
 {-| Component storage type sugar
 -}
 type alias ComponentStorage cdata userdata tar msg bdata scenemsg =
-    Env cdata userdata -> msg -> AbstractComponent cdata userdata tar msg bdata scenemsg
+    msg -> LevelComponentStorage cdata userdata tar msg bdata scenemsg
+
+
+{-| Level component storage type sugar
+-}
+type alias LevelComponentStorage cdata userdata tar msg bdata scenemsg =
+    Env cdata userdata -> AbstractComponent cdata userdata tar msg bdata scenemsg
 
 
 {-| Abstract component

@@ -49,7 +49,7 @@ loadScene scenest smsg model =
         env =
             Env model.currentGlobalData ()
     in
-    { model | currentScene = scenest env smsg }
+    { model | currentScene = scenest smsg env }
 
 
 {-| load a Scene from storage by name
