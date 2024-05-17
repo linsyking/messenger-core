@@ -2,7 +2,7 @@ module Messenger.Component.Component exposing
     ( AbstractComponent
     , ConcreteUserComponent
     , genComponent
-    , updateComponents
+    , updateComponents, updateComponentsWithBlock
     , updateComponentsWithTarget
     , genComponentsRenderList, viewComponentsRenderList
     , viewComponents
@@ -31,7 +31,7 @@ In this case, your basedata would be a record with these properties.
 @docs AbstractComponent
 @docs ConcreteUserComponent
 @docs genComponent
-@docs updateComponents
+@docs updateComponents, updateComponentsWithBlock
 @docs updateComponentsWithTarget
 
 
@@ -124,6 +124,20 @@ genComponent concomp =
 updateComponents : Env cdata userdata -> UserEvent -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MMsgBase msg scenemsg userdata), ( Env cdata userdata, Bool ) )
 updateComponents env evt comps =
     updateObjects env evt comps
+
+
+{-| Update a list of abstract user components with block indicator.
+
+It block is True, this function will not update anything.
+
+-}
+updateComponentsWithBlock : Env cdata userdata -> UserEvent -> Bool -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> ( List (AbstractComponent cdata userdata tar msg bdata scenemsg), List (MMsgBase msg scenemsg userdata), ( Env cdata userdata, Bool ) )
+updateComponentsWithBlock env evt block comps =
+    if block then
+        ( comps, [], ( env, True ) )
+
+    else
+        updateObjects env evt comps
 
 
 {-| Update a list of abstract user components with targeted msgs.
