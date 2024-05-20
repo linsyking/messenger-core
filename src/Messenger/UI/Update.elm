@@ -14,13 +14,14 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
-import Messenger.Audio.Audio exposing (loadAudio, stopAudio)
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, globalDataToUserGlobalData, loadedSpriteNum)
+import Messenger.Audio.Audio exposing (loadAudio)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, loadedSpriteNum)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
-import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..), unroll)
+import Messenger.Scene.Scene exposing (AllScenes, unroll)
+import Messenger.UI.SOMHandler exposing (handleSOM)
 import Messenger.UserConfig exposing (UserConfig, spriteNum)
 import Set
 import Task
@@ -37,6 +38,9 @@ gameUpdate config scenes evnt model =
 
     else
         let
+            somHandler =
+                handleSOM config scenes
+
             ( sdt, som, newenv ) =
                 (unroll model.currentScene).update (Env model.currentGlobalData ()) evnt
 
@@ -55,91 +59,11 @@ gameUpdate config scenes evnt model =
             ( updatedModel2, cmds, audiocmds ) =
                 List.foldl
                     (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
-                        case singleSOM of
-                            SOMChangeScene tm name ptrans ->
-                                if lastModel.transition == Nothing then
-                                    case ptrans of
-                                        Just trans ->
-                                            -- Delayed Loading
-                                            if existScene name scenes then
-                                                ( { lastModel | transition = Just ( trans, ( name, tm ) ) }
-                                                , lastCmds
-                                                , lastAudioCmds
-                                                )
-
-                                            else
-                                                ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
-
-                                        Nothing ->
-                                            -- Load new scene
-                                            if existScene name scenes then
-                                                ( loadSceneByName name scenes tm lastModel
-                                                    |> resetSceneStartTime
-                                                , lastCmds
-                                                , lastAudioCmds
-                                                )
-
-                                            else
-                                                ( model, config.ports.alert ("Scene" ++ name ++ "not found!") :: lastCmds, lastAudioCmds )
-
-                                else
-                                    -- In transition
-                                    ( lastModel, lastCmds, lastAudioCmds )
-
-                            SOMPlayAudio name path opt ->
-                                ( lastModel, lastCmds, lastAudioCmds ++ [ Audio.loadAudio (SoundLoaded name opt) path ] )
-
-                            SOMSetVolume s ->
-                                let
-                                    oldgd =
-                                        lastModel.currentGlobalData
-
-                                    newgd2 =
-                                        { oldgd | volume = s }
-                                in
-                                ( { lastModel | currentGlobalData = newgd2 }, lastCmds, lastAudioCmds )
-
-                            SOMStopAudio name ->
-                                ( { lastModel | audiorepo = stopAudio lastModel.audiorepo name }, lastCmds, lastAudioCmds )
-
-                            SOMAlert text ->
-                                ( lastModel, lastCmds ++ [ config.ports.alert text ], lastAudioCmds )
-
-                            SOMPrompt name title ->
-                                ( lastModel, lastCmds ++ [ config.ports.prompt { name = name, title = title } ], lastAudioCmds )
-
-                            SOMSaveGlobalData ->
-                                let
-                                    encodedGD =
-                                        config.globalDataCodec.encode (globalDataToUserGlobalData lastModel.currentGlobalData)
-                                in
-                                ( lastModel, lastCmds ++ [ config.ports.sendInfo encodedGD ], lastAudioCmds )
-
-                            SOMSetContext ctx ->
-                                let
-                                    oldgd =
-                                        lastModel.currentGlobalData
-
-                                    newgd =
-                                        { oldgd | sceneStartTime = ctx.sceneStartTime, currentScene = ctx.name }
-
-                                    newModel =
-                                        { lastModel | currentGlobalData = newgd, currentScene = ctx.scene }
-                                in
-                                ( newModel, lastCmds, lastAudioCmds )
-
-                            SOMGetContext getter ->
-                                let
-                                    ctx =
-                                        { scene = lastModel.currentScene, sceneStartTime = oldgd.sceneStartTime, name = oldgd.currentScene }
-
-                                    oldgd =
-                                        lastModel.currentGlobalData
-
-                                    newgd =
-                                        { oldgd | userData = getter ctx oldgd.userData }
-                                in
-                                ( { lastModel | currentGlobalData = newgd }, lastCmds, lastAudioCmds )
+                        let
+                            ( newModel, newCmds, newAudioCmds ) =
+                                somHandler singleSOM lastModel
+                        in
+                        ( newModel, newCmds ++ lastCmds, newAudioCmds ++ lastAudioCmds )
                     )
                     ( timeUpdatedModel, [], [] )
                     som
