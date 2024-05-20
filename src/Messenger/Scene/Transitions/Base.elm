@@ -40,18 +40,18 @@ type alias Transition userdata =
     { currentTransition : Int
     , outT : Int
     , inT : Int
-    , fadeout : SingleTrans userdata
-    , fadein : SingleTrans userdata
+    , outTrans : SingleTrans userdata
+    , inTrans : SingleTrans userdata
     }
 
 
 {-| Generate new transition
 -}
 genTransition : Int -> Int -> SingleTrans userdata -> SingleTrans userdata -> Transition userdata
-genTransition outT inT fadeout fadein =
+genTransition outT inT outTrans inTrans =
     { currentTransition = 0
     , outT = outT
     , inT = inT
-    , fadeout = fadeout
-    , fadein = fadein
+    , outTrans = outTrans
+    , inTrans = inTrans
     }

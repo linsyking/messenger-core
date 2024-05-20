@@ -22,11 +22,11 @@ makeTransition gd trans ren =
         Just data ->
             if data.currentTransition < data.outT then
                 -- Fade out
-                data.fadeout gd ren (toFloat data.currentTransition / toFloat data.outT)
+                data.outTrans gd ren (toFloat data.currentTransition / toFloat data.outT)
 
             else if data.currentTransition < data.outT + data.inT then
                 -- Fade in
-                data.fadein gd ren (toFloat (data.currentTransition - data.outT) / toFloat data.inT)
+                data.inTrans gd ren (toFloat (data.currentTransition - data.outT) / toFloat data.inT)
 
             else
                 ren
