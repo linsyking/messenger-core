@@ -1,5 +1,23 @@
 # Changelog
 
+## 11.1.0
+
+### Features
+
+- Add `updateComponentsWithBlock`
+
+## 11.0.0
+
+### Fix
+
+- Component storage type
+
+## 10.0.0
+
+### Fix
+
+- Types of updating components
+
 ## 9.1.0
 
 ### Features
