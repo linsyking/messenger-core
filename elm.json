@@ -12,6 +12,7 @@
         ],
         "UI": [
             "Messenger.UI",
+            "Messenger.UI.Input",
             "Messenger.UserConfig"
         ],
         "Lib": [

@@ -20,24 +20,28 @@ import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
+import Messenger.UI.Input exposing (Input)
 import Messenger.UI.SOMHandler exposing (handleSOM)
-import Messenger.UserConfig exposing (Resources, TimeInterval(..), UserConfig, resourceNum)
+import Messenger.UserConfig exposing (resourceNum)
 import Set
 import Time
 
 
 {-| Main logic for updating the game.
 -}
-gameUpdate : UserConfig userdata scenemsg -> Resources userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
-gameUpdate config resources evnt model =
-    if loadedSpriteNum model.currentGlobalData < resourceNum resources then
+gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+gameUpdate input evnt model =
+    if loadedSpriteNum model.currentGlobalData < resourceNum input.resources then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 
     else
         let
             scenes =
-                resources.allScenes
+                input.scenes
+
+            config =
+                input.config
 
             somHandler =
                 handleSOM config scenes
@@ -93,8 +97,8 @@ gameUpdate config resources evnt model =
 update function for the game
 
 -}
-update : UserConfig userdata scenemsg -> Resources userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
-update config resources audiodata msg model =
+update : Input userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+update input audiodata msg model =
     let
         gd =
             model.currentGlobalData
@@ -103,10 +107,16 @@ update config resources audiodata msg model =
             gd.internalData
 
         scenes =
-            resources.allScenes
+            input.scenes
+
+        config =
+            input.config
+
+        resources =
+            input.resources
 
         gameUpdateInner =
-            gameUpdate config resources
+            gameUpdate input
     in
     case msg of
         TextureLoaded name Nothing ->

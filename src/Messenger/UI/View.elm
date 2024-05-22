@@ -23,14 +23,20 @@ import Messenger.Model exposing (Model)
 import Messenger.Resources.Base exposing (getTexture)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.Scene.Transition exposing (makeTransition)
-import Messenger.UserConfig exposing (Resources, UserConfig)
+import Messenger.UI.Input exposing (Input)
 
 
 {-| View function of the game.
 -}
-view : UserConfig userdata scenemsg -> Resources userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
-view config resources _ model =
+view : Input userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
+view input _ model =
     let
+        resources =
+            input.resources
+
+        config =
+            input.config
+
         transitionData =
             Maybe.map Tuple.first model.transition
 

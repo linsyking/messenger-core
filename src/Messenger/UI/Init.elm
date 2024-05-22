@@ -20,7 +20,8 @@ import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
-import Messenger.UserConfig exposing (Resources, UserConfig)
+import Messenger.UI.Input exposing (Input)
+import Messenger.UserConfig exposing (UserConfig)
 import Time exposing (millisToPosix)
 
 
@@ -62,14 +63,23 @@ initModel config =
 
 {-| The Init function for the game.
 -}
-init : UserConfig userdata scenemsg -> Resources userdata scenemsg -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
-init config resources flags =
+init : Input userdata scenemsg -> Flags -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
+init input flags =
     let
+        config =
+            input.config
+
+        scenes =
+            input.scenes
+
+        resources =
+            input.resources
+
         im =
             initModel config
 
         ms =
-            loadSceneByName config.initScene resources.allScenes config.initSceneMsg { im | currentGlobalData = newgd }
+            loadSceneByName config.initScene scenes config.initSceneMsg { im | currentGlobalData = newgd }
 
         ( gw, gh ) =
             maxHandW ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )

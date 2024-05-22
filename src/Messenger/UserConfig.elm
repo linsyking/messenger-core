@@ -29,7 +29,6 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
-import Messenger.Scene.Scene exposing (AllScenes)
 
 
 type TimeInterval
@@ -90,17 +89,16 @@ type alias UserConfig userdata scenemsg =
     Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
 
 -}
-type alias Resources userdata scenemsg =
+type alias Resources =
     { allTexture : Dict String String
     , allAudio : Dict String String
     , allSpriteSheets : SpriteSheet
-    , allScenes : AllScenes userdata scenemsg
     }
 
 
 {-| The number of sprites in the game.
 -}
-resourceNum : Resources userdata scenemsg -> Int
+resourceNum : Resources -> Int
 resourceNum resources =
     Dict.size resources.allTexture + spriteSheetSize resources.allSpriteSheets + Dict.size resources.allAudio
 
