@@ -24,6 +24,7 @@ import Messenger.UI.SOMHandler exposing (handleSOM)
 import Messenger.UserConfig exposing (Resources, UserConfig, resourceNum)
 import Set
 
+
 {-| Main logic for updating the game.
 -}
 gameUpdate : UserConfig userdata scenemsg -> Resources userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
@@ -92,7 +93,7 @@ update function for the game
 
 -}
 update : UserConfig userdata scenemsg -> Resources userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
-update config resources _ msg model =
+update config resources audiodata msg model =
     let
         gd =
             model.currentGlobalData
@@ -153,7 +154,7 @@ update config resources _ msg model =
                             gdid.audiorepo
 
                         ard =
-                            Dict.insert name sound ar.audio
+                            Dict.insert name ( sound, Audio.length audiodata sound ) ar.audio
                     in
                     ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = { ar | audio = ard } } } }
                     , Cmd.none

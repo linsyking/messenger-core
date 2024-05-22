@@ -129,7 +129,7 @@ to send to a scene when switching scenes.
 -}
 type SceneOutputMsg scenemsg userdata
     = SOMChangeScene (Maybe scenemsg) String (Maybe (Transition userdata))
-    | SOMPlayAudio String String AudioOption -- audio name, audio url, audio option
+    | SOMPlayAudio String String AudioOption -- channel, audio name, audio option
     | SOMAlert String
     | SOMStopAudio String
     | SOMSetVolume Float

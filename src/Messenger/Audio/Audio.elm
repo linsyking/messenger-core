@@ -1,5 +1,5 @@
 module Messenger.Audio.Audio exposing
-    ( loadAudio
+    ( playAudio
     , stopAudio
     , getAudio
     , AudioRepo, emptyRepo
@@ -14,63 +14,127 @@ This module is used to manage audios.
 
 **Note. This module may only be used within Messenger core**
 
-@docs loadAudio
+@docs playAudio
 @docs stopAudio
 @docs getAudio
 @docs AudioRepo, emptyRepo
 
 -}
 
-import Audio exposing (AudioData)
+import Audio
 import Dict exposing (Dict)
 import Duration
 import Messenger.Audio.Base exposing (AudioOption(..))
 import Time
 
 
-{-| Load audio by name.
+{-| Play audio by name.
 -}
-loadAudio : AudioRepo -> String -> Audio.Source -> AudioOption -> Time.Posix -> AudioRepo
-loadAudio repo name source opt t =
+playAudio : AudioRepo -> String -> String -> AudioOption -> Time.Posix -> AudioRepo
+playAudio rawrepo channel name opt t =
     let
-        filterrepo =
-            List.filter (\( n, _, _ ) -> n /= name) repo
+        repo =
+            removeFinishedAudio rawrepo t
+
+        playing =
+            repo.playing
+
+        audio =
+            Dict.get name repo.audio
     in
-    filterrepo ++ [ ( name, source, ( opt, t ) ) ]
+    case audio of
+        Just ( source, duration ) ->
+            case opt of
+                ALoop ->
+                    let
+                        defaultConfig =
+                            Audio.audioDefaultConfig
+
+                        audioWC =
+                            Audio.audioWithConfig { defaultConfig | loop = Just (Audio.LoopConfig (Duration.seconds 0) duration) } source t
+
+                        newPA =
+                            { channel = channel
+                            , name = name
+                            , audio = audioWC
+                            , opt = opt
+                            , duration = duration
+                            , startTime = t
+                            }
+                    in
+                    { repo | playing = newPA :: playing }
+
+                AOnce ->
+                    let
+                        newPA =
+                            { channel = channel
+                            , name = name
+                            , audio = Audio.audio source t
+                            , opt = opt
+                            , duration = duration
+                            , startTime = t
+                            }
+                    in
+                    { repo | playing = newPA :: playing }
+
+        Nothing ->
+            repo
+
+
+removeFinishedAudio : AudioRepo -> Time.Posix -> AudioRepo
+removeFinishedAudio repo t =
+    let
+        playing =
+            repo.playing
+
+        newPlaying =
+            List.filter
+                (\pa ->
+                    pa.opt == ALoop || Time.posixToMillis t - Time.posixToMillis pa.startTime < ceiling (Duration.inMilliseconds pa.duration)
+                )
+                playing
+    in
+    { repo | playing = newPlaying }
 
 
 {-| Stop an audio by id.
 -}
 stopAudio : AudioRepo -> String -> AudioRepo
 stopAudio repo s =
-    List.filter (\( name, _, _ ) -> name /= s) repo
+    let
+        playing =
+            repo.playing
+
+        newPlaying =
+            List.filter (\pa -> pa.name /= s) playing
+    in
+    { repo | playing = newPlaying }
 
 
 {-| Change audio with config to real audio.
 -}
-getAudio : AudioData -> AudioRepo -> List Audio.Audio
-getAudio ad repo =
+getAudio : AudioRepo -> List Audio.Audio
+getAudio repo =
     List.map
-        (\( _, sound, ( opt, s ) ) ->
-            case opt of
-                ALoop ->
-                    let
-                        default =
-                            Audio.audioDefaultConfig
-                    in
-                    Audio.audioWithConfig { default | loop = Just (Audio.LoopConfig (Duration.seconds 0) (Audio.length ad sound)) } sound s
+        (\pa -> pa.audio)
+        repo.playing
 
-                AOnce ->
-                    Audio.audio sound s
-        )
-        repo
+
+type alias PlayingAudio =
+    { channel : String
+    , name : String
+    , audio : Audio.Audio
+    , opt : AudioOption
+    , duration : Duration.Duration
+    , startTime : Time.Posix
+    }
 
 
 {-| Audio repository that stores all the audios.
 -}
 type alias AudioRepo =
-    { audio : Dict String Audio.Source
-    , playing : List ( String, Audio.Audio )
+    { audio : Dict String ( Audio.Source, Duration.Duration )
+    , playing : List PlayingAudio
     }
 
 

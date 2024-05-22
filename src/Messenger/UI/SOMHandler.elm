@@ -10,7 +10,7 @@ module Messenger.UI.SOMHandler exposing (handleSOM)
 -}
 
 import Audio exposing (AudioCmd)
-import Messenger.Audio.Audio exposing (stopAudio)
+import Messenger.Audio.Audio exposing (playAudio, stopAudio)
 import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.Model exposing (Model, resetSceneStartTime)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
@@ -22,6 +22,13 @@ import Messenger.UserConfig exposing (UserConfig)
 -}
 handleSOM : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> SceneOutputMsg scenemsg userdata -> Model userdata scenemsg -> ( Model userdata scenemsg, List (Cmd WorldEvent), List (AudioCmd WorldEvent) )
 handleSOM config scenes som model =
+    let
+        gd =
+            model.currentGlobalData
+
+        gdid =
+            gd.internalData
+    in
     case som of
         SOMChangeScene tm name ptrans ->
             if model.transition == Nothing then
@@ -53,21 +60,26 @@ handleSOM config scenes som model =
                 -- In transition
                 ( model, [], [] )
 
-        SOMPlayAudio name path opt ->
-            ( model, [], [ Audio.loadAudio (SoundLoaded name opt) path ] )
+        SOMPlayAudio ch name opt ->
+            let
+                newRepo =
+                    playAudio gdid.audiorepo ch name opt gd.currentTimeStamp
+            in
+            ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = newRepo } } }, [], [] )
 
         SOMSetVolume s ->
             let
-                oldgd =
-                    model.currentGlobalData
-
                 newgd2 =
-                    { oldgd | volume = s }
+                    { gd | volume = s }
             in
             ( { model | currentGlobalData = newgd2 }, [], [] )
 
-        SOMStopAudio name ->
-            ( { model | audiorepo = stopAudio model.audiorepo name }, [], [] )
+        SOMStopAudio ch ->
+            let
+                newRepo =
+                    stopAudio gdid.audiorepo ch
+            in
+            ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = newRepo } } }, [], [] )
 
         SOMAlert text ->
             ( model, [ config.ports.alert text ], [] )
@@ -84,11 +96,8 @@ handleSOM config scenes som model =
 
         SOMSetContext ctx ->
             let
-                oldgd =
-                    model.currentGlobalData
-
                 newgd =
-                    { oldgd | sceneStartTime = ctx.sceneStartTime, currentScene = ctx.name }
+                    { gd | sceneStartTime = ctx.sceneStartTime, currentScene = ctx.name }
 
                 newModel =
                     { model | currentGlobalData = newgd, currentScene = ctx.scene }
@@ -98,12 +107,9 @@ handleSOM config scenes som model =
         SOMGetContext getter ->
             let
                 ctx =
-                    { scene = model.currentScene, sceneStartTime = oldgd.sceneStartTime, name = oldgd.currentScene }
-
-                oldgd =
-                    model.currentGlobalData
+                    { scene = model.currentScene, sceneStartTime = gd.sceneStartTime, name = gd.currentScene }
 
                 newgd =
-                    { oldgd | userData = getter ctx oldgd.userData }
+                    { gd | userData = getter ctx gd.userData }
             in
             ( { model | currentGlobalData = newgd }, [], [] )

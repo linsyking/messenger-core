@@ -17,13 +17,13 @@ import Html exposing (Html)
 import Html.Attributes exposing (style)
 import Html.Events exposing (on)
 import Json.Decode as Decode
+import Messenger.Audio.Audio exposing (getAudio)
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
 import Messenger.Resources.Base exposing (getTexture)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.Scene.Transition exposing (makeTransition)
 import Messenger.UserConfig exposing (Resources, UserConfig)
-import Messenger.Audio.Audio exposing (getAudio)
 
 
 {-| View function of the game.
@@ -66,6 +66,6 @@ The audio argument needed in the main model.
 
 -}
 audio : AudioData -> Model userdata scenemsg -> Audio
-audio ad model =
-    Audio.group (getAudio ad model.currentGlobalData.internalData.audiorepo)
+audio _ model =
+    Audio.group (getAudio model.currentGlobalData.internalData.audiorepo)
         |> Audio.scaleVolume model.currentGlobalData.volume
