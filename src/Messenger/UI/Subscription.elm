@@ -12,11 +12,11 @@ The subscriptions for the game
 -}
 
 import Audio exposing (AudioData)
-import Browser.Events exposing (onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp, onResize, onVisibilityChange)
+import Browser.Events exposing (onAnimationFrame, onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp, onResize, onVisibilityChange)
 import Json.Decode as Decode
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UserConfig exposing (TimeInterval(..), UserConfig)
 import Time
 
 
@@ -24,8 +24,17 @@ import Time
 -}
 subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Sub WorldEvent
 subscriptions config _ _ =
+    let
+        timeSub =
+            case config.timeInterval of
+                Fixed time ->
+                    Time.every time WTick
+
+                Animation ->
+                    onAnimationFrame WTick
+    in
     Sub.batch
-        [ Time.every config.timeInterval WTick --- Slow down the fps
+        [ timeSub
         , onKeyDown
             (Decode.map2
                 (\x rep ->

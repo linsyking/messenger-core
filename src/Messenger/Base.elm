@@ -48,7 +48,6 @@ Basically users don't need to deal with the world events, they work with user ev
 -}
 type WorldEvent
     = WTick Time.Posix
-    | WAnimationFrmae Time.Posix
     | WKeyDown Int
     | WKeyUp Int
     | NewWindowSize ( Float, Float )
@@ -85,7 +84,7 @@ negative value means scroll up. It can be also used for touchpad.
 
 -}
 type UserEvent
-    = Tick Float
+    = Tick Int
     | KeyDown Int
     | KeyUp Int
     | MouseDown Int ( Float, Float )
@@ -113,8 +112,8 @@ It is mainly used for display and reading/writing some localstorage data.
 -}
 type alias GlobalData userdata =
     { internalData : InternalData
-    , sceneStartTime : Float
-    , globalStartTime : Float
+    , sceneStartTime : Int
+    , globalStartTime : Int
     , sceneStartFrame : Int
     , globalStartFrame : Int
     , currentTimeStamp : Time.Posix
@@ -133,8 +132,8 @@ type alias GlobalData userdata =
 {-| This type is for user to use when initializing the messenger.
 -}
 type alias UserViewGlobalData userdata =
-    { sceneStartTime : Float
-    , globalStartTime : Float
+    { sceneStartTime : Int
+    , globalStartTime : Int
     , sceneStartFrame : Int
     , globalStartFrame : Int
     , volume : Float

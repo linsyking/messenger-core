@@ -21,8 +21,9 @@ import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.SOMHandler exposing (handleSOM)
-import Messenger.UserConfig exposing (Resources, UserConfig, resourceNum)
+import Messenger.UserConfig exposing (Resources, TimeInterval(..), UserConfig, resourceNum)
 import Set
+import Time
 
 
 {-| Main logic for updating the game.
@@ -283,10 +284,13 @@ update config resources audiodata msg model =
         WPrompt name result ->
             gameUpdateInner (Prompt name result) model
 
-        WTick x ->
+        WTick delta ->
             let
+                timeInterval =
+                    Time.posixToMillis delta - Time.posixToMillis gd.currentTimeStamp
+
                 newGD =
-                    { gd | currentTimeStamp = x, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + config.timeInterval }
+                    { gd | currentTimeStamp = delta, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + timeInterval }
 
                 trans =
                     model.transition
@@ -298,15 +302,12 @@ update config resources audiodata msg model =
                                 Nothing
 
                             else
-                                Just ( { data | currentTransition = data.currentTransition + 1 }, sd )
+                                Just ( { data | currentTransition = data.currentTransition + timeInterval }, sd )
 
                         Nothing ->
                             trans
             in
-            gameUpdateInner (Tick config.timeInterval) { model | currentGlobalData = newGD, transition = newTrans }
-
-        WAnimationFrmae delta ->
-            ( model, Cmd.none, Audio.cmdNone )
+            gameUpdateInner (Tick timeInterval) { model | currentGlobalData = newGD, transition = newTrans }
 
         NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )

@@ -14,6 +14,7 @@ module Messenger.Scene.Transitions.Base exposing
 -}
 
 import Canvas exposing (Renderable)
+import Duration exposing (Duration)
 import Messenger.Base exposing (GlobalData)
 
 
@@ -47,11 +48,11 @@ type alias Transition userdata =
 
 {-| Generate new transition
 -}
-genTransition : Int -> Int -> SingleTrans userdata -> SingleTrans userdata -> Transition userdata
-genTransition outT inT outTrans inTrans =
+genTransition : ( SingleTrans userdata, Duration ) -> ( SingleTrans userdata, Duration ) -> Transition userdata
+genTransition ( outTrans, outT ) ( inTrans, inT ) =
     { currentTransition = 0
-    , outT = outT
-    , inT = inT
+    , outT = ceiling <| Duration.inMilliseconds outT
+    , inT = ceiling <| Duration.inMilliseconds inT
     , outTrans = outTrans
     , inTrans = inTrans
     }

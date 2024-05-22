@@ -31,7 +31,7 @@ import Messenger.UserConfig exposing (Resources, UserConfig)
 view : UserConfig userdata scenemsg -> Resources userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
 view config resources _ model =
     let
-        transitiondata =
+        transitionData =
             Maybe.map Tuple.first model.transition
 
         canvas =
@@ -47,7 +47,7 @@ view config resources _ model =
                     ++ model.currentGlobalData.canvasAttributes
                 )
                 [ config.background model.currentGlobalData
-                , makeTransition model.currentGlobalData transitiondata <| (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
+                , makeTransition model.currentGlobalData transitionData <| (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
                 ]
     in
     Html.div [ on "wheel" (Decode.map WMouseWheel (Decode.field "deltaY" Decode.int)) ]

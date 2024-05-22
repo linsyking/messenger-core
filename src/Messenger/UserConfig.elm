@@ -1,5 +1,6 @@
 module Messenger.UserConfig exposing
-    ( UserConfig, PortDefs
+    ( TimeInterval(..)
+    , UserConfig, PortDefs
     , coloredBackground, transparentBackground
     , Resources
     , resourceNum
@@ -10,6 +11,7 @@ module Messenger.UserConfig exposing
 
 # User Configuration
 
+@docs TimeInterval
 @docs UserConfig, PortDefs
 @docs coloredBackground, transparentBackground
 @docs Resources
@@ -28,6 +30,11 @@ import Json.Encode as Encode
 import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
 import Messenger.Scene.Scene exposing (AllScenes)
+
+
+type TimeInterval
+    = Fixed Float
+    | Animation
 
 
 {-| User Configuration for the messenger.
@@ -69,7 +76,7 @@ type alias UserConfig userdata scenemsg =
         }
     , debug : Bool
     , background : GlobalData userdata -> Renderable
-    , timeInterval : Float
+    , timeInterval : TimeInterval
     , ports : PortDefs
     }
 
