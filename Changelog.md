@@ -1,5 +1,16 @@
 # Changelog
 
+## 12.0.0
+
+### Features
+
+- Better audio support
+- Tick events with delta
+
+### Fix
+
+- `SOMHandler` fix
+
 ## 11.1.0
 
 ### Features
