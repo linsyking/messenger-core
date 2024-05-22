@@ -10,7 +10,7 @@ module Messenger.UI.SOMHandler exposing (handleSOM)
 -}
 
 import Audio exposing (AudioCmd)
-import Messenger.Audio.Audio exposing (playAudio, stopAudio)
+import Messenger.Audio.Internal exposing (playAudio, stopAudio)
 import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.Model exposing (Model, resetSceneStartTime)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
@@ -77,7 +77,7 @@ handleSOM config scenes som model =
         SOMStopAudio ch ->
             let
                 newRepo =
-                    stopAudio gdid.audioRepo ch
+                    stopAudio gdid.audioRepo gd.currentTimeStamp ch
             in
             ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = newRepo } } }, [], [] )
 

@@ -14,7 +14,7 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedSpriteNum)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedResourceNum)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -31,7 +31,7 @@ import Time
 -}
 gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate input evnt model =
-    if loadedSpriteNum model.currentGlobalData < resourceNum input.resources then
+    if loadedResourceNum model.currentGlobalData < resourceNum input.resources then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 

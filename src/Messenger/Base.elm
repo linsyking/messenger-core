@@ -1,12 +1,13 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..)
-    , GlobalData, InternalData, loadedSpriteNum
+    , GlobalData, InternalData
     , Env
     , Flags
     , removeCommonData, addCommonData
     , UserViewGlobalData
     , emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
+    , loadedResourceNum
     )
 
 {-|
@@ -32,7 +33,7 @@ import Browser.Events exposing (Visibility(..))
 import Canvas.Texture exposing (Texture)
 import Dict exposing (Dict)
 import Html exposing (Html)
-import Messenger.Audio.Audio exposing (AudioRepo, emptyRepo)
+import Messenger.Audio.Internal exposing (AudioRepo, emptyRepo)
 import Set exposing (Set)
 import Time exposing (millisToPosix)
 
@@ -145,9 +146,9 @@ type alias UserViewGlobalData userdata =
 
 {-| Get the number of loaded sprites.
 -}
-loadedSpriteNum : GlobalData userdata -> Int
-loadedSpriteNum globalData =
-    Dict.size globalData.internalData.sprites
+loadedResourceNum : GlobalData userdata -> Int
+loadedResourceNum globalData =
+    Dict.size globalData.internalData.sprites + Dict.size globalData.internalData.audioRepo.audio
 
 
 {-| Empty InternalData

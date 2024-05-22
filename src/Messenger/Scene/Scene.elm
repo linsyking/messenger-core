@@ -131,8 +131,8 @@ type SceneOutputMsg scenemsg userdata
     = SOMChangeScene (Maybe scenemsg) String (Maybe (Transition userdata))
     | SOMAlert String
     | SOMPrompt String String
-    | SOMPlayAudio String String AudioOption
-    | SOMStopAudio String
+    | SOMPlayAudio Int String AudioOption
+    | SOMStopAudio Int
     | SOMSetVolume Float
     | SOMSaveGlobalData
     | SOMSetContext (SceneContext userdata scenemsg)

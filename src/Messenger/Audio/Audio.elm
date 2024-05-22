@@ -1,145 +1,29 @@
-module Messenger.Audio.Audio exposing
-    ( playAudio
-    , stopAudio
-    , getAudio
-    , AudioRepo, emptyRepo
-    )
+module Messenger.Audio.Audio exposing (newAudioChannel)
 
 {-|
 
 
-# Audio
+# Audio Module
 
-This module is used to manage audios.
-
-**Note. This module may only be used within Messenger core**
-
-@docs playAudio
-@docs stopAudio
-@docs getAudio
-@docs AudioRepo, emptyRepo
+@docs newAudioChannel
 
 -}
 
-import Audio
-import Dict exposing (Dict)
-import Duration
-import Messenger.Audio.Base exposing (AudioOption(..))
-import Time
+import List exposing (maximum)
+import Messenger.Base exposing (GlobalData)
 
 
-{-| Play audio by name.
+{-| Generate a new audio channel number.
 -}
-playAudio : AudioRepo -> String -> String -> AudioOption -> Time.Posix -> AudioRepo
-playAudio rawrepo channel name opt t =
+newAudioChannel : GlobalData userdata -> Int
+newAudioChannel globalData =
     let
-        repo =
-            removeFinishedAudio rawrepo t
-
-        playing =
-            repo.playing
-
-        audio =
-            Dict.get name repo.audio
+        playingChannels =
+            List.map (\pl -> pl.channel) globalData.internalData.audioRepo.playing
     in
-    case audio of
-        Just ( source, duration ) ->
-            case opt of
-                ALoop ->
-                    let
-                        defaultConfig =
-                            Audio.audioDefaultConfig
-
-                        audioWC =
-                            Audio.audioWithConfig { defaultConfig | loop = Just (Audio.LoopConfig (Duration.seconds 0) duration) } source t
-
-                        newPA =
-                            { channel = channel
-                            , name = name
-                            , audio = audioWC
-                            , opt = opt
-                            , duration = duration
-                            , startTime = t
-                            }
-                    in
-                    { repo | playing = newPA :: playing }
-
-                AOnce ->
-                    let
-                        newPA =
-                            { channel = channel
-                            , name = name
-                            , audio = Audio.audio source t
-                            , opt = opt
-                            , duration = duration
-                            , startTime = t
-                            }
-                    in
-                    { repo | playing = newPA :: playing }
+    case maximum playingChannels of
+        Just maxChannel ->
+            maxChannel + 1
 
         Nothing ->
-            repo
-
-
-removeFinishedAudio : AudioRepo -> Time.Posix -> AudioRepo
-removeFinishedAudio repo t =
-    let
-        playing =
-            repo.playing
-
-        newPlaying =
-            List.filter
-                (\pa ->
-                    pa.opt == ALoop || Time.posixToMillis t - Time.posixToMillis pa.startTime < ceiling (Duration.inMilliseconds pa.duration)
-                )
-                playing
-    in
-    { repo | playing = newPlaying }
-
-
-{-| Stop an audio by id.
--}
-stopAudio : AudioRepo -> String -> AudioRepo
-stopAudio repo s =
-    let
-        playing =
-            repo.playing
-
-        newPlaying =
-            List.filter (\pa -> pa.name /= s) playing
-    in
-    { repo | playing = newPlaying }
-
-
-{-| Change audio with config to real audio.
--}
-getAudio : AudioRepo -> List Audio.Audio
-getAudio repo =
-    List.map
-        (\pa -> pa.audio)
-        repo.playing
-
-
-type alias PlayingAudio =
-    { channel : String
-    , name : String
-    , audio : Audio.Audio
-    , opt : AudioOption
-    , duration : Duration.Duration
-    , startTime : Time.Posix
-    }
-
-
-{-| Audio repository that stores all the audios.
--}
-type alias AudioRepo =
-    { audio : Dict String ( Audio.Source, Duration.Duration )
-    , playing : List PlayingAudio
-    }
-
-
-emptyRepo : AudioRepo
-emptyRepo =
-    { audio = Dict.empty
-    , playing = []
-    }
+            0
