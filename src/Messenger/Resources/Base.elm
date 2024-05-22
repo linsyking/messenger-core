@@ -28,14 +28,14 @@ After the resources are loaded, we can get those data from globaldata.sprites.
 import Canvas.Texture as Texture exposing (Texture)
 import Dict exposing (Dict)
 import Messenger.Base exposing (WorldEvent(..))
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UserConfig exposing (Resources)
 
 
 {-| Return all the textures.
 -}
-getTexture : UserConfig userdata scenemsg -> List (Texture.Source WorldEvent)
-getTexture config =
-    List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) config.allTexture
+getTexture : Resources userdata scenemsg -> List (Texture.Source WorldEvent)
+getTexture res =
+    List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) res.allTexture
 
 
 {-| Save the sprite.

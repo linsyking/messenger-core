@@ -1,4 +1,4 @@
-module Messenger.UI.View exposing (view)
+module Messenger.UI.View exposing (view, audio)
 
 {-|
 
@@ -7,11 +7,11 @@ module Messenger.UI.View exposing (view)
 
 View the game via Canvas
 
-@docs view
+@docs view, audio
 
 -}
 
-import Audio exposing (AudioData)
+import Audio exposing (Audio, AudioData)
 import Canvas
 import Html exposing (Html)
 import Html.Attributes exposing (style)
@@ -22,13 +22,14 @@ import Messenger.Model exposing (Model)
 import Messenger.Resources.Base exposing (getTexture)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.Scene.Transition exposing (makeTransition)
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UserConfig exposing (Resources, UserConfig)
+import Messenger.Audio.Audio exposing (getAudio)
 
 
 {-| View function of the game.
 -}
-view : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
-view config _ model =
+view : UserConfig userdata scenemsg -> Resources userdata scenemsg -> AudioData -> Model userdata scenemsg -> Html WorldEvent
+view config resources _ model =
     let
         transitiondata =
             Maybe.map Tuple.first model.transition
@@ -37,7 +38,7 @@ view config _ model =
             Canvas.toHtmlWith
                 { width = floor model.currentGlobalData.internalData.realWidth
                 , height = floor model.currentGlobalData.internalData.realHeight
-                , textures = getTexture config
+                , textures = getTexture resources
                 }
                 ([ style "left" (String.fromFloat model.currentGlobalData.internalData.startLeft)
                  , style "top" (String.fromFloat model.currentGlobalData.internalData.startTop)
@@ -57,3 +58,14 @@ view config _ model =
             Nothing ->
                 [ canvas ]
         )
+
+
+{-| Audio view function
+
+The audio argument needed in the main model.
+
+-}
+audio : AudioData -> Model userdata scenemsg -> Audio
+audio ad model =
+    Audio.group (getAudio ad model.currentGlobalData.internalData.audiorepo)
+        |> Audio.scaleVolume model.currentGlobalData.volume

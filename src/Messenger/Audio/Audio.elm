@@ -2,7 +2,7 @@ module Messenger.Audio.Audio exposing
     ( loadAudio
     , stopAudio
     , getAudio
-    , AudioRepo
+    , AudioRepo, emptyRepo
     )
 
 {-|
@@ -17,7 +17,7 @@ This module is used to manage audios.
 @docs loadAudio
 @docs stopAudio
 @docs getAudio
-@docs AudioRepo
+@docs AudioRepo, emptyRepo
 
 -}
 
@@ -71,4 +71,11 @@ getAudio ad repo =
 type alias AudioRepo =
     { audio : Dict String Audio.Source
     , playing : List ( String, Audio.Audio )
+    }
+
+
+emptyRepo : AudioRepo
+emptyRepo =
+    { audio = Dict.empty
+    , playing = []
     }

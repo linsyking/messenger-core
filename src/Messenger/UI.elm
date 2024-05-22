@@ -17,20 +17,19 @@ Top-level user interface to the Messenger engine.
 
 import Audio
 import Messenger.Base exposing (Flags, WorldEvent)
-import Messenger.Model exposing (Model, audio)
-import Messenger.Scene.Scene exposing (AllScenes)
+import Messenger.Model exposing (Model)
 import Messenger.UI.Init exposing (init)
 import Messenger.UI.Subscription exposing (subscriptions)
 import Messenger.UI.Update exposing (update)
-import Messenger.UI.View exposing (view)
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UI.View exposing (audio, view)
+import Messenger.UserConfig exposing (Resources, UserConfig)
 
 
 {-| The input to the Messenger UI.
 -}
 type alias Input userdata scenemsg =
     { config : UserConfig userdata scenemsg
-    , allScenes : AllScenes userdata scenemsg
+    , resources : Resources userdata scenemsg
     }
 
 
@@ -48,10 +47,10 @@ type alias Output userdata scenemsg =
 genMain : Input userdata scenemsg -> Output userdata scenemsg
 genMain input =
     Audio.elementWithAudio
-        { init = init input.config input.allScenes
-        , update = update input.config input.allScenes
+        { init = init input.config input.resources
+        , update = update input.config input.resources
         , subscriptions = subscriptions input.config
-        , view = view input.config
+        , view = view input.config input.resources
         , audio = audio
         , audioPort = { toJS = input.config.ports.audioPortToJS, fromJS = input.config.ports.audioPortFromJS }
         }

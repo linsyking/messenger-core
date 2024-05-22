@@ -32,7 +32,7 @@ import Browser.Events exposing (Visibility(..))
 import Canvas.Texture exposing (Texture)
 import Dict exposing (Dict)
 import Html exposing (Html)
-import Messenger.Audio.Base exposing (AudioOption)
+import Messenger.Audio.Audio exposing (AudioRepo, emptyRepo)
 import Set exposing (Set)
 import Time exposing (millisToPosix)
 
@@ -52,8 +52,7 @@ type WorldEvent
     | WKeyUp Int
     | NewWindowSize ( Float, Float )
     | WindowVisibility Visibility
-    | SoundLoaded String AudioOption (Result Audio.LoadError Audio.Source)
-    | PlaySoundGotTime String AudioOption Audio.Source Time.Posix
+    | SoundLoaded String (Result Audio.LoadError Audio.Source)
     | TextureLoaded String (Maybe Texture)
     | WMouseDown Int ( Float, Float )
     | WMouseUp Int ( Float, Float )
@@ -188,6 +187,7 @@ emptyInternalData =
     , sprites = Dict.empty
     , virtualWidth = 0
     , virtualHeight = 0
+    , audiorepo = emptyRepo
     }
 
 
@@ -278,6 +278,7 @@ type alias InternalData =
     , sprites : Dict String Texture
     , virtualWidth : Float
     , virtualHeight : Float
+    , audiorepo : AudioRepo
     }
 
 

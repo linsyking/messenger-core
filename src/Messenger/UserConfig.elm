@@ -1,7 +1,8 @@
 module Messenger.UserConfig exposing
     ( UserConfig, PortDefs
     , coloredBackground, transparentBackground
-    , spriteNum
+    , Resources
+    , resourceNum
     )
 
 {-|
@@ -11,7 +12,8 @@ module Messenger.UserConfig exposing
 
 @docs UserConfig, PortDefs
 @docs coloredBackground, transparentBackground
-@docs spriteNum
+@docs Resources
+@docs resourceNum
 
 -}
 
@@ -24,6 +26,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
+import Messenger.Scene.Scene exposing (AllScenes)
 
 
 {-| User Configuration for the messenger.
@@ -46,11 +49,6 @@ to send to a scene when switching scenes.
     remember to disable it when releasing game
   - `background` determines the background of the game
     transparent background and colored background is already prepared
-  - `allTexture` stores all the texture assets users will use in the game. the path is based on the project folder.
-    **format: (name, path)**
-  - `allSpriteSheets` stores all the sprite sheets users set for this game. users should both
-    name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
-    Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
   - `timeInterval` determines the highest fps of the game, representing the interval
     between every two frames. More strictly speaking, it represents the interval between
     every two **Tick** events
@@ -70,19 +68,33 @@ type alias UserConfig userdata scenemsg =
         }
     , debug : Bool
     , background : GlobalData userdata -> Renderable
-    , allTexture : List ( String, String )
-    , allAudio : List ( String, String )
-    , allSpriteSheets : SpriteSheet
     , timeInterval : Float
     , ports : PortDefs
     }
 
 
+{-| Resources
+
+  - `allTexture` stores all the texture assets users will use in the game. the path is based on the project folder.
+    **format: (name, path)**
+  - `allSpriteSheets` stores all the sprite sheets users set for this game. users should both
+    name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
+    Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
+
+-}
+type alias Resources userdata scenemsg =
+    { allTexture : List ( String, String )
+    , allAudio : List ( String, String )
+    , allSpriteSheets : SpriteSheet
+    , allScenes : AllScenes userdata scenemsg
+    }
+
+
 {-| The number of sprites in the game.
 -}
-spriteNum : List ( String, String ) -> SpriteSheet -> Int
-spriteNum textures spritesheet =
-    List.length textures + spriteSheetSize spritesheet
+resourceNum : Resources userdata scenemsg -> Int
+resourceNum resources =
+    List.length resources.allTexture + spriteSheetSize resources.allSpriteSheets + List.length resources.allAudio
 
 
 {-| The ports that the user must provide to the messenger.
