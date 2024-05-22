@@ -14,6 +14,7 @@ Initialize the game
 import Audio exposing (AudioCmd)
 import Browser.Events exposing (Visibility(..))
 import Canvas
+import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
@@ -92,5 +93,12 @@ init config resources flags =
 
         newgd =
             { initGlobalData | currentTimeStamp = millisToPosix flags.timeStamp, internalData = newIT, currentScene = config.initScene }
+
+        audioLoad =
+            List.map
+                (\( name, url ) ->
+                    Audio.loadAudio (SoundLoaded name) url
+                )
+                (Dict.toList resources.allAudio)
     in
-    ( { ms | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
+    ( { ms | currentGlobalData = newgd }, Cmd.none, Audio.cmdBatch audioLoad )

@@ -35,7 +35,7 @@ import Messenger.UserConfig exposing (Resources)
 -}
 getTexture : Resources userdata scenemsg -> List (Texture.Source WorldEvent)
 getTexture res =
-    List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) res.allTexture
+    List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) <| Dict.toList res.allTexture
 
 
 {-| Save the sprite.

@@ -22,6 +22,7 @@ import Browser.Events exposing (Visibility(..))
 import Canvas exposing (Renderable)
 import Canvas.Settings
 import Color exposing (Color)
+import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
@@ -83,8 +84,8 @@ type alias UserConfig userdata scenemsg =
 
 -}
 type alias Resources userdata scenemsg =
-    { allTexture : List ( String, String )
-    , allAudio : List ( String, String )
+    { allTexture : Dict String String
+    , allAudio : Dict String String
     , allSpriteSheets : SpriteSheet
     , allScenes : AllScenes userdata scenemsg
     }
@@ -94,7 +95,7 @@ type alias Resources userdata scenemsg =
 -}
 resourceNum : Resources userdata scenemsg -> Int
 resourceNum resources =
-    List.length resources.allTexture + spriteSheetSize resources.allSpriteSheets + List.length resources.allAudio
+    Dict.size resources.allTexture + spriteSheetSize resources.allSpriteSheets + Dict.size resources.allAudio
 
 
 {-| The ports that the user must provide to the messenger.
