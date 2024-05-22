@@ -63,9 +63,9 @@ handleSOM config scenes som model =
         SOMPlayAudio ch name opt ->
             let
                 newRepo =
-                    playAudio gdid.audiorepo ch name opt gd.currentTimeStamp
+                    playAudio gdid.audioRepo ch name opt gd.currentTimeStamp
             in
-            ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = newRepo } } }, [], [] )
+            ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = newRepo } } }, [], [] )
 
         SOMSetVolume s ->
             let
@@ -77,9 +77,9 @@ handleSOM config scenes som model =
         SOMStopAudio ch ->
             let
                 newRepo =
-                    stopAudio gdid.audiorepo ch
+                    stopAudio gdid.audioRepo ch
             in
-            ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = newRepo } } }, [], [] )
+            ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = newRepo } } }, [], [] )
 
         SOMAlert text ->
             ( model, [ config.ports.alert text ], [] )

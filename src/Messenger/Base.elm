@@ -187,7 +187,7 @@ emptyInternalData =
     , sprites = Dict.empty
     , virtualWidth = 0
     , virtualHeight = 0
-    , audiorepo = emptyRepo
+    , audioRepo = emptyRepo
     }
 
 
@@ -278,7 +278,7 @@ type alias InternalData =
     , sprites : Dict String Texture
     , virtualWidth : Float
     , virtualHeight : Float
-    , audiorepo : AudioRepo
+    , audioRepo : AudioRepo
     }
 
 

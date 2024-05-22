@@ -151,12 +151,12 @@ update config resources audiodata msg model =
                 Ok sound ->
                     let
                         ar =
-                            gdid.audiorepo
+                            gdid.audioRepo
 
                         ard =
                             Dict.insert name ( sound, Audio.length audiodata sound ) ar.audio
                     in
-                    ( { model | currentGlobalData = { gd | internalData = { gdid | audiorepo = { ar | audio = ard } } } }
+                    ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = { ar | audio = ard } } } }
                     , Cmd.none
                     , Audio.cmdNone
                     )

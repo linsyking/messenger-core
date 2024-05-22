@@ -67,5 +67,5 @@ The audio argument needed in the main model.
 -}
 audio : AudioData -> Model userdata scenemsg -> Audio
 audio _ model =
-    Audio.group (getAudio model.currentGlobalData.internalData.audiorepo)
+    Audio.group (getAudio model.currentGlobalData.internalData.audioRepo)
         |> Audio.scaleVolume model.currentGlobalData.volume
