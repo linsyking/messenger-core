@@ -10,6 +10,8 @@ This library provides core types and functions that messenger uses.
 - Layered Scene
 - Layer
 - Component
-- Portable component (experimental)
+- Audio
+- Rendering
+- Virtual Coordinates
 
 For more details, please read the documentation in the main Messenger repository.

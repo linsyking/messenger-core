@@ -111,29 +111,29 @@ abstract conmodel initMsg initEnv =
     abstractRec (conmodel.init initEnv initMsg)
 
 
-{-| Scene Output Msg
-
-Scene Output Msg is the Msg that directedly handled by Top-level.
+{-| Scene Output Msg is the message that directedly handled by the top-level core.
 
 `scenemsg` is a custom type which represents the message type users wants
 to send to a scene when switching scenes.
 
-  - `SOMChangeScene` is used to change to a target scene by giving a **(initMsg, name, trasition)**
-  - `SOMPlayAudio` is used to play an audio resourse by giving **name url option**
+  - `SOMChangeScene` is used to change to a target scene by giving a **initMsg name trasition**
+  - `SOMPlayAudio channel name option` is used to play an audio resource by giving **channel name option**
   - `SOMStopAudio` is used to stop a playing audio by giving its **name**
   - `SOMSetVolume` is used to set the volume with a value **from 0 to 1**
   - `SOMAlert` makes an alert
-  - `SOMPromp` makes a prompt with **name title**
-  - `SOMSaveUserData` saves the userdata by encode funtion given in UserUonfig
+  - `SOMPromp name title` makes a prompt with **name title**
+  - `SOMSaveGlobalData` saves the global by encode funtion given in UserConfig
+  - `SOMSetContext` restores the context of the scene
+  - `SOMGetContext` gets the context of the scene
 
 -}
 type SceneOutputMsg scenemsg userdata
     = SOMChangeScene (Maybe scenemsg) String (Maybe (Transition userdata))
-    | SOMPlayAudio String String AudioOption -- channel, audio name, audio option
     | SOMAlert String
+    | SOMPrompt String String
+    | SOMPlayAudio String String AudioOption
     | SOMStopAudio String
     | SOMSetVolume Float
-    | SOMPrompt String String -- name, title
     | SOMSaveGlobalData
     | SOMSetContext (SceneContext userdata scenemsg)
     | SOMGetContext (SceneContext userdata scenemsg -> userdata -> userdata)
