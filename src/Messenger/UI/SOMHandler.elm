@@ -97,7 +97,7 @@ handleSOM config scenes som model =
         SOMSetContext ctx ->
             let
                 newgd =
-                    { gd | sceneStartTime = ctx.sceneStartTime, currentScene = ctx.name }
+                    { gd | sceneStartTime = ctx.sceneStartTime, sceneStartFrame = ctx.sceneStartFrame, currentScene = ctx.name }
 
                 newModel =
                     { model | currentGlobalData = newgd, currentScene = ctx.scene }
@@ -107,7 +107,7 @@ handleSOM config scenes som model =
         SOMGetContext getter ->
             let
                 ctx =
-                    { scene = model.currentScene, sceneStartTime = gd.sceneStartTime, name = gd.currentScene }
+                    { scene = model.currentScene, sceneStartTime = gd.sceneStartTime, sceneStartFrame = gd.sceneStartFrame, name = gd.currentScene }
 
                 newgd =
                     { gd | userData = getter ctx gd.userData }

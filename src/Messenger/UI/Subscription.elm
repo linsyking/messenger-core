@@ -55,5 +55,5 @@ subscriptions config _ _ =
         , onMouseDown (Decode.map3 (\b x y -> WMouseDown b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseUp (Decode.map3 (\b x y -> WMouseUp b ( x, y )) (Decode.field "button" Decode.int) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
         , onMouseMove (Decode.map2 (\x y -> MouseMove ( x, y )) (Decode.field "clientX" Decode.float) (Decode.field "clientY" Decode.float))
-        , config.ports.promptReceiver (\p -> Prompt p.name p.result)
+        , config.ports.promptReceiver (\p -> WPrompt p.name p.result)
         ]

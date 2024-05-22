@@ -1,6 +1,6 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
-    , UserEvent(..), eventFilter
+    , UserEvent(..)
     , GlobalData, InternalData, loadedSpriteNum
     , Env
     , Flags
@@ -17,7 +17,7 @@ module Messenger.Base exposing
 Some Basic Data Types for the game
 
 @docs WorldEvent
-@docs UserEvent, eventFilter
+@docs UserEvent
 @docs GlobalData, InternalData, loadedSpriteNum
 @docs Env
 @docs Flags
@@ -48,6 +48,7 @@ Basically users don't need to deal with the world events, they work with user ev
 -}
 type WorldEvent
     = WTick Time.Posix
+    | WAnimationFrmae Time.Posix
     | WKeyDown Int
     | WKeyUp Int
     | NewWindowSize ( Float, Float )
@@ -58,7 +59,7 @@ type WorldEvent
     | WMouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
     | WMouseWheel Int
-    | Prompt String String
+    | WPrompt String String
     | NullEvent
 
 
@@ -84,42 +85,13 @@ negative value means scroll up. It can be also used for touchpad.
 
 -}
 type UserEvent
-    = Tick
+    = Tick Float
     | KeyDown Int
     | KeyUp Int
     | MouseDown Int ( Float, Float )
     | MouseUp Int ( Float, Float )
     | MouseWheel Int
-
-
-{-| Event filter
-
-Change world events into user events.
-
--}
-eventFilter : WorldEvent -> Maybe UserEvent
-eventFilter event =
-    case event of
-        WTick _ ->
-            Just <| Tick
-
-        WKeyDown x ->
-            Just <| KeyDown x
-
-        WKeyUp x ->
-            Just <| KeyUp x
-
-        WMouseDown x p ->
-            Just <| MouseDown x p
-
-        WMouseUp x p ->
-            Just <| MouseUp x p
-
-        WMouseWheel x ->
-            Just <| MouseWheel x
-
-        _ ->
-            Nothing
+    | Prompt String String
 
 
 {-| GlobalData
@@ -141,8 +113,10 @@ It is mainly used for display and reading/writing some localstorage data.
 -}
 type alias GlobalData userdata =
     { internalData : InternalData
-    , sceneStartTime : Int
-    , globalTime : Int
+    , sceneStartTime : Float
+    , globalStartTime : Float
+    , sceneStartFrame : Int
+    , globalStartFrame : Int
     , currentTimeStamp : Time.Posix
     , windowVisibility : Visibility
     , mousePos : ( Float, Float )
@@ -159,8 +133,10 @@ type alias GlobalData userdata =
 {-| This type is for user to use when initializing the messenger.
 -}
 type alias UserViewGlobalData userdata =
-    { sceneStartTime : Int
-    , globalTime : Int
+    { sceneStartTime : Float
+    , globalStartTime : Float
+    , sceneStartFrame : Int
+    , globalStartFrame : Int
     , volume : Float
     , extraHTML : Maybe (Html WorldEvent)
     , canvasAttributes : List (Html.Attribute WorldEvent)
@@ -198,7 +174,9 @@ userGlobalDataToGlobalData user =
     { internalData = emptyInternalData
     , currentTimeStamp = millisToPosix 0
     , sceneStartTime = user.sceneStartTime
-    , globalTime = user.globalTime
+    , globalStartTime = user.globalStartTime
+    , sceneStartFrame = user.sceneStartFrame
+    , globalStartFrame = user.globalStartFrame
     , volume = user.volume
     , windowVisibility = Visible
     , pressedKeys = Set.empty
@@ -216,7 +194,9 @@ userGlobalDataToGlobalData user =
 globalDataToUserGlobalData : GlobalData userdata -> UserViewGlobalData userdata
 globalDataToUserGlobalData globalData =
     { sceneStartTime = globalData.sceneStartTime
-    , globalTime = globalData.globalTime
+    , globalStartTime = globalData.globalStartTime
+    , sceneStartFrame = globalData.sceneStartFrame
+    , globalStartFrame = globalData.globalStartFrame
     , volume = globalData.volume
     , extraHTML = globalData.extraHTML
     , canvasAttributes = globalData.canvasAttributes

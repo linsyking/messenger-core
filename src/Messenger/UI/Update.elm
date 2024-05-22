@@ -14,7 +14,7 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), eventFilter, loadedSpriteNum)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedSpriteNum)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -49,9 +49,9 @@ gameUpdate config resources evnt model =
 
             timeUpdatedModel =
                 case evnt of
-                    Tick ->
+                    Tick delta ->
                         -- Tick event needs to update time
-                        updateSceneTime updatedModel1
+                        updateSceneTime updatedModel1 delta
 
                     _ ->
                         updatedModel1
@@ -103,6 +103,9 @@ update config resources audiodata msg model =
 
         scenes =
             resources.allScenes
+
+        gameUpdateInner =
+            gameUpdate config resources
     in
     case msg of
         TextureLoaded name Nothing ->
@@ -208,7 +211,7 @@ update config resources audiodata msg model =
                 newModel =
                     { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
             in
-            gameUpdate config resources (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
+            gameUpdateInner (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
         WMouseUp e pos ->
             let
@@ -218,7 +221,7 @@ update config resources audiodata msg model =
                 newModel =
                     { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
             in
-            gameUpdate config resources (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
+            gameUpdateInner (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
 
         WKeyDown 112 ->
             if config.debug then
@@ -226,7 +229,7 @@ update config resources audiodata msg model =
                 ( model, config.ports.prompt { name = "load", title = "Enter the scene you want to load" }, Audio.cmdNone )
 
             else
-                gameUpdate config resources (KeyDown 112) model
+                gameUpdateInner (KeyDown 112) model
 
         WKeyDown 113 ->
             if config.debug then
@@ -234,23 +237,23 @@ update config resources audiodata msg model =
                 ( model, config.ports.prompt { name = "setVolume", title = "Set volume (0-1)" }, Audio.cmdNone )
 
             else
-                gameUpdate config resources (KeyDown 113) model
+                gameUpdateInner (KeyDown 113) model
 
         WKeyUp key ->
             let
                 newPressedKeys =
                     Set.remove key gd.pressedKeys
             in
-            gameUpdate config resources (KeyUp key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
+            gameUpdateInner (KeyUp key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
 
         WKeyDown key ->
             let
                 newPressedKeys =
                     Set.insert key gd.pressedKeys
             in
-            gameUpdate config resources (KeyDown key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
+            gameUpdateInner (KeyDown key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
 
-        Prompt "load" result ->
+        WPrompt "load" result ->
             if existScene result scenes then
                 ( loadSceneByName result scenes Nothing model
                     |> resetSceneStartTime
@@ -261,7 +264,7 @@ update config resources audiodata msg model =
             else
                 ( model, config.ports.alert "Scene not found!", Audio.cmdNone )
 
-        Prompt "setVolume" result ->
+        WPrompt "setVolume" result ->
             let
                 vol =
                     String.toFloat result
@@ -277,10 +280,13 @@ update config resources audiodata msg model =
                 Nothing ->
                     ( model, config.ports.alert "Not a number", Audio.cmdNone )
 
+        WPrompt name result ->
+            gameUpdateInner (Prompt name result) model
+
         WTick x ->
             let
                 newGD =
-                    { gd | currentTimeStamp = x, globalTime = gd.globalTime + 1 }
+                    { gd | currentTimeStamp = x, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + config.timeInterval }
 
                 trans =
                     model.transition
@@ -297,15 +303,13 @@ update config resources audiodata msg model =
                         Nothing ->
                             trans
             in
-            gameUpdate config resources Tick { model | currentGlobalData = newGD, transition = newTrans }
+            gameUpdateInner (Tick config.timeInterval) { model | currentGlobalData = newGD, transition = newTrans }
+
+        WAnimationFrmae delta ->
+            ( model, Cmd.none, Audio.cmdNone )
 
         NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )
 
-        _ ->
-            case eventFilter msg of
-                Just umsg ->
-                    gameUpdate config resources umsg model
-
-                Nothing ->
-                    ( model, Cmd.none, Audio.cmdNone )
+        WMouseWheel x ->
+            gameUpdateInner (MouseWheel x) model

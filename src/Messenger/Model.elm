@@ -36,14 +36,14 @@ type alias Model userdata scenemsg =
 
 {-| Update scene start time and global time
 -}
-updateSceneTime : Model userdata scenemsg -> Model userdata scenemsg
-updateSceneTime m =
+updateSceneTime : Model userdata scenemsg -> Float -> Model userdata scenemsg
+updateSceneTime m delta =
     let
         gd =
             m.currentGlobalData
 
         ngd =
-            { gd | sceneStartTime = gd.sceneStartTime + 1 }
+            { gd | sceneStartTime = gd.sceneStartTime + delta, sceneStartFrame = gd.sceneStartFrame + 1 }
     in
     { m | currentGlobalData = ngd }
 
