@@ -71,6 +71,7 @@ type alias UserConfig userdata scenemsg =
     , debug : Bool
     , background : GlobalData userdata -> Renderable
     , allTexture : List ( String, String )
+    , allAudio : List ( String, String )
     , allSpriteSheets : SpriteSheet
     , timeInterval : Float
     , ports : PortDefs

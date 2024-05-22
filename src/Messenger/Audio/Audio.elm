@@ -22,6 +22,7 @@ This module is used to manage audios.
 -}
 
 import Audio exposing (AudioData)
+import Dict exposing (Dict)
 import Duration
 import Messenger.Audio.Base exposing (AudioOption(..))
 import Time
@@ -68,4 +69,6 @@ getAudio ad repo =
 {-| Audio repository that stores all the audios.
 -}
 type alias AudioRepo =
-    List ( String, Audio.Source, ( AudioOption, Time.Posix ) )
+    { audio : Dict String Audio.Source
+    , playing : List ( String, Audio.Audio )
+    }
