@@ -36,9 +36,6 @@ playAudio rawrepo channel name opt t =
         repo =
             removeFinishedAudio rawrepo t
 
-        _ =
-            Debug.log "audios" <| List.length repo.playing
-
         playing =
             repo.playing
 
