@@ -35,8 +35,8 @@ import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
 
   - `Fixed` represents the fixed time interval between every two frames.
     The value is the time interval in milliseconds.
-  - `Animation` will use the browser's requestAnimationFrame to update the game.
-    This will make the animation looks smoother.
+  - `Animation` will use the browser's `requestAnimationFrame` to update the game.
+    The frame rate will be dependent on your device. This will make the animation looks smoother.
 
 -}
 type TimeInterval
