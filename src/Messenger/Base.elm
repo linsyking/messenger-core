@@ -1,13 +1,12 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..)
-    , GlobalData, InternalData
+    , GlobalData, InternalData, loadedResourceNum
     , Env
     , Flags
     , removeCommonData, addCommonData
     , UserViewGlobalData
     , emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
-    , loadedResourceNum
     )
 
 {-|
@@ -19,7 +18,7 @@ Some Basic Data Types for the game
 
 @docs WorldEvent
 @docs UserEvent
-@docs GlobalData, InternalData, loadedSpriteNum
+@docs GlobalData, InternalData, loadedResourceNum
 @docs Env
 @docs Flags
 @docs removeCommonData, addCommonData
@@ -151,7 +150,7 @@ type alias UserViewGlobalData userdata =
     }
 
 
-{-| Get the number of loaded sprites.
+{-| Get the number of loaded resources.
 -}
 loadedResourceNum : GlobalData userdata -> Int
 loadedResourceNum globalData =
