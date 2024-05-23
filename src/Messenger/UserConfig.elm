@@ -31,6 +31,14 @@ import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
 
 
+{-| Time interval between every two frames.
+
+  - `Fixed` represents the fixed time interval between every two frames.
+    The value is the time interval in milliseconds.
+  - `Animation` will use the browser's requestAnimationFrame to update the game.
+    This will make the animation looks smoother.
+
+-}
 type TimeInterval
     = Fixed Float
     | Animation
@@ -56,9 +64,7 @@ to send to a scene when switching scenes.
     remember to disable it when releasing game
   - `background` determines the background of the game
     transparent background and colored background is already prepared
-  - `timeInterval` determines the highest fps of the game, representing the interval
-    between every two frames. More strictly speaking, it represents the interval between
-    every two **Tick** events
+  - `timeInterval` See `TimeInterval`
   - `ports` stores the ports that users must provide.
 
 -}
@@ -82,11 +88,12 @@ type alias UserConfig userdata scenemsg =
 
 {-| Resources
 
-  - `allTexture` stores all the texture assets users will use in the game. the path is based on the project folder.
-    **format: (name, path)**
+  - `allTexture` stores all the texture assets users will use in the game. The path is based on the project folder.
+    **format: Dict name path**
   - `allSpriteSheets` stores all the sprite sheets users set for this game. users should both
     name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
     Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
+  - `allAudio` stores all the audio assets users will use in the game. **format: Dict name path**
 
 -}
 type alias Resources =

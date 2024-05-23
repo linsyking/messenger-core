@@ -83,6 +83,8 @@ We have provide some key and mouse codes in messenger-extra.
 `MouseWheel` records the wheel event for mouse, positive value means sroll down while
 negative value means scroll up. It can be also used for touchpad.
 
+`Prompt name result` gives the result user entered in the prompt window.
+
 -}
 type UserEvent
     = Tick Int
@@ -102,21 +104,26 @@ It won't be reset if you change the scene.
 
 It is mainly used for display and reading/writing some localstorage data.
 
-  - `globalTime` records the past frames number since the game started
-  - `sceneStartTime` records the past frames number since this scene started
+  - `globalStartFrame` records the past frames number since the game started
+  - `globalStartTime` records the past time since the game started, in milliseconds
+  - `sceneStartFrame` records the past frames number since this scene started
+  - `sceneStartTime` records the past time since this scene started, in milliseconds
   - `userdata` records the data that users set to save
   - `extraHTML` is used to render extra HTML tags. Be careful to use this
   - `windowVisibility` records whether users stay in this tab/window
   - `pressedKeys` records the keycodes that are be pressed now
   - `pressedMouseButtons` records the mouse buttons that are pressed now
+  - `volume` records the volume of the game
+  - `currentScene` records the current scene name
+  - `mousePos` records the mouse position, in virtual coordinate
 
 -}
 type alias GlobalData userdata =
     { internalData : InternalData
     , sceneStartTime : Int
     , globalStartTime : Int
-    , sceneStartFrame : Int
     , globalStartFrame : Int
+    , sceneStartFrame : Int
     , currentTimeStamp : Time.Posix
     , windowVisibility : Visibility
     , mousePos : ( Float, Float )

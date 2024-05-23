@@ -84,6 +84,8 @@ playAudio rawrepo channel name opt t =
             repo
 
 
+{-| Remove finished audio.
+-}
 removeFinishedAudio : AudioRepo -> Time.Posix -> AudioRepo
 removeFinishedAudio repo t =
     let
@@ -126,6 +128,8 @@ getAudio repo =
         repo.playing
 
 
+{-| Information about the playing audio.
+-}
 type alias PlayingAudio =
     { channel : Int
     , name : String
@@ -144,6 +148,8 @@ type alias AudioRepo =
     }
 
 
+{-| An empty audio repository.
+-}
 emptyRepo : AudioRepo
 emptyRepo =
     { audio = Dict.empty

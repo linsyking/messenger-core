@@ -92,10 +92,7 @@ gameUpdate input evnt model =
         )
 
 
-{-| Update
-
-update function for the game
-
+{-| Outer update function that handles world events
 -}
 update : Input userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 update input audiodata msg model =
