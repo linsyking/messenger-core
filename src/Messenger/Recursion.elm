@@ -113,7 +113,7 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                         in
                         if List.isEmpty msgMatched then
                             -- No need to update
-                            ( ele :: lastObjs, ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
+                            ( lastObjs ++ [ ele ], ( lastMsgUnfinished, lastMsgFinished ), lastEnv )
 
                         else
                             -- Need update
@@ -155,7 +155,7 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                                         ( ele, ( [], [] ), env )
                                         msgMatched
                             in
-                            ( newObj :: lastObjs, ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
+                            ( lastObjs ++ [ newObj ], ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
                     )
                     ( [], ( [], [] ), env )
                     objs
