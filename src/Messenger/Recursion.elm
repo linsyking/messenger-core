@@ -152,7 +152,7 @@ updateRemain env ( unfinishedMsg, finishedMsg ) objs =
                                             in
                                             ( newEle, ( lastMsgUnfinished2 ++ unfinishedMsgs, lastMsgFinished2 ++ finishedMsgs ), newEnv3 )
                                         )
-                                        ( ele, ( [], [] ), env )
+                                        ( ele, ( [], [] ), lastEnv )
                                         msgMatched
                             in
                             ( lastObjs ++ [ newObj ], ( lastMsgUnfinished ++ newMsgUnfinished, lastMsgFinished ++ newMsgFinished ), newEnv2 )
