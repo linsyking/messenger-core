@@ -76,7 +76,7 @@ gameUpdate input evnt model =
             updatedModel3 =
                 case updatedModel2.transition of
                     Just ( trans, ( name, tm ) ) ->
-                        if trans.currentTransition == trans.outT then
+                        if trans.currentTransition >= trans.outT then
                             loadSceneByName name scenes tm updatedModel2
                                 |> resetSceneStartTime
 
