@@ -27,6 +27,7 @@
             "Messenger.Render.Sprite",
             "Messenger.Render.SpriteSheet",
             "Messenger.Render.Text",
+            "Messenger.Render.TextBox",
             "Messenger.Layer.Layer",
             "Messenger.Coordinate.HTML",
             "Messenger.Coordinate.Coordinates",

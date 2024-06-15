@@ -34,7 +34,7 @@ renderText gd size content font pos =
     renderTextWithStyle gd size content font "" pos
 
 
-{-| Render Text. Black color, left top align.
+{-| Render Text. Black color, left top align with style.
 -}
 renderTextWithStyle : GlobalData a -> Float -> String -> String -> String -> ( Float, Float ) -> Renderable
 renderTextWithStyle gd size content ft style ( x, y ) =
@@ -55,16 +55,14 @@ renderTextWithStyle gd size content ft style ( x, y ) =
         content
 
 
-{-| renderTextWithColor
-Render colorful texts.
+{-| Render colorful texts.
 -}
 renderTextWithColor : GlobalData a -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
 renderTextWithColor gd size content font color position =
     renderTextWithColorStyle gd size content font color "" position
 
 
-{-| renderTextWithColor
-Render colorful texts.
+{-| Render colorful texts with style.
 -}
 renderTextWithColorStyle : GlobalData a -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
 renderTextWithColorStyle gd size content ft color style ( x, y ) =
@@ -85,16 +83,14 @@ renderTextWithColorStyle gd size content ft color style ( x, y ) =
         content
 
 
-{-| renderTextWithColorAlign
-Render texts with color and align.
+{-| Render texts with color and align.
 -}
 renderTextWithColorCenter : GlobalData a -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
 renderTextWithColorCenter gd size content font color position =
     renderTextWithColorCenterStyle gd size content font color "" position
 
 
-{-| renderTextWithColorAlign
-Render texts with color and align.
+{-| Render texts with color and align with style.
 -}
 renderTextWithColorCenterStyle : GlobalData a -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
 renderTextWithColorCenterStyle gd size content ft color style ( x, y ) =
@@ -122,7 +118,7 @@ renderTextWithColorAlignBaseline gd size content font color align baseline posit
     renderTextWithColorAlignBaselineStyle gd size content font color align baseline "" position
 
 
-{-| Render texts with color, align and baseline.
+{-| Render texts with color, align and baseline with style.
 -}
 renderTextWithColorAlignBaselineStyle : GlobalData a -> Float -> String -> String -> Color -> TextAlign -> TextBaseLine -> String -> ( Float, Float ) -> Renderable
 renderTextWithColorAlignBaselineStyle gd size content ft color al bl style ( x, y ) =
@@ -150,7 +146,7 @@ renderTextWithSettings gd size content font settings pos =
     renderTextWithSettingsStyle gd size content font settings "" pos
 
 
-{-| Use customized settings to render texts.
+{-| Use customized settings to render texts with style.
 -}
 renderTextWithSettingsStyle : GlobalData a -> Float -> String -> String -> List Setting -> String -> ( Float, Float ) -> Renderable
 renderTextWithSettingsStyle gd size content ft settings style ( x, y ) =
