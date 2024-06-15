@@ -72,21 +72,8 @@ gameUpdate input evnt model =
                     )
                     ( timeUpdatedModel, [], [] )
                     som
-
-            updatedModel3 =
-                case updatedModel2.transition of
-                    Just ( trans, ( name, tm ) ) ->
-                        if trans.currentTransition >= trans.outT then
-                            loadSceneByName name scenes tm updatedModel2
-                                |> resetSceneStartTime
-
-                        else
-                            updatedModel2
-
-                    Nothing ->
-                        updatedModel2
         in
-        ( updatedModel3
+        ( updatedModel2
         , Cmd.batch cmds
         , Audio.cmdBatch audiocmds
         )
@@ -298,23 +285,8 @@ update input audiodata msg model =
 
                 newGD =
                     { gd | currentTimeStamp = delta, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + timeInterval }
-
-                trans =
-                    model.transition
-
-                newTrans =
-                    case trans of
-                        Just ( data, sd ) ->
-                            if data.currentTransition >= data.inT + data.outT then
-                                Nothing
-
-                            else
-                                Just ( { data | currentTransition = data.currentTransition + timeInterval }, sd )
-
-                        Nothing ->
-                            trans
             in
-            gameUpdateInner (Tick timeInterval) { model | currentGlobalData = newGD, transition = newTrans }
+            gameUpdateInner (Tick timeInterval) { model | currentGlobalData = newGD }
 
         NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )

@@ -57,7 +57,6 @@ initModel : UserConfig userdata scenemsg -> Model userdata scenemsg
 initModel config =
     { currentScene = emptyScene
     , currentGlobalData = emptyGlobalData config
-    , transition = Nothing
     }
 
 

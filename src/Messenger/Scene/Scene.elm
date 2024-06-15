@@ -26,7 +26,6 @@ Gerneral Model and Basic types for Scenes
 import Canvas exposing (Renderable)
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.Scene.Transitions.Base exposing (Transition)
 
 
 {-| Concrete Scene Model
@@ -128,7 +127,7 @@ to send to a scene when switching scenes.
 
 -}
 type SceneOutputMsg scenemsg userdata
-    = SOMChangeScene (Maybe scenemsg) String (Maybe (Transition userdata))
+    = SOMChangeScene (Maybe scenemsg) String
     | SOMAlert String
     | SOMPrompt String String
     | SOMPlayAudio Int String AudioOption

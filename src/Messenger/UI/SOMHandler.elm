@@ -30,35 +30,17 @@ handleSOM config scenes som model =
             gd.internalData
     in
     case som of
-        SOMChangeScene tm name ptrans ->
-            if model.transition == Nothing then
-                case ptrans of
-                    Just trans ->
-                        -- Delayed Loading
-                        if existScene name scenes then
-                            ( { model | transition = Just ( trans, ( name, tm ) ) }
-                            , []
-                            , []
-                            )
-
-                        else
-                            ( model, [ config.ports.alert ("Scene" ++ name ++ "not found!") ], [] )
-
-                    Nothing ->
-                        -- Load new scene
-                        if existScene name scenes then
-                            ( loadSceneByName name scenes tm model
-                                |> resetSceneStartTime
-                            , []
-                            , []
-                            )
-
-                        else
-                            ( model, [ config.ports.alert ("Scene" ++ name ++ "not found!") ], [] )
+        SOMChangeScene tm name ->
+            -- Load new scene
+            if existScene name scenes then
+                ( loadSceneByName name scenes tm model
+                    |> resetSceneStartTime
+                , []
+                , []
+                )
 
             else
-                -- In transition
-                ( model, [], [] )
+                ( model, [ config.ports.alert ("Scene" ++ name ++ "not found!") ], [] )
 
         SOMPlayAudio ch name opt ->
             let

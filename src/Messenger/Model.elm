@@ -22,7 +22,6 @@ We only use it in the main update.
 import Browser.Events exposing (Visibility(..))
 import Messenger.Base exposing (GlobalData)
 import Messenger.Scene.Scene exposing (MAbstractScene)
-import Messenger.Scene.Transitions.Base exposing (Transition)
 
 
 {-| The model for the game
@@ -30,7 +29,6 @@ import Messenger.Scene.Transitions.Base exposing (Transition)
 type alias Model userdata scenemsg =
     { currentScene : MAbstractScene userdata scenemsg
     , currentGlobalData : GlobalData userdata
-    , transition : Maybe ( Transition userdata, ( String, Maybe scenemsg ) )
     }
 
 

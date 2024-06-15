@@ -21,8 +21,6 @@ import Messenger.Audio.Internal exposing (getAudio)
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
 import Messenger.Resources.Base exposing (getTexture)
-import Messenger.Scene.Scene exposing (unroll)
-import Messenger.Scene.Transition exposing (makeTransition)
 import Messenger.UI.Input exposing (Input)
 
 
@@ -37,9 +35,6 @@ view input _ model =
         config =
             input.config
 
-        transitionData =
-            Maybe.map Tuple.first model.transition
-
         canvas =
             Canvas.toHtmlWith
                 { width = floor model.currentGlobalData.internalData.realWidth
@@ -53,7 +48,6 @@ view input _ model =
                     ++ model.currentGlobalData.canvasAttributes
                 )
                 [ config.background model.currentGlobalData
-                , makeTransition model.currentGlobalData transitionData <| (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
                 ]
     in
     Html.div [ on "wheel" (Decode.map WMouseWheel (Decode.field "deltaY" Decode.int)) ]
