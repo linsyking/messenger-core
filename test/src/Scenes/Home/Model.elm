@@ -9,6 +9,7 @@ module Scenes.Home.Model exposing (scene)
 import Canvas
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
+import Messenger.Render.TextBox exposing (renderTextBox)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage)
 
@@ -29,7 +30,9 @@ update env msg data =
 
 view : RawSceneView UserData Data
 view env data =
-    Canvas.empty
+    Canvas.group []
+        [ renderTextBox env.globalData 50 "Menu\n1. Test Rendering\n2. Test Layer\n3. Test Component\n4. Test Transition" "Courier" ( 0, 0 )
+        ]
 
 
 scenecon : MConcreteScene Data UserData SceneMsg
