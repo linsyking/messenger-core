@@ -1,0 +1,5 @@
+.messenger/
+elm-stuff/
+build/
+*.html
+!public/*
