@@ -20,10 +20,12 @@ function startmessenger(appname) {
 
     app.ports.prompt.subscribe(function (m) {
         let res = prompt(m.title);
-        app.ports.promptReceiver.send({
-            name: m.name,
-            result: res
-        });
+        if (res) {
+            app.ports.promptReceiver.send({
+                name: m.name,
+                result: res
+            });
+        }
     });
 
     // Disable F1-F4 keys
