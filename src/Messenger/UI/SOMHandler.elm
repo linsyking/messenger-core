@@ -75,23 +75,3 @@ handleSOM config scenes som model =
                     config.globalDataCodec.encode (globalDataToUserGlobalData model.currentGlobalData)
             in
             ( model, [ config.ports.sendInfo encodedGD ], [] )
-
-        SOMSetContext ctx ->
-            let
-                newgd =
-                    { gd | sceneStartTime = ctx.sceneStartTime, sceneStartFrame = ctx.sceneStartFrame, currentScene = ctx.name }
-
-                newModel =
-                    { model | currentGlobalData = newgd, currentScene = ctx.scene }
-            in
-            ( newModel, [], [] )
-
-        SOMGetContext getter ->
-            let
-                ctx =
-                    { scene = model.currentScene, sceneStartTime = gd.sceneStartTime, sceneStartFrame = gd.sceneStartFrame, name = gd.currentScene }
-
-                newgd =
-                    { gd | userData = getter ctx gd.userData }
-            in
-            ( { model | currentGlobalData = newgd }, [], [] )

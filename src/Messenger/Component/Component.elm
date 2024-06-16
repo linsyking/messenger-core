@@ -50,9 +50,9 @@ In this case, your basedata would be a record with these properties.
 
 import Canvas exposing (Renderable, group)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, MMsg, MMsgBase, abstract, unroll)
+import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, abstract, unroll)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
-import Messenger.Scene.Scene exposing (SceneOutputMsg)
+import Messenger.Scene.Scene exposing (MMsg, MMsgBase, SceneOutputMsg)
 
 
 {-| ConcreteUserComponent

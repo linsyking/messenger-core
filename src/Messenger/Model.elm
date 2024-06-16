@@ -29,7 +29,7 @@ import Messenger.Scene.Scene exposing (MAbstractScene)
 type alias Model userdata scenemsg =
     { currentScene : MAbstractScene userdata scenemsg
     , currentGlobalData : GlobalData userdata
-    , currentGlobalComponent: List ()
+    , currentGlobalComponent : List ()
     }
 
 

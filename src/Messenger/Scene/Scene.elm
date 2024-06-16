@@ -28,8 +28,7 @@ Gerneral Model and Basic types for Scenes
 import Canvas exposing (Renderable)
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.Component.GlobalComponent as GC
-import Messenger.Layer.Layer exposing (ConcreteLayer)
+import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
 
 
 {-| Concrete Scene Model
@@ -150,39 +149,6 @@ type alias SceneStorage userdata scenemsg =
 -}
 type alias AllScenes userdata scenemsg =
     List ( String, SceneStorage userdata scenemsg )
-
-
-
---- Global Component Related
-
-
-type alias GCMsg =
-    GC.GCMsg
-
-
-type alias GCTarget =
-    GC.GCTarget
-
-
-type alias GlobalComponentStorage userdata scenemsg =
-    GC.GlobalComponentStorage (MAbstractScene userdata scenemsg) userdata scenemsg
-
-
-type alias GlobalMsgCodec msg =
-    GC.GlobalMsgCodec msg
-
-
-type alias GlobalTarCodec msg =
-    GC.GlobalTarCodec msg
-
-
-type alias ConcreteGlobalComponent data userdata tar msg scenemsg =
-    ConcreteLayer data (MAbstractScene userdata scenemsg) userdata tar msg scenemsg
-
-
-genGlobalComponent : ConcreteGlobalComponent data userdata tar msg scenemsg -> GlobalTarCodec tar -> GlobalMsgCodec msg -> GCMsg -> GlobalComponentStorage userdata scenemsg
-genGlobalComponent =
-    GC.genGlobalComponent
 
 
 {-| Messsenger MsgBase
