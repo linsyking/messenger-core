@@ -1,8 +1,6 @@
 module Messenger.GeneralModel exposing
     ( Msg(..), MsgBase(..)
-    , MMsg, MMsgBase
     , ConcreteGeneralModel, AbstractGeneralModel(..)
-    , MConcreteGeneralModel, MAbstractGeneralModel
     , unroll, abstract
     , viewModelList
     , Matcher
@@ -28,9 +26,7 @@ A Gernel model has the ability to:
   - identify itself by a matcher
 
 @docs Msg, MsgBase
-@docs MMsg, MMsgBase
 @docs ConcreteGeneralModel, AbstractGeneralModel
-@docs MConcreteGeneralModel, MAbstractGeneralModel
 @docs unroll, abstract
 @docs viewModelList
 @docs Matcher
@@ -39,7 +35,6 @@ A Gernel model has the ability to:
 
 import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.Scene.Scene exposing (SceneOutputMsg)
 
 
 {-| MsgBase
@@ -63,18 +58,6 @@ Make sure the `othertar` can pass the matcher of target object.
 type Msg othertar msg sommsg
     = Parent (MsgBase msg sommsg)
     | Other ( othertar, msg )
-
-
-{-| Messsenger MsgBase
--}
-type alias MMsgBase othermsg scenemsg userdata =
-    MsgBase othermsg (SceneOutputMsg scenemsg userdata)
-
-
-{-| Messenger Msg
--}
-type alias MMsg othertar msg scenemsg userdata =
-    Msg othertar msg (SceneOutputMsg scenemsg userdata)
 
 
 {-| Concrete General Model.
@@ -175,21 +158,9 @@ abstract conmodel initMsg initEnv =
     abstractRec init_d init_bd
 
 
-{-| Specialized Concrete Model for Messenger
--}
-type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
-    ConcreteGeneralModel data (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
-
-
-{-| Specialized Abstract Model for Messenger
--}
-type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
-    AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
-
-
 {-| View model list.
 -}
-viewModelList : Env common userdata -> List (MAbstractGeneralModel common userdata tar msg bdata scenemsg) -> List Renderable
+viewModelList : Env common userdata -> List (AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata sommsg) -> List Renderable
 viewModelList env models =
     List.map (\model -> (unroll model).view env) models
 

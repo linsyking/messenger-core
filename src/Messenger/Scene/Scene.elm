@@ -4,7 +4,8 @@ module Messenger.Scene.Scene exposing
     , unroll, abstract
     , SceneOutputMsg(..)
     , SceneStorage, AllScenes
-    , SceneContext
+    , MMsg, MMsgBase
+    , MConcreteGeneralModel, MAbstractGeneralModel
     )
 
 {-|
@@ -19,13 +20,16 @@ Gerneral Model and Basic types for Scenes
 @docs unroll, abstract
 @docs SceneOutputMsg
 @docs SceneStorage, AllScenes
-@docs SceneContext
+@docs MMsg, MMsgBase
+@docs MConcreteGeneralModel, MAbstractGeneralModel
 
 -}
 
 import Canvas exposing (Renderable)
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
+import Messenger.Component.GlobalComponent as GC
+import Messenger.Layer.Layer exposing (ConcreteLayer)
 
 
 {-| Concrete Scene Model
@@ -134,8 +138,6 @@ type SceneOutputMsg scenemsg userdata
     | SOMStopAudio Int
     | SOMSetVolume Float
     | SOMSaveGlobalData
-    | SOMSetContext (SceneContext userdata scenemsg)
-    | SOMGetContext (SceneContext userdata scenemsg -> userdata -> userdata)
 
 
 {-| The type used to store the scene data.
@@ -150,11 +152,58 @@ type alias AllScenes userdata scenemsg =
     List ( String, SceneStorage userdata scenemsg )
 
 
-{-| Scene Context
+
+--- Global Component Related
+
+
+type alias GCMsg =
+    GC.GCMsg
+
+
+type alias GCTarget =
+    GC.GCTarget
+
+
+type alias GlobalComponentStorage userdata scenemsg =
+    GC.GlobalComponentStorage (MAbstractScene userdata scenemsg) userdata scenemsg
+
+
+type alias GlobalMsgCodec msg =
+    GC.GlobalMsgCodec msg
+
+
+type alias GlobalTarCodec msg =
+    GC.GlobalTarCodec msg
+
+
+type alias ConcreteGlobalComponent data userdata tar msg scenemsg =
+    ConcreteLayer data (MAbstractScene userdata scenemsg) userdata tar msg scenemsg
+
+
+genGlobalComponent : ConcreteGlobalComponent data userdata tar msg scenemsg -> GlobalTarCodec tar -> GlobalMsgCodec msg -> GCMsg -> GlobalComponentStorage userdata scenemsg
+genGlobalComponent =
+    GC.genGlobalComponent
+
+
+{-| Messsenger MsgBase
 -}
-type alias SceneContext userdata scenemsg =
-    { scene : MAbstractScene userdata scenemsg
-    , sceneStartTime : Int
-    , sceneStartFrame : Int
-    , name : String
-    }
+type alias MMsgBase othermsg scenemsg userdata =
+    MsgBase othermsg (SceneOutputMsg scenemsg userdata)
+
+
+{-| Messenger Msg
+-}
+type alias MMsg othertar msg scenemsg userdata =
+    Msg othertar msg (SceneOutputMsg scenemsg userdata)
+
+
+{-| Specialized Concrete Model for Messenger
+-}
+type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
+    ConcreteGeneralModel data (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
+
+
+{-| Specialized Abstract Model for Messenger
+-}
+type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
+    AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
