@@ -26,6 +26,7 @@ Gerneral Model and Basic types for Scenes
 -}
 
 import Canvas exposing (Renderable)
+import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
@@ -173,3 +174,157 @@ type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
 -}
 type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
     AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
+
+
+
+--- Global Component
+
+
+type alias GCCommonData userdata scenemsg =
+    MAbstractScene userdata scenemsg
+
+
+{-| Global component message type.
+-}
+type alias GCMsg =
+    Json.Decode.Value
+
+
+{-| Global component target type.
+-}
+type alias GCTarget =
+    String
+
+
+{-| init type sugar
+-}
+type alias GlobalComponentInit userdata data =
+    Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> data
+
+
+{-| update type sugar
+-}
+type alias GlobalComponentUpdate cdata userdata scenemsg data =
+    Env (GCCommonData userdata scenemsg) userdata -> UserEvent -> data -> ( data, List (MMsg GCTarget GCMsg scenemsg userdata), ( Env (GCCommonData userdata scenemsg) userdata, Bool ) )
+
+
+{-| updaterec type sugar
+-}
+type alias GlobalComponentUpdateRec userdata tar msg scenemsg data =
+    Env (GCCommonData userdata scenemsg) userdata -> msg -> data -> ( data, List (MMsg tar msg scenemsg userdata), Env (GCCommonData userdata scenemsg) userdata )
+
+
+{-| view type sugar
+-}
+type alias GlobalComponentView cdata userdata data =
+    Env cdata userdata -> data -> Renderable
+
+
+{-| GlobalComponent Storage
+-}
+type alias GlobalComponentStorage userdata scenemsg =
+    Env () userdata -> AbstractGlobalComponent cdata userdata tar msg scenemsg
+
+
+{-| Concrete GlobalComponent Model
+
+Users deal with the fields in concrete model.
+
+-}
+type alias ConcreteGlobalComponent data cdata userdata tar msg scenemsg =
+    { init : GlobalComponentInit cdata userdata msg data
+    , update : GlobalComponentUpdate cdata userdata tar msg scenemsg data
+    , updaterec : GlobalComponentUpdateRec cdata userdata tar msg scenemsg data
+    , view : GlobalComponentView cdata userdata data
+    , matcher : Matcher data tar
+    }
+
+
+{-| Abstract GlobalComponent Model.
+
+Cannot be directedly modified.
+Used for storage.
+
+-}
+type alias AbstractGlobalComponent cdata userdata tar msg scenemsg =
+    MAbstractGeneralModel cdata userdata tar msg () scenemsg
+
+
+{-| Global component storage type.
+-}
+type alias GlobalComponentStorage cdata userdata scenemsg =
+    Env cdata userdata -> AbstractGlobalComponent cdata userdata GCTarget GCMsg scenemsg
+
+
+{-| Translate a `ConcreteGlobalComponent` to a specific `ConcreteGlobalComponent`.
+-}
+translateGlobalComponent : ConcreteGlobalComponent data cdata userdata tar msg scenemsg -> GlobalTarCodec tar -> GlobalMsgCodec msg -> ConcreteGlobalComponent data cdata userdata GCTarget GCMsg scenemsg
+translateGlobalComponent pcomp tarcodec msgcodec =
+    let
+        msgMDecoder =
+            genMsgDecoder msgcodec tarcodec
+    in
+    { init = \env gmsg -> pcomp.init env (msgcodec.encode gmsg)
+    , update =
+        \env evt data ->
+            let
+                ( resData, resMsg, ( resEnv, resBlock ) ) =
+                    pcomp.update env evt data
+            in
+            ( resData, List.map msgMDecoder resMsg, ( resEnv, resBlock ) )
+    , updaterec =
+        \env gmsg data ->
+            let
+                ( resData, resMsg, resEnv ) =
+                    pcomp.updaterec env (msgcodec.encode gmsg) data
+            in
+            ( resData, List.map msgMDecoder resMsg, resEnv )
+    , view = \env data -> pcomp.view env data
+    , matcher = \data gtar -> pcomp.matcher data <| tarcodec.encode gtar
+    }
+
+
+{-| Msg decoder
+-}
+type alias MsgDecoder specifictar specificmsg som =
+    Msg specifictar specificmsg som -> Msg GCTarget GCMsg som
+
+
+{-| Global Component Message Codec
+-}
+type alias GlobalMsgCodec specificmsg =
+    { encode : GCMsg -> specificmsg
+    , decode : specificmsg -> GCMsg
+    }
+
+
+{-| Global Component Target Codec
+-}
+type alias GlobalTarCodec specifictar =
+    { encode : GCTarget -> specifictar
+    , decode : specifictar -> GCTarget
+    }
+
+
+{-| Generate a message decoder.
+-}
+genMsgDecoder : GlobalMsgCodec specificmsg -> GlobalTarCodec specifictar -> MsgDecoder specifictar specificmsg som
+genMsgDecoder msgcodec tarcodec sMsgM =
+    case sMsgM of
+        Parent x ->
+            case x of
+                OtherMsg othermsg ->
+                    Parent <| OtherMsg <| msgcodec.decode othermsg
+
+                SOMMsg som ->
+                    Parent <| SOMMsg som
+
+        Other ( othertar, smsg ) ->
+            Other ( tarcodec.decode othertar, msgcodec.decode smsg )
+
+
+{-| Generate abstract global component from concrete global component.
+-}
+genGlobalComponent : ConcreteGlobalComponent data cdata userdata tar msg scenemsg -> GlobalTarCodec tar -> GlobalMsgCodec msg -> GCMsg -> GlobalComponentStorage cdata userdata scenemsg
+genGlobalComponent conpcomp tcodec mcodec gcmsg =
+    genLayer (translateGlobalComponent conpcomp tcodec mcodec) gcmsg
