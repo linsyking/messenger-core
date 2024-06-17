@@ -1,21 +1,43 @@
-module Messenger.UI.SOMHandler exposing (handleSOM)
+module Messenger.UI.SOMHandler exposing (handleSOMs, handleSOM)
 
 {-|
 
 
 # Scene Output Message Handler
 
-@docs handleSOM
+@docs handleSOMs, handleSOM
 
 -}
 
 import Audio exposing (AudioCmd)
 import Messenger.Audio.Internal exposing (playAudio, stopAudio)
-import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
+import Messenger.Base exposing (Env, WorldEvent(..), globalDataToUserGlobalData)
+import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime)
+import Messenger.Recursion exposing (removeObjects, updateObjectsWithTarget)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..))
 import Messenger.UserConfig exposing (UserConfig)
+
+
+{-| Handle a list of Scene Output Message.
+-}
+handleSOMs : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> List (SceneOutputMsg scenemsg userdata) -> Model userdata scenemsg -> ( Model userdata scenemsg, List (Cmd WorldEvent), List (AudioCmd WorldEvent) )
+handleSOMs config scenes som model =
+    let
+        somhandle =
+            handleSOM config scenes
+    in
+    List.foldl
+        (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
+            let
+                ( newModel, newCmds, newAudioCmds ) =
+                    somhandle singleSOM lastModel
+            in
+            ( newModel, newCmds ++ lastCmds, newAudioCmds ++ lastAudioCmds )
+        )
+        ( model, [], [] )
+        som
 
 
 {-| Handle a Scene Output Message.
@@ -76,6 +98,24 @@ handleSOM config scenes som model =
             in
             ( model, [ config.ports.sendInfo encodedGD ], [] )
 
-        _ ->
-            -- TODO
-            ( model, [], [] )
+        SOMLoadGC gc ->
+            ( { model | globalComponents = model.globalComponents ++ [ gc (Env model.currentGlobalData model.currentScene) ] }, [], [] )
+
+        SOMUnloadGC gctar ->
+            ( { model | globalComponents = removeObjects gctar model.globalComponents }, [], [] )
+
+        SOMCallGC calls ->
+            let
+                ( gc1, som1, env1 ) =
+                    updateObjectsWithTarget (Env model.currentGlobalData model.currentScene) calls model.globalComponents
+
+                model1 : Model userdata scenemsg
+                model1 =
+                    { globalComponents = gc1, currentGlobalData = env1.globalData, currentScene = env1.commonData }
+            in
+            if List.isEmpty som1 then
+                -- End
+                ( model1, [], [] )
+
+            else
+                handleSOMs config scenes (filterSOM som1) model1

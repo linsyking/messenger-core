@@ -1,4 +1,7 @@
-module Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
+module Messenger.Recursion exposing
+    ( updateObjects, updateObjectsWithTarget
+    , removeObjects
+    )
 
 {-|
 
@@ -8,6 +11,7 @@ module Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
 List implementation for the recursion algorithm
 
 @docs updateObjects, updateObjectsWithTarget
+@docs removeObjects
 
 -}
 
@@ -34,6 +38,13 @@ updateObjects env evt objs =
 updateObjectsWithTarget : env -> List ( tar, msg ) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> ( List (AbstractGeneralModel env event tar msg ren bdata sommsg), List (MsgBase msg sommsg), env )
 updateObjectsWithTarget env msgs objs =
     updateRemain env ( msgs, [] ) objs
+
+
+{-| Remove all objects by target.
+-}
+removeObjects : tar -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg)
+removeObjects t xs =
+    List.filter (\x -> (unroll x).matcher t) xs
 
 
 

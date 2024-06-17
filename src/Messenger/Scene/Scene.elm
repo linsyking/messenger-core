@@ -153,7 +153,7 @@ type SceneOutputMsg scenemsg userdata
     | SOMSaveGlobalData
     | SOMLoadGC (GlobalComponentStorage userdata scenemsg)
     | SOMUnloadGC GCTarget
-    | SOMCallGC GCTarget GCMsg
+    | SOMCallGC (List ( GCTarget, GCMsg ))
 
 
 {-| The type used to store the scene data.

@@ -23,7 +23,7 @@ import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.Input exposing (Input)
-import Messenger.UI.SOMHandler exposing (handleSOM)
+import Messenger.UI.SOMHandler exposing (handleSOMs)
 import Messenger.UserConfig exposing (resourceNum)
 import Set
 import Time
@@ -46,7 +46,7 @@ gameUpdate input evnt model =
                 input.config
 
             somHandler =
-                handleSOM config scenes
+                handleSOMs config scenes
 
             ( gc1, gcsompre, ( env1c, block ) ) =
                 updateObjects (Env model.currentGlobalData model.currentScene) evnt model.globalComponents
@@ -85,16 +85,7 @@ gameUpdate input evnt model =
                         model2
 
             ( model4, cmds, audiocmds ) =
-                List.foldl
-                    (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
-                        let
-                            ( newModel, newCmds, newAudioCmds ) =
-                                somHandler singleSOM lastModel
-                        in
-                        ( newModel, newCmds ++ lastCmds, newAudioCmds ++ lastAudioCmds )
-                    )
-                    ( model3, [], [] )
-                    som
+                somHandler som model3
         in
         ( model4
         , Cmd.batch cmds
