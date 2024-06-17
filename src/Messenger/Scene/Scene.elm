@@ -41,6 +41,7 @@ Gerneral Model and Basic types for Scenes
 -}
 
 import Canvas exposing (Renderable)
+import Dict
 import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
@@ -165,7 +166,7 @@ type alias SceneStorage userdata scenemsg =
 {-| All scenes type
 -}
 type alias AllScenes userdata scenemsg =
-    List ( String, SceneStorage userdata scenemsg )
+    Dict.Dict String (SceneStorage userdata scenemsg)
 
 
 {-| Messsenger MsgBase

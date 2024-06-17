@@ -11,6 +11,7 @@ Scene loader is used to find and load scenes.
 
 -}
 
+import Dict
 import Messenger.Base exposing (Env)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Scene exposing (AllScenes, SceneStorage)
@@ -20,25 +21,14 @@ import Messenger.Scene.Scene exposing (AllScenes, SceneStorage)
 -}
 existScene : String -> AllScenes userdata scenemsg -> Bool
 existScene i scenes =
-    let
-        tests =
-            List.filter (\( x, _ ) -> x == i) scenes
-    in
-    case List.head tests of
-        Just _ ->
-            True
-
-        Nothing ->
-            False
+    Dict.member i scenes
 
 
 {-| Get a scene from storage by name.
 -}
 getScene : String -> AllScenes userdata scenemsg -> Maybe (SceneStorage userdata scenemsg)
 getScene i scenes =
-    List.head <|
-        List.map (\( _, s ) -> s) <|
-            List.filter (\( x, _ ) -> x == i) scenes
+    Dict.get i scenes
 
 
 {-| load a Scene with init msg
