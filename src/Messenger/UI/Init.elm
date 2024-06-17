@@ -110,5 +110,8 @@ init input flags =
                     Audio.loadAudio (SoundLoaded name) url
                 )
                 (Dict.toList resources.allAudio)
+
+        gcs =
+            List.map (\gc -> gc (Env newgd ms.currentScene)) input.globalComponents
     in
-    ( { ms | currentGlobalData = newgd }, Cmd.none, Audio.cmdBatch audioLoad )
+    ( { ms | currentGlobalData = newgd, globalComponents = gcs }, Cmd.none, Audio.cmdBatch audioLoad )
