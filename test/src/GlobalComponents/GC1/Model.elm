@@ -32,7 +32,7 @@ update env evnt data =
         Tick delta ->
             let
                 lastTimes =
-                    (if List.length data.lastTenTime == 10 then
+                    (if List.length data.lastTenTime == 20 then
                         Maybe.withDefault [] <| List.tail data.lastTenTime
 
                      else
@@ -53,13 +53,13 @@ update env evnt data =
 
 
 updaterec : GlobalComponentUpdateRec UserData SceneMsg Data
-updaterec env msg data =
+updaterec env _ data =
     ( data, [], env )
 
 
 view : GlobalComponentView UserData SceneMsg Data
 view env data =
-    renderTextWithColor env.globalData 10 ("FPS: " ++ String.fromFloat data.fps) "Arial" Color.gray ( 0, 0 )
+    renderTextWithColor env.globalData 20 ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
 gcCon : ConcreteGlobalComponent Data UserData SceneMsg
