@@ -14,9 +14,11 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedResourceNum)
+import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedResourceNum, removeCommonData)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
+import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
+import Messenger.Recursion exposing (updateObjects)
 import Messenger.Resources.Base exposing (saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
@@ -46,22 +48,43 @@ gameUpdate input evnt model =
             somHandler =
                 handleSOM config scenes
 
-            ( sdt, som, newenv ) =
-                (unroll model.currentScene).update (Env model.currentGlobalData ()) evnt
+            ( gc1, gcsompre, ( env1c, block ) ) =
+                updateObjects (Env model.currentGlobalData model.currentScene) evnt model.globalComponents
 
-            updatedModel1 =
-                { model | currentGlobalData = newenv.globalData, currentScene = sdt }
+            gcsom =
+                filterSOM gcsompre
 
-            timeUpdatedModel =
+            env1 =
+                removeCommonData env1c
+
+            model1 : Model userdata scenemsg
+            model1 =
+                { currentScene = env1c.commonData, currentGlobalData = env1c.globalData, globalComponents = gc1 }
+
+            ( scene1, scenesom, env2 ) =
+                if block then
+                    ( model1.currentScene, [], env1 )
+
+                else
+                    (unroll model1.currentScene).update env1 evnt
+
+            model2 =
+                { model1 | currentGlobalData = env2.globalData, currentScene = scene1 }
+
+            -- GC SOM should be handled before Scene SOM
+            som =
+                gcsom ++ scenesom
+
+            model3 =
                 case evnt of
                     Tick delta ->
                         -- Tick event needs to update time
-                        updateSceneTime updatedModel1 delta
+                        updateSceneTime model2 delta
 
                     _ ->
-                        updatedModel1
+                        model2
 
-            ( updatedModel2, cmds, audiocmds ) =
+            ( model4, cmds, audiocmds ) =
                 List.foldl
                     (\singleSOM ( lastModel, lastCmds, lastAudioCmds ) ->
                         let
@@ -70,10 +93,10 @@ gameUpdate input evnt model =
                         in
                         ( newModel, newCmds ++ lastCmds, newAudioCmds ++ lastAudioCmds )
                     )
-                    ( timeUpdatedModel, [], [] )
+                    ( model3, [], [] )
                     som
         in
-        ( updatedModel2
+        ( model4
         , Cmd.batch cmds
         , Audio.cmdBatch audiocmds
         )
