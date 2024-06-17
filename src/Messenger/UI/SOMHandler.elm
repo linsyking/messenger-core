@@ -75,3 +75,7 @@ handleSOM config scenes som model =
                     config.globalDataCodec.encode (globalDataToUserGlobalData model.currentGlobalData)
             in
             ( model, [ config.ports.sendInfo encodedGD ], [] )
+
+        _ ->
+            -- TODO
+            ( model, [], [] )

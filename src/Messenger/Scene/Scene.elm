@@ -44,7 +44,7 @@ import Canvas exposing (Renderable)
 import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel as GM exposing (AbstractGeneralModel, ConcreteGeneralModel, Matcher, Msg, MsgBase)
+import Messenger.GeneralModel as GM exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
 
 
 {-| Concrete Scene Model
@@ -134,15 +134,13 @@ abstract conmodel initMsg initEnv =
 `scenemsg` is a custom type which represents the message type users wants
 to send to a scene when switching scenes.
 
-  - `SOMChangeScene` is used to change to a target scene by giving a **initMsg name trasition**
+  - `SOMChangeScene` is used to change to a target scene by giving a **initMsg name**
   - `SOMPlayAudio channel name option` is used to play an audio resource by giving **channel name option**
   - `SOMStopAudio` is used to stop a playing audio by giving its **name**
   - `SOMSetVolume` is used to set the volume with a value **from 0 to 1**
   - `SOMAlert` makes an alert
   - `SOMPromp name title` makes a prompt with **name title**
   - `SOMSaveGlobalData` saves the global by encode funtion given in UserConfig
-  - `SOMSetContext` restores the context of the scene
-  - `SOMGetContext` gets the context of the scene
 
 -}
 type SceneOutputMsg scenemsg userdata
@@ -153,6 +151,9 @@ type SceneOutputMsg scenemsg userdata
     | SOMStopAudio Int
     | SOMSetVolume Float
     | SOMSaveGlobalData
+    | SOMLoadGC (GlobalComponentStorage userdata scenemsg)
+    | SOMUnloadGC GCTarget
+    | SOMCallGC GCTarget GCMsg
 
 
 {-| The type used to store the scene data.
@@ -248,7 +249,7 @@ type alias ConcreteGlobalComponent data userdata scenemsg =
     , update : GlobalComponentUpdate userdata scenemsg data
     , updaterec : GlobalComponentUpdateRec userdata scenemsg data
     , view : GlobalComponentView userdata scenemsg data
-    , matcher : Matcher data GCTarget
+    , matcher : GCTarget
     }
 
 
@@ -264,15 +265,24 @@ type alias AbstractGlobalComponent userdata scenemsg =
 
 {-| Generate abstract global component from concrete global component.
 -}
-genGlobalComponent : ConcreteGlobalComponent data userdata scenemsg -> GCMsg -> GlobalComponentStorage userdata scenemsg
-genGlobalComponent conpcomp gcmsg =
-    GM.abstract (addEmptyBData conpcomp) <| gcmsg
+genGlobalComponent : ConcreteGlobalComponent data userdata scenemsg -> GCMsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
+genGlobalComponent conpcomp gcmsg gctar =
+    GM.abstract (addEmptyBData conpcomp gctar) <| gcmsg
 
 
 {-| Turn global component into a general model.
 -}
-addEmptyBData : ConcreteGlobalComponent data userdata scenemsg -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
-addEmptyBData mconnoB =
+addEmptyBData : ConcreteGlobalComponent data userdata scenemsg -> Maybe GCTarget -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
+addEmptyBData mconnoB gctar =
+    let
+        id =
+            case gctar of
+                Just t ->
+                    t
+
+                Nothing ->
+                    mconnoB.matcher
+    in
     { init = \env msg -> ( mconnoB.init env msg, () )
     , update =
         \env evt data () ->
@@ -289,5 +299,5 @@ addEmptyBData mconnoB =
             in
             ( ( resData, () ), resMsg, resEnv )
     , view = \env data () -> mconnoB.view env data
-    , matcher = \data () tar -> mconnoB.matcher data tar
+    , matcher = \_ _ tar -> tar == id
     }
