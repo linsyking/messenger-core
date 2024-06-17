@@ -238,7 +238,7 @@ type alias GlobalComponentView userdata scenemsg data =
 {-| GlobalComponent Storage
 -}
 type alias GlobalComponentStorage userdata scenemsg =
-    Env (GCCommonData userdata scenemsg) userdata -> AbstractGlobalComponent userdata GCTarget GCMsg scenemsg
+    Env (GCCommonData userdata scenemsg) userdata -> AbstractGlobalComponent userdata scenemsg
 
 
 {-| Concrete GlobalComponent Model
@@ -258,8 +258,8 @@ Cannot be directedly modified.
 Used for storage.
 
 -}
-type alias AbstractGlobalComponent userdata tar msg scenemsg =
-    MAbstractGeneralModel (GCCommonData userdata scenemsg) userdata tar msg () scenemsg
+type alias AbstractGlobalComponent userdata scenemsg =
+    MAbstractGeneralModel (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
 
 
 {-| Generate abstract global component from concrete global component.

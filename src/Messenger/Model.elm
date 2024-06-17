@@ -21,7 +21,7 @@ We only use it in the main update.
 
 import Browser.Events exposing (Visibility(..))
 import Messenger.Base exposing (GlobalData)
-import Messenger.Scene.Scene exposing (MAbstractScene)
+import Messenger.Scene.Scene exposing (AbstractGlobalComponent, MAbstractScene)
 
 
 {-| The model for the game
@@ -29,7 +29,7 @@ import Messenger.Scene.Scene exposing (MAbstractScene)
 type alias Model userdata scenemsg =
     { currentScene : MAbstractScene userdata scenemsg
     , currentGlobalData : GlobalData userdata
-    , currentGlobalComponent : List ()
+    , globalComponents : List (AbstractGlobalComponent userdata scenemsg)
     }
 
 
