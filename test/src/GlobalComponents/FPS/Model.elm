@@ -2,7 +2,7 @@ module GlobalComponents.FPS.Model exposing (Msg, encode, genGC)
 
 {-| Global component configuration module
 
-A Global Component to show FPS
+A Global Component to show FPS at the corner
 
 @docs Msg, encode, genGC
 
@@ -35,6 +35,8 @@ decode gcmsg =
     Msg num
 
 
+{-| Encode custom message into GCMsg.
+-}
 encode : Msg -> GCMsg
 encode msg =
     E.object
@@ -107,6 +109,8 @@ gcCon =
     }
 
 
+{-| Generate a global component.
+-}
 genGC : Maybe GCMsg -> Maybe GCTarget -> GlobalComponentStorage UserData SceneMsg
-genGC gcmsg =
-    genGlobalComponent gcCon <| Maybe.withDefault E.null gcmsg
+genGC gcMsg =
+    genGlobalComponent gcCon <| Maybe.withDefault E.null gcMsg
