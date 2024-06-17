@@ -1,5 +1,14 @@
 # Changelog
 
+## 13.0.0
+
+### Features
+
+- Using `InternalData` to render instead of `GlobalData`
+- Remove `SOMMsg` related to transition and scene context management
+- Add basic support for global component
+- `AllScenes` changed to `Dict` instead of `List`
+
 ## 12.1.0
 
 ### Features
