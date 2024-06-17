@@ -102,6 +102,6 @@ gcCon =
     }
 
 
-genGC : Maybe GCTarget -> GlobalComponentStorage UserData SceneMsg
-genGC =
-    genGlobalComponent gcCon E.null
+genGC : Maybe GCMsg -> Maybe GCTarget -> GlobalComponentStorage UserData SceneMsg
+genGC gcmsg =
+    genGlobalComponent gcCon <| Maybe.withDefault E.null gcmsg
