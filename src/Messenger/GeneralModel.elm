@@ -1,5 +1,5 @@
 module Messenger.GeneralModel exposing
-    ( Msg(..), MsgBase(..)
+    ( Msg(..), MsgBase(..), filterSOM
     , ConcreteGeneralModel, AbstractGeneralModel(..)
     , unroll, abstract
     , viewModelList
@@ -25,7 +25,7 @@ A Gernel model has the ability to:
   - render itself
   - identify itself by a matcher
 
-@docs Msg, MsgBase
+@docs Msg, MsgBase, filterSOM
 @docs ConcreteGeneralModel, AbstractGeneralModel
 @docs unroll, abstract
 @docs viewModelList
@@ -47,6 +47,22 @@ Using **SOMMsg** when sending a `SceneOutputMsg`, which will be directedly handl
 type MsgBase othermsg sommsg
     = SOMMsg sommsg
     | OtherMsg othermsg
+
+
+{-| Filter SOMMsg from list of MsgBase.
+-}
+filterSOM : List (MsgBase othermsg sommsg) -> List sommsg
+filterSOM xs =
+    List.filterMap
+        (\x ->
+            case x of
+                SOMMsg som ->
+                    Just som
+
+                _ ->
+                    Nothing
+        )
+        xs
 
 
 {-| The Basic Msg Model.

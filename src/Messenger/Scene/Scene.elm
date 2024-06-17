@@ -273,7 +273,7 @@ genGlobalComponent conpcomp gcmsg gctar =
 {-| Turn global component into a general model.
 -}
 addEmptyBData : ConcreteGlobalComponent data userdata scenemsg -> Maybe GCTarget -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
-addEmptyBData mconnoB gctar =
+addEmptyBData concomp gctar =
     let
         id =
             case gctar of
@@ -281,23 +281,23 @@ addEmptyBData mconnoB gctar =
                     t
 
                 Nothing ->
-                    mconnoB.matcher
+                    concomp.matcher
     in
-    { init = \env msg -> ( mconnoB.init env msg, () )
+    { init = \env msg -> ( concomp.init env msg, () )
     , update =
         \env evt data () ->
             let
                 ( resData, resMsg, resEnv ) =
-                    mconnoB.update env evt data
+                    concomp.update env evt data
             in
             ( ( resData, () ), resMsg, resEnv )
     , updaterec =
         \env msg data () ->
             let
                 ( resData, resMsg, resEnv ) =
-                    mconnoB.updaterec env msg data
+                    concomp.updaterec env msg data
             in
             ( ( resData, () ), resMsg, resEnv )
-    , view = \env data () -> mconnoB.view env data
+    , view = \env data () -> concomp.view env data
     , matcher = \_ _ tar -> tar == id
     }

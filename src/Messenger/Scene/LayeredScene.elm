@@ -27,7 +27,7 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 import Canvas exposing (Renderable, group)
 import Canvas.Settings exposing (Setting)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
-import Messenger.GeneralModel exposing (MsgBase(..), viewModelList)
+import Messenger.GeneralModel exposing (MsgBase(..), filterSOM, viewModelList)
 import Messenger.Layer.Layer exposing (AbstractLayer)
 import Messenger.Recursion exposing (updateObjects)
 import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract)
@@ -54,16 +54,7 @@ updateLayeredScene settingsFunc env evt lsd =
             updateObjects (addCommonData lsd.commonData env) evt lsd.layers
 
         som =
-            List.filterMap
-                (\msg ->
-                    case msg of
-                        SOMMsg m ->
-                            Just m
-
-                        _ ->
-                            Nothing
-                )
-                newMsgs
+            filterSOM newMsgs
     in
     ( { renderSettings = settingsFunc env evt lsd, commonData = newEnv.commonData, layers = newLayers }, som, removeCommonData newEnv )
 
