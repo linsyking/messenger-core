@@ -1,5 +1,17 @@
 module GlobalComponents exposing (allGlobalComopnents)
 
+{-|
+
+
+# Global Component Configuration
+
+Record all the global components to load at the beginning here
+
+@docs allGlobalComopnents
+
+-}
+
+import GlobalComponents.GC1.Model as FPS
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Scene.Scene exposing (GlobalComponentStorage)
@@ -9,4 +21,5 @@ import Messenger.Scene.Scene exposing (GlobalComponentStorage)
 -}
 allGlobalComopnents : List (GlobalComponentStorage UserData SceneMsg)
 allGlobalComopnents =
-    []
+    [ FPS.genGC Nothing
+    ]
