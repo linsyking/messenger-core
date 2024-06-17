@@ -1,28 +1,58 @@
-module GlobalComponents.GC1.Model exposing (genGC)
+module GlobalComponents.GC1.Model exposing (Msg, encode, genGC)
 
 {-| A Global Component to show FPS
 -}
 
-import Canvas
 import Color
-import Json.Encode
+import Json.Decode as D
+import Json.Encode as E
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.Text exposing (renderTextWithColor)
-import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
+import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCMsg, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
+
+
+type alias Msg =
+    { fontSize : Float
+    }
+
+
+decode : GCMsg -> Msg
+decode gcmsg =
+    let
+        decoder =
+            D.field "size" D.float
+
+        num =
+            Result.withDefault 20 <| D.decodeValue decoder gcmsg
+    in
+    Msg num
+
+
+encode : Msg -> GCMsg
+encode msg =
+    E.object
+        [ ( "size", E.float msg.fontSize )
+        ]
 
 
 type alias Data =
     { lastTenTime : List Int
     , fps : Float
+    , size : Float
     }
 
 
 init : GlobalComponentInit UserData SceneMsg Data
-init _ _ =
+init _ gcmsg =
+    let
+        msg =
+            decode gcmsg
+    in
     { lastTenTime = []
     , fps = 0
+    , size = msg.fontSize
     }
 
 
@@ -32,7 +62,7 @@ update env evnt data =
         Tick delta ->
             let
                 lastTimes =
-                    (if List.length data.lastTenTime == 20 then
+                    (if List.length data.lastTenTime == 10 then
                         Maybe.withDefault [] <| List.tail data.lastTenTime
 
                      else
@@ -59,7 +89,7 @@ updaterec env _ data =
 
 view : GlobalComponentView UserData SceneMsg Data
 view env data =
-    renderTextWithColor env.globalData 20 ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
+    renderTextWithColor env.globalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
 gcCon : ConcreteGlobalComponent Data UserData SceneMsg
@@ -74,4 +104,4 @@ gcCon =
 
 genGC : Maybe GCTarget -> GlobalComponentStorage UserData SceneMsg
 genGC =
-    genGlobalComponent gcCon Json.Encode.null
+    genGlobalComponent gcCon E.null
