@@ -1,4 +1,4 @@
-module Messenger.Scene.Transitions.Fade exposing
+module GlobalComponents.Transition.Transitions.Fade exposing
     ( fadeIn, fadeOut
     , fadeOutBlack, fadeInBlack
     , fadeOutWithRenderable, fadeInWithRenderable
@@ -16,51 +16,51 @@ import Canvas exposing (Renderable, group, shapes)
 import Canvas.Settings exposing (fill)
 import Canvas.Settings.Advanced exposing (alpha)
 import Color exposing (Color)
+import GlobalComponents.Transition.Transitions.Base exposing (SingleTrans)
 import Messenger.Render.Shape exposing (rect)
-import Messenger.Scene.Transitions.Base exposing (SingleTrans)
 
 
 {-| Fade Out with Color
 -}
-fadeOut : Color -> SingleTrans userdata
+fadeOut : Color -> SingleTrans
 fadeOut color gd rd v =
     group []
         [ rd
         , shapes [ fill color, alpha v ]
-            [ rect gd ( 0, 0 ) ( gd.internalData.virtualWidth, gd.internalData.virtualHeight )
+            [ rect gd ( 0, 0 ) ( gd.virtualWidth, gd.virtualHeight )
             ]
         ]
 
 
 {-| Fade In with Color
 -}
-fadeIn : Color -> SingleTrans userdata
+fadeIn : Color -> SingleTrans
 fadeIn color gd rd v =
     group []
         [ rd
         , shapes [ fill color, alpha (1 - v) ]
-            [ rect gd ( 0, 0 ) ( gd.internalData.virtualWidth, gd.internalData.virtualHeight )
+            [ rect gd ( 0, 0 ) ( gd.virtualWidth, gd.virtualHeight )
             ]
         ]
 
 
 {-| Fade Out with Black
 -}
-fadeOutBlack : SingleTrans userdata
+fadeOutBlack : SingleTrans
 fadeOutBlack =
     fadeOut Color.black
 
 
 {-| Fade In with Black
 -}
-fadeInBlack : SingleTrans userdata
+fadeInBlack : SingleTrans
 fadeInBlack =
     fadeIn Color.black
 
 
 {-| Fade Out with Renderable
 -}
-fadeOutWithRenderable : Renderable -> SingleTrans userdata
+fadeOutWithRenderable : Renderable -> SingleTrans
 fadeOutWithRenderable renderable _ rd v =
     group []
         [ rd
@@ -72,7 +72,7 @@ fadeOutWithRenderable renderable _ rd v =
 
 {-| Fade In with Renderable
 -}
-fadeInWithRenderable : Renderable -> SingleTrans userdata
+fadeInWithRenderable : Renderable -> SingleTrans
 fadeInWithRenderable renderable _ rd v =
     group []
         [ rd

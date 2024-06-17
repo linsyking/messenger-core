@@ -11,7 +11,7 @@ Record all the global components to load at the beginning here
 
 -}
 
-import GlobalComponents.GC1.Model as FPS
+import GlobalComponents.FPS.Model as FPS
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Scene.Scene exposing (GlobalComponentStorage)

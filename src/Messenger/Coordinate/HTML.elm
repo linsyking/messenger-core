@@ -13,7 +13,7 @@ This is only useful when you use extraHTML.
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (style)
-import Messenger.Base exposing (GlobalData)
+import Messenger.Base exposing (InternalData)
 import Messenger.Coordinate.Coordinates exposing (fixedPosToReal, lengthToReal)
 
 
@@ -22,7 +22,7 @@ import Messenger.Coordinate.Coordinates exposing (fixedPosToReal, lengthToReal)
 Useful when you try to add extra HTML
 
 -}
-genAttribute : GlobalData a -> ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg)
+genAttribute : InternalData -> ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg)
 genAttribute gd ( x, y ) ( w, h ) =
     let
         ( rx, ry ) =

@@ -29,7 +29,7 @@ This module is very important because it can calculate the correct position of t
 
 -}
 
-import Messenger.Base exposing (GlobalData)
+import Messenger.Base exposing (InternalData)
 
 
 plScale : ( Float, Float ) -> Float
@@ -51,9 +51,9 @@ floatpairadd ( x, y ) ( z, w ) =
 Same as posToReal, but add the initial position of canvas.
 
 -}
-fixedPosToReal : GlobalData a -> ( Float, Float ) -> ( Float, Float )
+fixedPosToReal : InternalData -> ( Float, Float ) -> ( Float, Float )
 fixedPosToReal gd ( x, y ) =
-    floatpairadd (posToReal gd ( x, y )) ( gd.internalData.startLeft, gd.internalData.startTop )
+    floatpairadd (posToReal gd ( x, y )) ( gd.startLeft, gd.startTop )
 
 
 {-| posToReal
@@ -61,30 +61,30 @@ fixedPosToReal gd ( x, y ) =
 Transform from the virtual coordinate system to the real pixel system.
 
 -}
-posToReal : GlobalData a -> ( Float, Float ) -> ( Float, Float )
+posToReal : InternalData -> ( Float, Float ) -> ( Float, Float )
 posToReal gd ( x, y ) =
     let
         realWidth =
-            gd.internalData.realWidth
+            gd.realWidth
 
         realHeight =
-            gd.internalData.realHeight
+            gd.realHeight
     in
-    ( realWidth * (x / gd.internalData.virtualWidth), realHeight * (y / gd.internalData.virtualHeight) )
+    ( realWidth * (x / gd.virtualWidth), realHeight * (y / gd.virtualHeight) )
 
 
 {-| Inverse of posToReal.
 -}
-posToVirtual : GlobalData a -> ( Float, Float ) -> ( Float, Float )
+posToVirtual : InternalData -> ( Float, Float ) -> ( Float, Float )
 posToVirtual gd ( x, y ) =
     let
         realWidth =
-            gd.internalData.realWidth
+            gd.realWidth
 
         realHeight =
-            gd.internalData.realHeight
+            gd.realHeight
     in
-    ( gd.internalData.virtualWidth * (x / realWidth), gd.internalData.virtualHeight * (y / realHeight) )
+    ( gd.virtualWidth * (x / realWidth), gd.virtualHeight * (y / realHeight) )
 
 
 {-| widthToReal
@@ -92,16 +92,16 @@ posToVirtual gd ( x, y ) =
 Use this if you want to draw something based on the length.
 
 -}
-lengthToReal : GlobalData a -> Float -> Float
+lengthToReal : InternalData -> Float -> Float
 lengthToReal gd x =
-    gd.internalData.realWidth * (x / gd.internalData.virtualWidth)
+    gd.realWidth * (x / gd.virtualWidth)
 
 
 {-| The inverse function of widthToReal.
 -}
-fromRealLength : GlobalData a -> Float -> Float
+fromRealLength : InternalData -> Float -> Float
 fromRealLength gd x =
-    gd.internalData.virtualWidth * (x / gd.internalData.realWidth)
+    gd.virtualWidth * (x / gd.realWidth)
 
 
 {-| maxHandW
@@ -143,6 +143,6 @@ judgeMouseRect ( mx, my ) ( x, y ) ( w, h ) =
 
 {-| fromMouseToVirtual
 -}
-fromMouseToVirtual : GlobalData a -> ( Float, Float ) -> ( Float, Float )
+fromMouseToVirtual : InternalData -> ( Float, Float ) -> ( Float, Float )
 fromMouseToVirtual gd ( px, py ) =
-    posToVirtual gd ( px - gd.internalData.startLeft, py - gd.internalData.startTop )
+    posToVirtual gd ( px - gd.startLeft, py - gd.startTop )

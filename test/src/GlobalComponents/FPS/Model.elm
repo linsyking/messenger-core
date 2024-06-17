@@ -1,6 +1,11 @@
-module GlobalComponents.GC1.Model exposing (Msg, encode, genGC)
+module GlobalComponents.FPS.Model exposing (Msg, encode, genGC)
 
-{-| A Global Component to show FPS
+{-| Global component configuration module
+
+A Global Component to show FPS
+
+@docs Msg, encode, genGC
+
 -}
 
 import Color
@@ -89,7 +94,7 @@ updaterec env _ data =
 
 view : GlobalComponentView UserData SceneMsg Data
 view env data =
-    renderTextWithColor env.globalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
+    renderTextWithColor env.globalData.internalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
 gcCon : ConcreteGlobalComponent Data UserData SceneMsg

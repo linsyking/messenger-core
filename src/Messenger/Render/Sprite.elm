@@ -17,18 +17,18 @@ import Canvas exposing (Renderable, empty, texture)
 import Canvas.Settings exposing (Setting)
 import Canvas.Settings.Advanced exposing (scale, transform, translate)
 import Canvas.Texture exposing (Texture, dimensions, sprite)
-import Messenger.Base exposing (GlobalData)
+import Messenger.Base exposing (InternalData)
 import Messenger.Coordinate.Coordinates exposing (lengthToReal, posToReal)
 import Messenger.Resources.Base exposing (igetSprite)
 
 
 {-| Render a single sprite.
 -}
-renderSprite : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
+renderSprite : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
 renderSprite gd settings position size name =
     let
         dst =
-            gd.internalData.sprites
+            gd.sprites
     in
     case igetSprite name dst of
         Just t ->
@@ -40,11 +40,11 @@ renderSprite gd settings position size name =
 
 {-| Render a single sprite with crop.
 -}
-renderSpriteCropped : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> { x : Float, y : Float, width : Float, height : Float } -> String -> Renderable
+renderSpriteCropped : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> { x : Float, y : Float, width : Float, height : Float } -> String -> Renderable
 renderSpriteCropped gd settings position size spconf name =
     let
         dst =
-            gd.internalData.sprites
+            gd.sprites
     in
     case igetSprite name dst of
         Just t ->
@@ -54,7 +54,7 @@ renderSpriteCropped gd settings position size spconf name =
             empty
 
 
-renderSprite_ : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
+renderSprite_ : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
 renderSprite_ gd settings position ( w, h ) t =
     let
         text_dim =
@@ -127,13 +127,13 @@ renderSprite_ gd settings position ( w, h ) t =
 The first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.
 
 -}
-renderSpriteWithRev : Bool -> GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
+renderSpriteWithRev : Bool -> InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
 renderSpriteWithRev rev gd settings position size name =
     if not rev then
         renderSprite gd settings position size name
 
     else
-        case igetSprite name gd.internalData.sprites of
+        case igetSprite name gd.sprites of
             Just t ->
                 renderSpriteWithRev_ gd settings position size t
 
@@ -141,7 +141,7 @@ renderSpriteWithRev rev gd settings position size name =
                 empty
 
 
-renderSpriteWithRev_ : GlobalData a -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
+renderSpriteWithRev_ : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
 renderSpriteWithRev_ gd settings position ( w, h ) t =
     let
         text_dim =

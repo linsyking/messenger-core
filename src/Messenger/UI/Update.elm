@@ -208,7 +208,7 @@ update input audiodata msg model =
         MouseMove ( px, py ) ->
             let
                 mp =
-                    fromMouseToVirtual gd ( px, py )
+                    fromMouseToVirtual gd.internalData ( px, py )
             in
             ( { model | currentGlobalData = { gd | mousePos = mp } }, Cmd.none, Audio.cmdNone )
 
@@ -220,7 +220,7 @@ update input audiodata msg model =
                 newModel =
                     { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
             in
-            gameUpdateInner (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
+            gameUpdateInner (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData.internalData pos) newModel
 
         WMouseUp e pos ->
             let
@@ -230,7 +230,7 @@ update input audiodata msg model =
                 newModel =
                     { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
             in
-            gameUpdateInner (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData pos) newModel
+            gameUpdateInner (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData.internalData pos) newModel
 
         WKeyDown 112 ->
             if config.debug then
