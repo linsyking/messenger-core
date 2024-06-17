@@ -1,5 +1,30 @@
 # Changelog
 
+## 12.1.0
+
+### Features
+
+- Add `TextBox` rendering helper functions
+- Add test modules inside core repository
+
+## 12.0.4
+
+### Fix
+
+- Transition time not correct because using delta
+
+## 12.0.3
+
+### Fix
+
+- Using wrong `env` in `updateRemain`
+
+## 12.0.2
+
+### Fix
+
+- `updateRemain` order error
+
 ## 12.0.0
 
 ### Features
