@@ -4,10 +4,12 @@ module GlobalComponents.GC1.Model exposing (genGC)
 -}
 
 import Canvas
+import Color
 import Json.Encode
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
+import Messenger.Render.Text exposing (renderTextWithColor)
 import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
 
 
@@ -57,7 +59,7 @@ updaterec env msg data =
 
 view : GlobalComponentView UserData SceneMsg Data
 view env data =
-    Canvas.empty
+    renderTextWithColor env.globalData 10 ("FPS: " ++ String.fromFloat data.fps) "Arial" Color.gray ( 0, 0 )
 
 
 gcCon : ConcreteGlobalComponent Data UserData SceneMsg
