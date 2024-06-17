@@ -11,6 +11,7 @@ Main module for the whole game.
 
 -}
 
+import GlobalComponents exposing (allGlobalComopnents)
 import Lib.Base exposing (SceneMsg)
 import Lib.Ports exposing (alert, audioPortFromJS, audioPortToJS, prompt, promptReceiver, sendInfo)
 import Lib.Resources exposing (resources)
@@ -50,4 +51,4 @@ userConfig =
 -}
 main : Output UserData SceneMsg
 main =
-    genMain { config = userConfig, scenes = allScenes, resources = resources }
+    genMain { config = userConfig, scenes = allScenes, resources = resources, globalComponents = allGlobalComopnents }
