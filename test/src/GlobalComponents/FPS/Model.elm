@@ -1,45 +1,25 @@
-module GlobalComponents.FPS.Model exposing (Msg, encode, genGC)
+module GlobalComponents.FPS.Model exposing (InitOption, genGC)
 
 {-| Global component configuration module
 
 A Global Component to show FPS at the corner
 
-@docs Msg, encode, genGC
+@docs InitOption, genGC
 
 -}
 
 import Color
-import Json.Decode as D
 import Json.Encode as E
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.Text exposing (renderTextWithColor)
-import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCMsg, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
+import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
 
 
-type alias Msg =
+{-| Init Options
+-}
+type alias InitOption =
     { fontSize : Float
     }
-
-
-decode : GCMsg -> Msg
-decode gcmsg =
-    let
-        decoder =
-            D.field "size" D.float
-
-        num =
-            Result.withDefault 20 <| D.decodeValue decoder gcmsg
-    in
-    Msg num
-
-
-{-| Encode custom message into GCMsg.
--}
-encode : Msg -> GCMsg
-encode msg =
-    E.object
-        [ ( "size", E.float msg.fontSize )
-        ]
 
 
 type alias Data =
@@ -49,15 +29,11 @@ type alias Data =
     }
 
 
-init : GlobalComponentInit userdata scenemsg Data
-init _ gcmsg =
-    let
-        msg =
-            decode gcmsg
-    in
+init : InitOption -> GlobalComponentInit userdata scenemsg Data
+init opt _ _ =
     { lastTenTime = []
     , fps = 0
-    , size = msg.fontSize
+    , size = opt.fontSize
     }
 
 
@@ -97,9 +73,9 @@ view env data =
     renderTextWithColor env.globalData.internalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
-gcCon : ConcreteGlobalComponent Data userdata scenemsg
-gcCon =
-    { init = init
+gcCon : InitOption -> ConcreteGlobalComponent Data userdata scenemsg
+gcCon opt =
+    { init = init opt
     , update = update
     , updaterec = updaterec
     , view = view
@@ -109,6 +85,6 @@ gcCon =
 
 {-| Generate a global component.
 -}
-genGC : Maybe GCMsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
-genGC gcMsg =
-    genGlobalComponent gcCon <| Maybe.withDefault E.null gcMsg
+genGC : InitOption -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
+genGC opt =
+    genGlobalComponent (gcCon opt) E.null
