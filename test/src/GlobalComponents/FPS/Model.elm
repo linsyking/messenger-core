@@ -11,8 +11,6 @@ A Global Component to show FPS at the corner
 import Color
 import Json.Decode as D
 import Json.Encode as E
-import Lib.Base exposing (SceneMsg)
-import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.Text exposing (renderTextWithColor)
 import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCMsg, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
@@ -51,7 +49,7 @@ type alias Data =
     }
 
 
-init : GlobalComponentInit UserData SceneMsg Data
+init : GlobalComponentInit userdata scenemsg Data
 init _ gcmsg =
     let
         msg =
@@ -63,7 +61,7 @@ init _ gcmsg =
     }
 
 
-update : GlobalComponentUpdate UserData SceneMsg Data
+update : GlobalComponentUpdate userdata scenemsg Data
 update env evnt data =
     case evnt of
         Tick delta ->
@@ -89,17 +87,17 @@ update env evnt data =
             ( data, [], ( env, False ) )
 
 
-updaterec : GlobalComponentUpdateRec UserData SceneMsg Data
+updaterec : GlobalComponentUpdateRec userdata scenemsg Data
 updaterec env _ data =
     ( data, [], env )
 
 
-view : GlobalComponentView UserData SceneMsg Data
+view : GlobalComponentView userdata scenemsg Data
 view env data =
     renderTextWithColor env.globalData.internalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
-gcCon : ConcreteGlobalComponent Data UserData SceneMsg
+gcCon : ConcreteGlobalComponent Data userdata scenemsg
 gcCon =
     { init = init
     , update = update
@@ -111,6 +109,6 @@ gcCon =
 
 {-| Generate a global component.
 -}
-genGC : Maybe GCMsg -> Maybe GCTarget -> GlobalComponentStorage UserData SceneMsg
+genGC : Maybe GCMsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
 genGC gcMsg =
     genGlobalComponent gcCon <| Maybe.withDefault E.null gcMsg
