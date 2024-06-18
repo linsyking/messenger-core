@@ -1,42 +1,29 @@
 module GlobalComponents.Transition.Transitions.Fade exposing
-    ( fadeIn, fadeInStorage
-    , fadeOut, fadeOutStorage
+    ( fadeIn, fadeOut
     , fadeOutBlack, fadeInBlack
+    , fadeOutWithRenderable, fadeInWithRenderable
     )
 
 {-| Fading Effects
 
-@docs fadeIn, fadeInStorage
-@docs fadeOut, fadeOutStorage
+@docs fadeIn, fadeOut
 @docs fadeOutBlack, fadeInBlack
+@docs fadeOutWithRenderable, fadeInWithRenderable
 
 -}
 
-import Canvas exposing (group, shapes)
+import Canvas exposing (Renderable, group, shapes)
 import Canvas.Settings exposing (fill)
 import Canvas.Settings.Advanced exposing (alpha)
 import Color exposing (Color)
-import GlobalComponents.Transition.Transitions.Base exposing (SingleTrans, TransStorage, colorDec, colorEnc)
+import GlobalComponents.Transition.Transitions.Base exposing (SingleTrans)
 import Messenger.Render.Shape exposing (rect)
-import Messenger.Scene.Scene exposing (GCMsg)
 
 
 {-| Fade Out with Color
 -}
-fadeOut : Color -> ( String, GCMsg )
-fadeOut col =
-    ( "FadeOut", colorEnc col )
-
-
-{-| FadeOut Storage
--}
-fadeOutStorage : TransStorage
-fadeOutStorage msg =
-    fadeOutHelper (colorDec msg)
-
-
-fadeOutHelper : Color -> SingleTrans
-fadeOutHelper color gd rd v =
+fadeOut : Color -> SingleTrans
+fadeOut color gd rd v =
     group []
         [ rd
         , shapes [ fill color, alpha v ]
@@ -47,20 +34,8 @@ fadeOutHelper color gd rd v =
 
 {-| Fade In with Color
 -}
-fadeIn : Color -> ( String, GCMsg )
-fadeIn col =
-    ( "FadeIn", colorEnc col )
-
-
-{-| FadeIn Storage
--}
-fadeInStorage : TransStorage
-fadeInStorage msg =
-    fadeInHelper (colorDec msg)
-
-
-fadeInHelper : Color -> SingleTrans
-fadeInHelper color gd rd v =
+fadeIn : Color -> SingleTrans
+fadeIn color gd rd v =
     group []
         [ rd
         , shapes [ fill color, alpha (1 - v) ]
@@ -71,13 +46,37 @@ fadeInHelper color gd rd v =
 
 {-| Fade Out with Black
 -}
-fadeOutBlack : ( String, GCMsg )
+fadeOutBlack : SingleTrans
 fadeOutBlack =
     fadeOut Color.black
 
 
 {-| Fade In with Black
 -}
-fadeInBlack : ( String, GCMsg )
+fadeInBlack : SingleTrans
 fadeInBlack =
     fadeIn Color.black
+
+
+{-| Fade Out with Renderable
+-}
+fadeOutWithRenderable : Renderable -> SingleTrans
+fadeOutWithRenderable renderable _ rd v =
+    group []
+        [ rd
+        , group [ alpha v ]
+            [ renderable
+            ]
+        ]
+
+
+{-| Fade In with Renderable
+-}
+fadeInWithRenderable : Renderable -> SingleTrans
+fadeInWithRenderable renderable _ rd v =
+    group []
+        [ rd
+        , group [ alpha (1 - v) ]
+            [ renderable
+            ]
+        ]

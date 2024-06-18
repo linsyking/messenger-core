@@ -1,12 +1,8 @@
-module GlobalComponents.Transition.Transitions.Scroll exposing
-    ( scrollIn, scrollInStorage
-    , scrollOut, scrollOutStorage
-    )
+module GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
 
 {-| Scroll Transition
 
-@docs scrollIn, scrollInStorage
-@docs scrollOut, scrollOutStorage
+@docs scrollIn, scrollOut
 
 -}
 
@@ -14,28 +10,15 @@ import Canvas exposing (group, shapes)
 import Canvas.Settings exposing (fill)
 import Canvas.Settings.Advanced exposing (GlobalCompositeOperationMode(..), compositeOperationMode, fillLinear)
 import Color exposing (Color)
-import GlobalComponents.Transition.Transitions.Base exposing (SingleTrans, TransStorage, colorDec, colorEnc)
+import GlobalComponents.Transition.Transitions.Base exposing (SingleTrans)
 import Messenger.Coordinate.Coordinates exposing (lengthToReal)
 import Messenger.Render.Shape exposing (rect)
-import Messenger.Scene.Scene exposing (GCMsg)
 
 
 {-| Scroll Out
 -}
-scrollOut : Color -> ( String, GCMsg )
-scrollOut col =
-    ( "ScrollOut", colorEnc col )
-
-
-{-| ScrollOut Storage
--}
-scrollOutStorage : TransStorage
-scrollOutStorage msg =
-    scrollOutHelper (colorDec msg)
-
-
-scrollOutHelper : Color -> SingleTrans
-scrollOutHelper col gd rd v =
+scrollOut : Color -> SingleTrans
+scrollOut col gd rd v =
     group []
         [ rd
         , shapes
@@ -64,20 +47,8 @@ scrollOutHelper col gd rd v =
 
 {-| Scroll In
 -}
-scrollIn : Color -> ( String, GCMsg )
-scrollIn col =
-    ( "ScrollIn", colorEnc col )
-
-
-{-| ScrollIn Storage
--}
-scrollInStorage : TransStorage
-scrollInStorage msg =
-    scrollInHelper (colorDec msg)
-
-
-scrollInHelper : Color -> SingleTrans
-scrollInHelper col gd rd v =
+scrollIn : Color -> SingleTrans
+scrollIn col gd rd v =
     group []
         [ rd
         , shapes

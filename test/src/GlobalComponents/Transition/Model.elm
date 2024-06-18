@@ -10,8 +10,7 @@ module GlobalComponents.Transition.Model exposing (InitOption, genGC)
 -}
 
 import Canvas
-import Dict exposing (Dict)
-import GlobalComponents.Transition.Transitions.Base exposing (TransStorage, Transition)
+import GlobalComponents.Transition.Transitions.Base exposing (Transition)
 import Json.Encode as E
 import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, genGlobalComponent)
 
@@ -19,23 +18,23 @@ import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, Global
 {-| Options
 -}
 type alias InitOption =
-    Dict String TransStorage
+    ( Transition, GCTarget )
 
 
 type alias Data userdata scenemsg =
-    { userTransitions : InitOption
-    , changeSceneTime : Int
+    { changeSceneTime : Int
     , preScene : Maybe (MAbstractScene userdata scenemsg)
-    , transition : Maybe Transition
+    , transition : Transition
+    , target : GCTarget
     }
 
 
 init : InitOption -> GlobalComponentInit userdata scenemsg (Data userdata scenemsg)
-init userTransitions _ _ =
-    { userTransitions = userTransitions
-    , changeSceneTime = 0
+init ( tran, tar ) _ _ =
+    { changeSceneTime = 0
     , preScene = Nothing
-    , transition = Nothing
+    , transition = tran
+    , target = tar
     }
 
 
