@@ -40,7 +40,9 @@ Example:
 -}
 allTexture : Dict String String
 allTexture =
-    Dict.empty
+    Dict.fromList
+        [ ( "ship", "assets/enemy.png" )
+        ]
 
 
 {-| Add all your sprite sheets here.

@@ -9,6 +9,7 @@ module Scenes.Home2.Model exposing (scene)
 import Canvas
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
+import Messenger.Render.Sprite exposing (renderSprite)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage)
 
@@ -29,7 +30,9 @@ update env msg data =
 
 view : RawSceneView UserData Data
 view env data =
-    Canvas.empty
+    Canvas.group []
+        [ renderSprite env.globalData.internalData [] ( 0, 0 ) ( 1920, 0 ) "ship"
+        ]
 
 
 scenecon : MConcreteScene Data UserData SceneMsg
