@@ -18,13 +18,6 @@ import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
 import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), unroll)
 
 
-type TransitionState
-    = In
-    | BeforeIn
-    | Out
-    | BeforeOut
-
-
 {-| Options
 -}
 type alias InitOption scenemsg =
@@ -35,7 +28,6 @@ type alias Data userdata scenemsg =
     { preScene : Maybe (MAbstractScene userdata scenemsg)
     , transition : Transition
     , scene : ( String, Maybe scenemsg )
-    , state : TransitionState
     }
 
 
@@ -44,73 +36,11 @@ init ( tran, scene, msg ) _ _ =
     ( { preScene = Nothing
       , transition = tran
       , scene = ( scene, msg )
-      , state = BeforeOut
       }
     , { dead = False
+      , postProcessor = []
       }
     )
-
-
-type alias SceneView userdata =
-    Env () userdata -> Renderable
-
-
-changeSceneView : MAbstractScene userdata scenemsg -> (SceneView userdata -> SceneView userdata) -> MAbstractScene userdata scenemsg
-changeSceneView scene f =
-    let
-        old =
-            unroll scene
-
-        dummyView =
-            \env ->
-                let
-                    _ =
-                        Debug.log "HELLO" 0
-                in
-                Canvas.empty
-
-        new =
-            { old | view = dummyView }
-    in
-    Roll new
-
-
-inViewReplace : Data userdata scenemsg -> SceneView userdata -> SceneView userdata
-inViewReplace data old env =
-    let
-        progress_ =
-            toFloat data.transition.currentTransition / toFloat data.transition.inT
-
-        progress =
-            if progress_ > 1 then
-                1
-
-            else
-                progress_
-
-        oldView =
-            old env
-    in
-    data.transition.inTrans env.globalData.internalData oldView progress
-
-
-outViewReplace : Data userdata scenemsg -> SceneView userdata -> SceneView userdata
-outViewReplace data old env =
-    let
-        progress_ =
-            toFloat data.transition.currentTransition / toFloat data.transition.outT
-
-        progress =
-            if progress_ > 1 then
-                1
-
-            else
-                progress_
-
-        oldView =
-            old env
-    in
-    data.transition.outTrans env.globalData.internalData oldView progress
 
 
 update : GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
@@ -130,7 +60,7 @@ update env evnt data bdata =
                 data2 =
                     { data | transition = { trans0 | currentTransition = newTime } }
             in
-            if data.state == In && newTime >= trans0.inT then
+            if newTime >= trans0.inT + trans0.outT then
                 -- End
                 ( ( data, { bdata | dead = True } ), [], ( env, False ) )
 
@@ -138,37 +68,47 @@ update env evnt data bdata =
                 -- TODO
                 ( ( data, bdata ), [], ( env, False ) )
 
-            else if data.state == BeforeOut then
-                -- Change view of current scene
+            else if trans0.currentTransition < trans0.outT then
                 let
-                    currentScene =
-                        env.commonData
+                    progress_ =
+                        toFloat data.transition.currentTransition / toFloat data.transition.outT
 
-                    newScene =
-                        changeSceneView currentScene (outViewReplace data)
+                    progress =
+                        if progress_ > 1 then
+                            1
+
+                        else
+                            progress_
+
+                    outPP : Renderable -> Renderable
+                    outPP ren =
+                        data.transition.outTrans env.globalData.internalData ren progress
                 in
-                ( ( { data | state = Out }, bdata ), [], ( { env | commonData = newScene }, False ) )
+                if newTime >= trans0.outT then
+                    -- Needs to change scene
+                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
 
-            else if data.state == Out && newTime >= trans0.outT then
-                let
-                    trans1 =
-                        { trans0 | currentTransition = 0 }
-                in
-                ( ( { data2 | state = BeforeIn, transition = trans1 }, bdata ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
-
-            else if data.state == BeforeIn then
-                -- Change view of current scene
-                let
-                    currentScene =
-                        env.commonData
-
-                    newScene =
-                        changeSceneView currentScene (inViewReplace data)
-                in
-                ( ( { data2 | state = In }, bdata ), [], ( { env | commonData = newScene }, False ) )
+                else
+                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [], ( env, False ) )
 
             else
-                ( ( data2, bdata ), [], ( env, False ) )
+                -- Implies trans0.outT + trans0.inT > trans0.currentTransition >= trans0.outT
+                let
+                    progress_ =
+                        toFloat (data.transition.currentTransition - data.transition.outT) / toFloat data.transition.inT
+
+                    progress =
+                        if progress_ > 1 then
+                            1
+
+                        else
+                            progress_
+
+                    inPP : Renderable -> Renderable
+                    inPP ren =
+                        data.transition.inTrans env.globalData.internalData ren progress
+                in
+                ( ( data2, { bdata | postProcessor = [ inPP ] } ), [], ( env, False ) )
 
         _ ->
             ( ( data, bdata ), [], ( env, False ) )

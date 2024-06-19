@@ -37,6 +37,7 @@ init opt _ _ =
       , size = opt.fontSize
       }
     , { dead = False
+      , postProcessor = []
       }
     )
 
