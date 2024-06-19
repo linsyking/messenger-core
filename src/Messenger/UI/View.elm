@@ -45,7 +45,7 @@ view input _ model =
             (unroll model.env.commonData).view { globalData = model.env.globalData, commonData = () }
 
         gcView =
-            viewModelList { globalData = gd, commonData = model.env.commonData } model.globalComponents
+            viewModelList model.env model.globalComponents
 
         canvas =
             Canvas.toHtmlWith
