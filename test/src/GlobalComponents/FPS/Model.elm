@@ -11,8 +11,9 @@ A Global Component to show FPS at the corner
 import Color
 import Json.Encode as E
 import Messenger.Base exposing (UserEvent(..))
+import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
 import Messenger.Render.Text exposing (renderTextWithColor)
-import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, genGlobalComponent)
+import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView)
 
 
 {-| Init Options
@@ -31,14 +32,17 @@ type alias Data =
 
 init : InitOption -> GlobalComponentInit userdata scenemsg Data
 init opt _ _ =
-    { lastTenTime = []
-    , fps = 0
-    , size = opt.fontSize
-    }
+    ( { lastTenTime = []
+      , fps = 0
+      , size = opt.fontSize
+      }
+    , { dead = False
+      }
+    )
 
 
 update : GlobalComponentUpdate userdata scenemsg Data
-update env evnt data =
+update env evnt data bdata =
     case evnt of
         Tick delta ->
             let
@@ -57,19 +61,19 @@ update env evnt data =
                 fps =
                     toFloat (List.length lastTimes) / sum * 1000
             in
-            ( { data | lastTenTime = lastTimes, fps = fps }, [], ( env, False ) )
+            ( ( { data | lastTenTime = lastTimes, fps = fps }, bdata ), [], ( env, False ) )
 
         _ ->
-            ( data, [], ( env, False ) )
+            ( ( data, bdata ), [], ( env, False ) )
 
 
 updaterec : GlobalComponentUpdateRec userdata scenemsg Data
-updaterec env _ data =
-    ( data, [], env )
+updaterec env _ data bdata =
+    ( ( data, bdata ), [], env )
 
 
 view : GlobalComponentView userdata scenemsg Data
-view env data =
+view env data _ =
     renderTextWithColor env.globalData.internalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
 
 
@@ -79,7 +83,7 @@ gcCon opt =
     , update = update
     , updaterec = updaterec
     , view = view
-    , matcher = "fps"
+    , id = "fps"
     }
 
 
