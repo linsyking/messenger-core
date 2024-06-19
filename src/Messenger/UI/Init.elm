@@ -57,7 +57,6 @@ initModel : UserConfig userdata scenemsg -> Model userdata scenemsg
 initModel config =
     { env = Env (emptyGlobalData config) emptyScene
     , globalComponents = []
-    , canvasRenderable = []
     }
 
 

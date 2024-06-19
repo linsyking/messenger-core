@@ -20,7 +20,6 @@ We only use it in the main update.
 -}
 
 import Browser.Events exposing (Visibility(..))
-import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env)
 import Messenger.Scene.Scene exposing (AbstractGlobalComponent, MAbstractScene)
 
@@ -30,7 +29,6 @@ import Messenger.Scene.Scene exposing (AbstractGlobalComponent, MAbstractScene)
 type alias Model userdata scenemsg =
     { env : Env (MAbstractScene userdata scenemsg) userdata
     , globalComponents : List (AbstractGlobalComponent userdata scenemsg)
-    , canvasRenderable : List Renderable
     }
 
 

@@ -12,13 +12,12 @@ Update the game
 -}
 
 import Audio exposing (AudioCmd, AudioData)
-import Canvas exposing (Renderable)
 import Canvas.Texture
 import Dict
 import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, loadedResourceNum, removeCommonData)
-import Messenger.Component.GlobalComponent exposing (combinePP, filterAliveGC)
+import Messenger.Component.GlobalComponent exposing (filterAliveGC)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
-import Messenger.GeneralModel exposing (filterSOM, viewModelList)
+import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Recursion exposing (updateObjects)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -64,7 +63,7 @@ gameUpdate input evnt model =
 
             model1 : Model userdata scenemsg
             model1 =
-                { env = env2, globalComponents = gc2, canvasRenderable = model.canvasRenderable }
+                { env = env2, globalComponents = gc2 }
 
             ( scenesom, model2 ) =
                 if block then
@@ -106,40 +105,6 @@ gameUpdate input evnt model =
 -}
 update : Input userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 update input audiodata msg model =
-    let
-        ( newModel, cmd, audiocmd ) =
-            updateInner input audiodata msg model
-
-        res =
-            render newModel
-    in
-    ( { newModel | canvasRenderable = res }, cmd, audiocmd )
-
-
-postProcess : Renderable -> List (Renderable -> Renderable) -> Renderable
-postProcess x xs =
-    List.foldl (\le uni -> le uni) x xs
-
-
-render : Model userdata scenemsg -> List Renderable
-render model =
-    let
-        sceneView =
-            (unroll model.env.commonData).view { globalData = model.env.globalData, commonData = () }
-
-        scenePP =
-            postProcess sceneView <| combinePP model.globalComponents
-
-        gcView =
-            viewModelList model.env model.globalComponents
-    in
-    scenePP :: gcView
-
-
-{-| update helper functino
--}
-updateInner : Input userdata scenemsg -> AudioData -> WorldEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
-updateInner input audiodata msg model =
     let
         gd =
             env.globalData
