@@ -19,6 +19,7 @@
             "Messenger.Scene.Scene",
             "Messenger.Scene.RawScene",
             "Messenger.Scene.LayeredScene",
+            "Messenger.Scene.VSR",
             "Messenger.Render.Shape",
             "Messenger.Render.Sprite",
             "Messenger.Render.SpriteSheet",
@@ -28,6 +29,7 @@
             "Messenger.Coordinate.HTML",
             "Messenger.Coordinate.Coordinates",
             "Messenger.Component.Component",
+            "Messenger.Component.GlobalComponent",
             "Messenger.Audio.Base",
             "Messenger.Audio.Audio"
         ]
