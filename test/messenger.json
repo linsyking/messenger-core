@@ -5,6 +5,10 @@
         "Home": {
             "components": {},
             "layers": []
+        },
+        "Home2": {
+            "components": {},
+            "layers": []
         }
     },
     "sceneprotos": {}
