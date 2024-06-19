@@ -43,16 +43,23 @@ type alias Transition =
     , inT : Int
     , outTrans : SingleTrans
     , inTrans : SingleTrans
+    , options : TransitionOption
+    }
+
+
+type alias TransitionOption =
+    { mix : Bool
     }
 
 
 {-| Generate new transition
 -}
-genTransition : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> Transition
-genTransition ( outTrans, outT ) ( inTrans, inT ) =
+genTransition : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> TransitionOption -> Transition
+genTransition ( outTrans, outT ) ( inTrans, inT ) opts =
     { currentTransition = 0
     , outT = ceiling <| Duration.inMilliseconds outT
     , inT = ceiling <| Duration.inMilliseconds inT
     , outTrans = outTrans
     , inTrans = inTrans
+    , options = opts
     }
