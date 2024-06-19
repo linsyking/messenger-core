@@ -9,6 +9,10 @@
         "Home2": {
             "components": {},
             "layers": []
+        },
+        "Stress": {
+            "components": {},
+            "layers": []
         }
     },
     "sceneprotos": {}

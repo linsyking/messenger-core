@@ -34,11 +34,17 @@ update env msg data =
     case msg of
         KeyDown 49 ->
             ( data
-            , [ 
-            --     SOMUnloadGC "fps"
-            --   , SOMLoadGC (FPS.genGC (FPS.InitOption 100) Nothing)
-            --   , 
-              SOMLoadGC (Transition.genGC ( genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing, "Home2", Nothing ) Nothing)
+            , [ --     SOMUnloadGC "fps"
+                --   , SOMLoadGC (FPS.genGC (FPS.InitOption 100) Nothing)
+                --   ,
+                SOMLoadGC (Transition.genGC ( genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing, "Home2", Nothing ) Nothing)
+              ]
+            , env
+            )
+
+        KeyDown 50 ->
+            ( data
+            , [ SOMLoadGC (Transition.genGC ( genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing, "Stress", Nothing ) Nothing)
               ]
             , env
             )

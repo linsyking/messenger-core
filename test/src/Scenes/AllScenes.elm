@@ -17,6 +17,7 @@ import Lib.UserData exposing (UserData)
 import Messenger.Scene.Scene exposing (AllScenes)
 import Scenes.Home.Model as Home
 import Scenes.Home2.Model as Home2
+import Scenes.Stress.Model as Stress
 
 
 {-| All Scenes
@@ -29,4 +30,5 @@ allScenes =
     Dict.fromList
         [ ( "Home", Home.scene )
         , ( "Home2", Home2.scene )
+        , ( "Stress", Stress.scene )
         ]
