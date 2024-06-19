@@ -302,8 +302,8 @@ update input audiodata msg model =
             in
             gameUpdateInner (Tick timeInterval) { model | currentGlobalData = newGD }
 
-        NullEvent ->
-            ( model, Cmd.none, Audio.cmdNone )
-
         WMouseWheel x ->
             gameUpdateInner (MouseWheel x) model
+
+        NullEvent ->
+            ( model, Cmd.none, Audio.cmdNone )

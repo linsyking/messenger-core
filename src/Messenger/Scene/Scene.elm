@@ -197,8 +197,17 @@ type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
 --- Global Component
 
 
+{-| Global component common data.
+-}
 type alias GCCommonData userdata scenemsg =
     MAbstractScene userdata scenemsg
+
+
+{-| Global component base data.
+-}
+type alias GCBaseData =
+    { dead : Bool
+    }
 
 
 {-| Global component message type.
@@ -216,25 +225,25 @@ type alias GCTarget =
 {-| init type sugar
 -}
 type alias GlobalComponentInit userdata scenemsg data =
-    Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> data
+    Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> ( data, GCBaseData )
 
 
 {-| update type sugar
 -}
 type alias GlobalComponentUpdate userdata scenemsg data =
-    Env (GCCommonData userdata scenemsg) userdata -> UserEvent -> data -> ( data, List (MMsg GCTarget GCMsg scenemsg userdata), ( Env (GCCommonData userdata scenemsg) userdata, Bool ) )
+    Env (GCCommonData userdata scenemsg) userdata -> UserEvent -> data -> GCBaseData -> ( ( data, GCBaseData ), List (MMsg GCTarget GCMsg scenemsg userdata), ( Env (GCCommonData userdata scenemsg) userdata, Bool ) )
 
 
 {-| updaterec type sugar
 -}
 type alias GlobalComponentUpdateRec userdata scenemsg data =
-    Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> data -> ( data, List (MMsg GCTarget GCMsg scenemsg userdata), Env (GCCommonData userdata scenemsg) userdata )
+    Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> data -> GCBaseData -> ( ( data, GCBaseData ), List (MMsg GCTarget GCMsg scenemsg userdata), Env (GCCommonData userdata scenemsg) userdata )
 
 
 {-| view type sugar
 -}
 type alias GlobalComponentView userdata scenemsg data =
-    Env (GCCommonData userdata scenemsg) userdata -> data -> Renderable
+    Env (GCCommonData userdata scenemsg) userdata -> data -> GCBaseData -> Renderable
 
 
 {-| GlobalComponent Storage
@@ -250,7 +259,7 @@ type alias ConcreteGlobalComponent data userdata scenemsg =
     , update : GlobalComponentUpdate userdata scenemsg data
     , updaterec : GlobalComponentUpdateRec userdata scenemsg data
     , view : GlobalComponentView userdata scenemsg data
-    , matcher : GCTarget
+    , id : GCTarget
     }
 
 
@@ -261,20 +270,20 @@ Used for storage.
 
 -}
 type alias AbstractGlobalComponent userdata scenemsg =
-    MAbstractGeneralModel (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
+    MAbstractGeneralModel (GCCommonData userdata scenemsg) userdata GCTarget GCMsg GCBaseData scenemsg
 
 
 {-| Generate abstract global component from concrete global component.
 -}
 genGlobalComponent : ConcreteGlobalComponent data userdata scenemsg -> GCMsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
 genGlobalComponent conpcomp gcmsg gctar =
-    GM.abstract (addEmptyBData conpcomp gctar) <| gcmsg
+    GM.abstract (gcTransform conpcomp gctar) <| gcmsg
 
 
 {-| Turn global component into a general model.
 -}
-addEmptyBData : ConcreteGlobalComponent data userdata scenemsg -> Maybe GCTarget -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg () scenemsg
-addEmptyBData concomp gctar =
+gcTransform : ConcreteGlobalComponent data userdata scenemsg -> Maybe GCTarget -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg GCBaseData scenemsg
+gcTransform concomp gctar =
     let
         id =
             case gctar of
@@ -282,23 +291,23 @@ addEmptyBData concomp gctar =
                     t
 
                 Nothing ->
-                    concomp.matcher
+                    concomp.id
     in
-    { init = \env msg -> ( concomp.init env msg, () )
+    { init = \env msg -> concomp.init env msg
     , update =
-        \env evt data () ->
+        \env evt data bdata ->
             let
                 ( resData, resMsg, resEnv ) =
-                    concomp.update env evt data
+                    concomp.update env evt data bdata
             in
-            ( ( resData, () ), resMsg, resEnv )
+            ( resData, resMsg, resEnv )
     , updaterec =
-        \env msg data () ->
+        \env msg data bdata ->
             let
                 ( resData, resMsg, resEnv ) =
-                    concomp.updaterec env msg data
+                    concomp.updaterec env msg data bdata
             in
-            ( ( resData, () ), resMsg, resEnv )
-    , view = \env data () -> concomp.view env data
+            ( resData, resMsg, resEnv )
+    , view = \env data bdata -> concomp.view env data bdata
     , matcher = \_ _ tar -> tar == id
     }

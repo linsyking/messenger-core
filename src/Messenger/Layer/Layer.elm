@@ -131,7 +131,7 @@ handleComponentMsgs lastEnv compMsgs lastData lastLayerMsgs handler =
         compMsgs
 
 
-{-| Translate layer into a general model.
+{-| Turn layer into a general model.
 -}
 addEmptyBData : ConcreteLayer data cdata userdata tar msg scenemsg -> MConcreteGeneralModel data cdata userdata tar msg () scenemsg
 addEmptyBData mconnoB =

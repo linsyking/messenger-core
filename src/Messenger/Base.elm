@@ -173,7 +173,7 @@ emptyInternalData =
     }
 
 
-{-| Translate UserViewGlobalData to GlobalData
+{-| Turn UserViewGlobalData into GlobalData
 -}
 userGlobalDataToGlobalData : UserViewGlobalData userdata -> GlobalData userdata
 userGlobalDataToGlobalData user =
@@ -195,7 +195,7 @@ userGlobalDataToGlobalData user =
     }
 
 
-{-| Translate GlobalData to UserViewGlobalData
+{-| Turn GlobalData into UserViewGlobalData
 -}
 globalDataToUserGlobalData : GlobalData userdata -> UserViewGlobalData userdata
 globalDataToUserGlobalData globalData =
