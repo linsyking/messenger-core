@@ -4,6 +4,7 @@ module Messenger.GeneralModel exposing
     , unroll, abstract
     , viewModelList
     , Matcher
+    , updateResultRemap, updaterecResultRemap
     )
 
 {-|
@@ -30,6 +31,11 @@ A Gernel model has the ability to:
 @docs unroll, abstract
 @docs viewModelList
 @docs Matcher
+
+
+## Result Remapper
+
+@docs updateResultRemap, updaterecResultRemap
 
 -}
 
@@ -185,3 +191,57 @@ viewModelList env models =
 -}
 type alias Matcher data tar =
     data -> tar -> Bool
+
+
+{-| Change the `update` function to remap the result and return the changed abstract general model.
+-}
+updateResultRemap : (( List (Msg tar msg sommsg), ( env, Bool ) ) -> ( List (Msg tar msg sommsg), ( env, Bool ) )) -> AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
+updateResultRemap f model =
+    let
+        change : AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
+        change m =
+            let
+                um =
+                    unroll m
+
+                newUpdate : env -> event -> ( AbstractGeneralModel env event tar msg ren bdata sommsg, List (Msg tar msg sommsg), ( env, Bool ) )
+                newUpdate env evnt =
+                    let
+                        ( oldr, oldmsg, oldres ) =
+                            um.update env evnt
+
+                        ( newmsg, newres ) =
+                            f ( oldmsg, oldres )
+                    in
+                    ( change oldr, newmsg, newres )
+            in
+            Roll { um | update = newUpdate }
+    in
+    change model
+
+
+{-| Change the `updaterec` function to remap the result and return the changed abstract general model.
+-}
+updaterecResultRemap : (( List (Msg tar msg sommsg), env ) -> ( List (Msg tar msg sommsg), env )) -> AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
+updaterecResultRemap f model =
+    let
+        change : AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
+        change m =
+            let
+                um =
+                    unroll m
+
+                newUpdateRec : env -> msg -> ( AbstractGeneralModel env event tar msg ren bdata sommsg, List (Msg tar msg sommsg), env )
+                newUpdateRec env msg =
+                    let
+                        ( oldr, oldmsg, oldres ) =
+                            um.updaterec env msg
+
+                        ( newmsg, newres ) =
+                            f ( oldmsg, oldres )
+                    in
+                    ( change oldr, newmsg, newres )
+            in
+            Roll { um | updaterec = newUpdateRec }
+    in
+    change model

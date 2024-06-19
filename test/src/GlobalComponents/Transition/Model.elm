@@ -12,30 +12,35 @@ module GlobalComponents.Transition.Model exposing (InitOption, genGC)
 import Canvas exposing (Renderable)
 import GlobalComponents.Transition.Transitions.Base exposing (Transition)
 import Json.Encode exposing (null)
-import Messenger.Base exposing (Env, UserEvent(..))
+import Messenger.Base exposing (UserEvent(..))
 import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
 import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
-import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), unroll)
+import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), updateResultRemap)
 
 
 {-| Options
 -}
 type alias InitOption scenemsg =
-    ( Transition, String, Maybe scenemsg )
+    { transition : Transition
+    , scene : ( String, Maybe scenemsg )
+    , filterSOM : Bool
+    }
 
 
 type alias Data userdata scenemsg =
     { preScene : Maybe (MAbstractScene userdata scenemsg)
     , transition : Transition
     , scene : ( String, Maybe scenemsg )
+    , filterSOM : Bool
     }
 
 
 init : InitOption scenemsg -> GlobalComponentInit userdata scenemsg (Data userdata scenemsg)
-init ( tran, scene, msg ) _ _ =
+init opts _ _ =
     ( { preScene = Nothing
-      , transition = tran
-      , scene = ( scene, msg )
+      , transition = opts.transition
+      , scene = opts.scene
+      , filterSOM = opts.filterSOM
       }
     , { dead = False
       , postProcessor = []
@@ -43,14 +48,49 @@ init ( tran, scene, msg ) _ _ =
     )
 
 
+remap : ( List (SceneOutputMsg scenemsg userdata), env ) -> ( List (SceneOutputMsg scenemsg userdata), env )
+remap ( som, env ) =
+    ( List.filter
+        (\msg ->
+            case msg of
+                SOMChangeScene _ _ ->
+                    False
+
+                SOMLoadGC _ ->
+                    False
+
+                _ ->
+                    True
+        )
+        som
+    , env
+    )
+
+
 update : GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
 update env evnt data bdata =
+    let
+        trans0 =
+            data.transition
+
+        env1 =
+            if trans0.currentTransition == 0 && data.filterSOM then
+                -- Disable SOM messages
+                let
+                    _ =
+                        Debug.log "Change" 0
+
+                    newScene =
+                        updateResultRemap remap env.commonData
+                in
+                { env | commonData = newScene }
+
+            else
+                env
+    in
     case evnt of
         Tick delta ->
             let
-                trans0 =
-                    data.transition
-
                 newTime =
                     trans0.currentTransition + delta
 
@@ -62,11 +102,11 @@ update env evnt data bdata =
             in
             if newTime >= trans0.inT + trans0.outT then
                 -- End
-                ( ( data, { bdata | dead = True } ), [], ( env, False ) )
+                ( ( data, { bdata | dead = True } ), [], ( env1, False ) )
 
             else if data.transition.options.mix then
                 -- TODO
-                ( ( data, bdata ), [], ( env, False ) )
+                ( ( data, bdata ), [], ( env1, False ) )
 
             else if trans0.currentTransition < trans0.outT then
                 let
@@ -82,14 +122,14 @@ update env evnt data bdata =
 
                     outPP : Renderable -> Renderable
                     outPP ren =
-                        data.transition.outTrans env.globalData.internalData ren progress
+                        data.transition.outTrans env1.globalData.internalData ren progress
                 in
                 if newTime >= trans0.outT then
                     -- Needs to change scene
-                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
+                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env1, False ) )
 
                 else
-                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [], ( env, False ) )
+                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [], ( env1, False ) )
 
             else
                 -- Implies trans0.outT + trans0.inT > trans0.currentTransition >= trans0.outT
@@ -106,12 +146,12 @@ update env evnt data bdata =
 
                     inPP : Renderable -> Renderable
                     inPP ren =
-                        data.transition.inTrans env.globalData.internalData ren progress
+                        data.transition.inTrans env1.globalData.internalData ren progress
                 in
-                ( ( data2, { bdata | postProcessor = [ inPP ] } ), [], ( env, False ) )
+                ( ( data2, { bdata | postProcessor = [ inPP ] } ), [], ( env1, False ) )
 
         _ ->
-            ( ( data, bdata ), [], ( env, False ) )
+            ( ( data, bdata ), [], ( env1, False ) )
 
 
 updaterec : GlobalComponentUpdateRec userdata scenemsg (Data userdata scenemsg)

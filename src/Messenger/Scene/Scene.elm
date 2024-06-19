@@ -6,6 +6,7 @@ module Messenger.Scene.Scene exposing
     , SceneStorage, AllScenes
     , MMsg, MMsgBase
     , MConcreteGeneralModel, MAbstractGeneralModel
+    , updateResultRemap
     , GCCommonData, GCBaseData, GCMsg, GCTarget
     , AbstractGlobalComponent, ConcreteGlobalComponent
     , GlobalComponentInit, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView
@@ -26,6 +27,11 @@ Gerneral Model and Basic types for Scenes
 @docs SceneStorage, AllScenes
 @docs MMsg, MMsgBase
 @docs MConcreteGeneralModel, MAbstractGeneralModel
+
+
+## Scene Result Remapper
+
+@docs updateResultRemap
 
 
 # Global Component
@@ -188,6 +194,33 @@ type alias MConcreteGeneralModel data common userdata tar msg bdata scenemsg =
 -}
 type alias MAbstractGeneralModel common userdata tar msg bdata scenemsg =
     AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata (SceneOutputMsg scenemsg userdata)
+
+
+{-| Change the `update` function to remap the result and return the changed abstract scene.
+-}
+updateResultRemap : (( List (SceneOutputMsg scenemsg userdata), env ) -> ( List (SceneOutputMsg scenemsg userdata), env )) -> AbstractScene env event ren scenemsg userdata -> AbstractScene env event ren scenemsg userdata
+updateResultRemap f model =
+    let
+        change : AbstractScene env event ren scenemsg userdata -> AbstractScene env event ren scenemsg userdata
+        change m =
+            let
+                um =
+                    unroll m
+
+                newUpdate : env -> event -> ( AbstractScene env event ren scenemsg userdata, List (SceneOutputMsg scenemsg userdata), env )
+                newUpdate env evnt =
+                    let
+                        ( oldr, oldmsg, oldres ) =
+                            um.update env evnt
+
+                        ( newmsg, newres ) =
+                            f ( oldmsg, oldres )
+                    in
+                    ( change oldr, newmsg, newres )
+            in
+            Roll { um | update = newUpdate }
+    in
+    change model
 
 
 
