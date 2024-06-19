@@ -65,19 +65,19 @@ gameUpdate input evnt model =
             model1 =
                 { env = env2, globalComponents = gc2 }
 
-            ( scenesom, env3 ) =
+            ( scenesom, model2 ) =
                 if block then
-                    ( [], env2 )
+                    ( [], model1 )
 
                 else
                     let
                         ( scene, psom, env ) =
-                            (unroll model1.env.commonData).update (removeCommonData env2) evnt
-                    in
-                    ( psom, addCommonData scene env )
+                            (unroll env2.commonData).update (removeCommonData env2) evnt
 
-            model2 =
-                { model1 | env = env3 }
+                        envc =
+                            addCommonData scene env
+                    in
+                    ( psom, { model1 | env = envc } )
 
             -- GC SOM should be handled before Scene SOM
             som =
