@@ -37,32 +37,35 @@ view input _ model =
         config =
             input.config
 
+        gd =
+            model.env.globalData
+
         sceneView =
-            (unroll model.currentScene).view { globalData = model.currentGlobalData, commonData = () }
+            (unroll model.env.commonData).view { globalData = model.env.globalData, commonData = () }
 
         gcView =
-            viewModelList { globalData = model.currentGlobalData, commonData = model.currentScene } model.globalComponents
+            viewModelList { globalData = gd, commonData = model.env.commonData } model.globalComponents
 
         canvas =
             Canvas.toHtmlWith
-                { width = floor model.currentGlobalData.internalData.realWidth
-                , height = floor model.currentGlobalData.internalData.realHeight
+                { width = floor gd.internalData.realWidth
+                , height = floor gd.internalData.realHeight
                 , textures = getTexture resources
                 }
-                ([ style "left" (String.fromFloat model.currentGlobalData.internalData.startLeft)
-                 , style "top" (String.fromFloat model.currentGlobalData.internalData.startTop)
+                ([ style "left" (String.fromFloat gd.internalData.startLeft)
+                 , style "top" (String.fromFloat gd.internalData.startTop)
                  , style "position" "fixed"
                  ]
-                    ++ model.currentGlobalData.canvasAttributes
+                    ++ gd.canvasAttributes
                 )
-                ([ config.background model.currentGlobalData
+                ([ config.background gd
                  , sceneView
                  ]
                     ++ gcView
                 )
     in
     Html.div [ on "wheel" (Decode.map WMouseWheel (Decode.field "deltaY" Decode.int)) ]
-        (case model.currentGlobalData.extraHTML of
+        (case gd.extraHTML of
             Just x ->
                 [ canvas, x ]
 
@@ -78,5 +81,5 @@ The audio argument needed in the main model.
 -}
 audio : AudioData -> Model userdata scenemsg -> Audio
 audio _ model =
-    Audio.group (getAudio model.currentGlobalData.internalData.audioRepo)
-        |> Audio.scaleVolume model.currentGlobalData.volume
+    Audio.group (getAudio model.env.globalData.internalData.audioRepo)
+        |> Audio.scaleVolume model.env.globalData.volume

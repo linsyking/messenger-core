@@ -11,7 +11,7 @@ module Messenger.UI.SOMHandler exposing (handleSOMs, handleSOM)
 
 import Audio exposing (AudioCmd)
 import Messenger.Audio.Internal exposing (playAudio, stopAudio)
-import Messenger.Base exposing (Env, WorldEvent(..), globalDataToUserGlobalData)
+import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime)
 import Messenger.Recursion exposing (removeObjects, updateObjectsWithTarget)
@@ -46,7 +46,10 @@ handleSOM : UserConfig userdata scenemsg -> AllScenes userdata scenemsg -> Scene
 handleSOM config scenes som model =
     let
         gd =
-            model.currentGlobalData
+            env.globalData
+
+        env =
+            model.env
 
         gdid =
             gd.internalData
@@ -68,22 +71,31 @@ handleSOM config scenes som model =
             let
                 newRepo =
                     playAudio gdid.audioRepo ch name opt gd.currentTimeStamp
+
+                newEnv =
+                    { env | globalData = { gd | internalData = { gdid | audioRepo = newRepo } } }
             in
-            ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = newRepo } } }, [], [] )
+            ( { model | env = newEnv }, [], [] )
 
         SOMSetVolume s ->
             let
                 newgd2 =
                     { gd | volume = s }
+
+                newEnv =
+                    { env | globalData = newgd2 }
             in
-            ( { model | currentGlobalData = newgd2 }, [], [] )
+            ( { model | env = newEnv }, [], [] )
 
         SOMStopAudio ch ->
             let
                 newRepo =
                     stopAudio gdid.audioRepo gd.currentTimeStamp ch
+
+                newEnv =
+                    { env | globalData = { gd | internalData = { gdid | audioRepo = newRepo } } }
             in
-            ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = newRepo } } }, [], [] )
+            ( { model | env = newEnv }, [], [] )
 
         SOMAlert text ->
             ( model, [ config.ports.alert text ], [] )
@@ -94,12 +106,12 @@ handleSOM config scenes som model =
         SOMSaveGlobalData ->
             let
                 encodedGD =
-                    config.globalDataCodec.encode (globalDataToUserGlobalData model.currentGlobalData)
+                    config.globalDataCodec.encode (globalDataToUserGlobalData gd)
             in
             ( model, [ config.ports.sendInfo encodedGD ], [] )
 
         SOMLoadGC gc ->
-            ( { model | globalComponents = model.globalComponents ++ [ gc (Env model.currentGlobalData model.currentScene) ] }, [], [] )
+            ( { model | globalComponents = model.globalComponents ++ [ gc env ] }, [], [] )
 
         SOMUnloadGC gctar ->
             ( { model | globalComponents = removeObjects gctar model.globalComponents }, [], [] )
@@ -107,11 +119,11 @@ handleSOM config scenes som model =
         SOMCallGC calls ->
             let
                 ( gc1, som1, env1 ) =
-                    updateObjectsWithTarget (Env model.currentGlobalData model.currentScene) calls model.globalComponents
+                    updateObjectsWithTarget env calls model.globalComponents
 
                 model1 : Model userdata scenemsg
                 model1 =
-                    { globalComponents = gc1, currentGlobalData = env1.globalData, currentScene = env1.commonData }
+                    { globalComponents = gc1, env = env1 }
             in
             if List.isEmpty som1 then
                 -- End

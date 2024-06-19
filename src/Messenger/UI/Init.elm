@@ -55,8 +55,7 @@ emptyGlobalData config =
 -}
 initModel : UserConfig userdata scenemsg -> Model userdata scenemsg
 initModel config =
-    { currentScene = emptyScene
-    , currentGlobalData = emptyGlobalData config
+    { env = Env (emptyGlobalData config) emptyScene
     , globalComponents = []
     }
 
@@ -78,8 +77,14 @@ init input flags =
         im =
             initModel config
 
+        env1 =
+            im.env
+
+        newEnv1 =
+            { env1 | globalData = newgd }
+
         ms =
-            loadSceneByName config.initScene scenes config.initSceneMsg { im | currentGlobalData = newgd }
+            loadSceneByName config.initScene scenes config.initSceneMsg { im | env = newEnv1 }
 
         ( gw, gh ) =
             maxHandW ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )
@@ -112,6 +117,12 @@ init input flags =
                 (Dict.toList resources.allAudio)
 
         gcs =
-            List.map (\gc -> gc (Env newgd ms.currentScene)) input.globalComponents
+            List.map (\gc -> gc (Env newgd ms.env.commonData)) input.globalComponents
+
+        env2 =
+            ms.env
+
+        newEnv2 =
+            { env2 | globalData = newgd }
     in
-    ( { ms | currentGlobalData = newgd, globalComponents = gcs }, Cmd.none, Audio.cmdBatch audioLoad )
+    ( { ms | env = newEnv2, globalComponents = gcs }, Cmd.none, Audio.cmdBatch audioLoad )

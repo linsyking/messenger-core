@@ -61,8 +61,16 @@ changeSceneView scene f =
         old =
             unroll scene
 
+        dummyView =
+            \env ->
+                let
+                    _ =
+                        Debug.log "HELLO" 0
+                in
+                Canvas.empty
+
         new =
-            { old | view = f old.view }
+            { old | view = dummyView }
     in
     Roll new
 
@@ -118,6 +126,9 @@ update env evnt data bdata =
 
                 ( scene, scenemsg ) =
                     data.scene
+
+                data2 =
+                    { data | transition = { trans0 | currentTransition = newTime } }
             in
             if data.state == In && newTime >= trans0.inT then
                 -- End
@@ -143,7 +154,7 @@ update env evnt data bdata =
                     trans1 =
                         { trans0 | currentTransition = 0 }
                 in
-                ( ( { data | state = BeforeIn, transition = trans1 }, bdata ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
+                ( ( { data2 | state = BeforeIn, transition = trans1 }, bdata ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
 
             else if data.state == BeforeIn then
                 -- Change view of current scene
@@ -154,10 +165,10 @@ update env evnt data bdata =
                     newScene =
                         changeSceneView currentScene (inViewReplace data)
                 in
-                ( ( { data | state = In }, bdata ), [], ( { env | commonData = newScene }, False ) )
+                ( ( { data2 | state = In }, bdata ), [], ( { env | commonData = newScene }, False ) )
 
             else
-                ( ( data, bdata ), [], ( env, False ) )
+                ( ( data2, bdata ), [], ( env, False ) )
 
         _ ->
             ( ( data, bdata ), [], ( env, False ) )

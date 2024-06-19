@@ -7,6 +7,11 @@ module Scenes.Home.Model exposing (scene)
 -}
 
 import Canvas
+import Duration
+import GlobalComponents.FPS.Model as FPS
+import GlobalComponents.Transition.Model as Transition
+import GlobalComponents.Transition.Transitions.Base exposing (genTransition)
+import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeOutBlack)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
@@ -28,7 +33,15 @@ update : RawSceneUpdate Data UserData SceneMsg
 update env msg data =
     case msg of
         KeyDown 49 ->
-            ( data, [ SOMChangeScene Nothing "Home2", SOMUnloadGC "fps" ], env )
+            ( data
+            , [ 
+            --     SOMUnloadGC "fps"
+            --   , SOMLoadGC (FPS.genGC (FPS.InitOption 100) Nothing)
+            --   , 
+              SOMLoadGC (Transition.genGC ( genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing, "Home2", Nothing ) Nothing)
+              ]
+            , env
+            )
 
         _ ->
             ( data, [], env )

@@ -34,7 +34,7 @@ view : RawSceneView UserData Data
 view env data =
     Canvas.group []
         [ renderSprite env.globalData.internalData [] ( 0, 0 ) ( 1920, 0 ) "ship"
-        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Menu\n1. Test Rendering\n2. Test Layer\n3. Test Component\n4. Test Transition" "Courier" Color.blue ( 1920 / 2, 1080 / 2 )
+        , renderTextBoxWithColorCenter env.globalData.internalData 50 "HELLO\nWORLD!" "Courier" Color.blue ( 1920 / 2, 1080 / 2 )
         ]
 
 

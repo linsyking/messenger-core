@@ -1,5 +1,5 @@
 module GlobalComponents.Transition.Transitions.Base exposing
-    ( Transition, SingleTrans
+    ( Transition, SingleTrans, TransitionOption
     , genTransition, nullTransition
     )
 
@@ -8,7 +8,7 @@ module GlobalComponents.Transition.Transitions.Base exposing
 
 # Transition Base
 
-@docs Transition, SingleTrans
+@docs Transition, SingleTrans, TransitionOption
 @docs genTransition, nullTransition
 
 -}
@@ -47,19 +47,27 @@ type alias Transition =
     }
 
 
+{-| Transition option
+-}
 type alias TransitionOption =
     { mix : Bool
     }
 
 
+defaultOption : TransitionOption
+defaultOption =
+    { mix = False
+    }
+
+
 {-| Generate new transition
 -}
-genTransition : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> TransitionOption -> Transition
+genTransition : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> Maybe TransitionOption -> Transition
 genTransition ( outTrans, outT ) ( inTrans, inT ) opts =
     { currentTransition = 0
     , outT = ceiling <| Duration.inMilliseconds outT
     , inT = ceiling <| Duration.inMilliseconds inT
     , outTrans = outTrans
     , inTrans = inTrans
-    , options = opts
+    , options = Maybe.withDefault defaultOption opts
     }

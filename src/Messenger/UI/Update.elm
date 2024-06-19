@@ -14,7 +14,7 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
-import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedResourceNum, removeCommonData)
+import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, loadedResourceNum, removeCommonData)
 import Messenger.Component.GlobalComponent exposing (filterAliveGC)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.GeneralModel exposing (filterSOM)
@@ -34,7 +34,7 @@ import Time
 -}
 gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate input evnt model =
-    if loadedResourceNum model.currentGlobalData < resourceNum input.resources then
+    if loadedResourceNum model.env.globalData < resourceNum input.resources then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 
@@ -52,28 +52,32 @@ gameUpdate input evnt model =
             gc1 =
                 filterAliveGC model.globalComponents
 
-            ( gc2, gcsompre, ( env1c, block ) ) =
-                updateObjects (Env model.currentGlobalData model.currentScene) evnt gc1
+            ( gc2, gcsompre, ( env2, block ) ) =
+                updateObjects env1 evnt gc1
 
             gcsom =
                 filterSOM gcsompre
 
             env1 =
-                removeCommonData env1c
+                model.env
 
             model1 : Model userdata scenemsg
             model1 =
-                { currentScene = env1c.commonData, currentGlobalData = env1c.globalData, globalComponents = gc2 }
+                { env = env2, globalComponents = gc2 }
 
-            ( scene1, scenesom, env2 ) =
+            ( scenesom, env3 ) =
                 if block then
-                    ( model1.currentScene, [], env1 )
+                    ( [], env2 )
 
                 else
-                    (unroll model1.currentScene).update env1 evnt
+                    let
+                        ( scene, psom, env ) =
+                            (unroll model1.env.commonData).update (removeCommonData env2) evnt
+                    in
+                    ( psom, addCommonData scene env )
 
             model2 =
-                { model1 | currentGlobalData = env2.globalData, currentScene = scene1 }
+                { model1 | env = env3 }
 
             -- GC SOM should be handled before Scene SOM
             som =
@@ -103,7 +107,10 @@ update : Input userdata scenemsg -> AudioData -> WorldEvent -> Model userdata sc
 update input audiodata msg model =
     let
         gd =
-            model.currentGlobalData
+            env.globalData
+
+        env =
+            model.env
 
         gdid =
             gd.internalData
@@ -159,8 +166,11 @@ update input audiodata msg model =
                                     { gdid | sprites = saveSprite gdid.sprites name t }
                             in
                             { gd | internalData = newIT }
+
+                newEnv =
+                    { env | globalData = newgd }
             in
-            ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
+            ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
         SoundLoaded name result ->
             case result of
@@ -171,8 +181,11 @@ update input audiodata msg model =
 
                         ard =
                             Dict.insert name ( sound, Audio.length audiodata sound ) ar.audio
+
+                        newEnv =
+                            { env | globalData = { gd | internalData = { gdid | audioRepo = { ar | audio = ard } } } }
                     in
-                    ( { model | currentGlobalData = { gd | internalData = { gdid | audioRepo = { ar | audio = ard } } } }
+                    ( { model | env = newEnv }
                     , Cmd.none
                     , Audio.cmdNone
                     )
@@ -199,42 +212,57 @@ update input audiodata msg model =
 
                 newgd =
                     { gd | internalData = newIT }
+
+                newEnv =
+                    { env | globalData = newgd }
             in
-            ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
+            ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
         WindowVisibility v ->
             let
                 newgd =
                     { gd | windowVisibility = v, pressedKeys = Set.empty, pressedMouseButtons = Set.empty }
+
+                newEnv =
+                    { env | globalData = newgd }
             in
-            ( { model | currentGlobalData = newgd }, Cmd.none, Audio.cmdNone )
+            ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
         MouseMove ( px, py ) ->
             let
                 mp =
                     fromMouseToVirtual gd.internalData ( px, py )
+
+                newEnv =
+                    { env | globalData = { gd | mousePos = mp } }
             in
-            ( { model | currentGlobalData = { gd | mousePos = mp } }, Cmd.none, Audio.cmdNone )
+            ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
         WMouseDown e pos ->
             let
                 newPressedMouseButtons =
                     Set.insert e gd.pressedMouseButtons
 
+                newEnv =
+                    { env | globalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+
                 newModel =
-                    { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+                    { model | env = newEnv }
             in
-            gameUpdateInner (MouseDown e <| fromMouseToVirtual newModel.currentGlobalData.internalData pos) newModel
+            gameUpdateInner (MouseDown e <| fromMouseToVirtual newModel.env.globalData.internalData pos) newModel
 
         WMouseUp e pos ->
             let
                 newPressedMouseButtons =
                     Set.remove e gd.pressedMouseButtons
 
+                newEnv =
+                    { env | globalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+
                 newModel =
-                    { model | currentGlobalData = { gd | pressedMouseButtons = newPressedMouseButtons } }
+                    { model | env = newEnv }
             in
-            gameUpdateInner (MouseUp e <| fromMouseToVirtual newModel.currentGlobalData.internalData pos) newModel
+            gameUpdateInner (MouseUp e <| fromMouseToVirtual newModel.env.globalData.internalData pos) newModel
 
         WKeyDown 112 ->
             if config.debug then
@@ -256,15 +284,21 @@ update input audiodata msg model =
             let
                 newPressedKeys =
                     Set.remove key gd.pressedKeys
+
+                newEnv =
+                    { env | globalData = { gd | pressedKeys = newPressedKeys } }
             in
-            gameUpdateInner (KeyUp key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
+            gameUpdateInner (KeyUp key) { model | env = newEnv }
 
         WKeyDown key ->
             let
                 newPressedKeys =
                     Set.insert key gd.pressedKeys
+
+                newEnv =
+                    { env | globalData = { gd | pressedKeys = newPressedKeys } }
             in
-            gameUpdateInner (KeyDown key) { model | currentGlobalData = { gd | pressedKeys = newPressedKeys } }
+            gameUpdateInner (KeyDown key) { model | env = newEnv }
 
         WPrompt "load" result ->
             if existScene result scenes then
@@ -285,10 +319,13 @@ update input audiodata msg model =
             case vol of
                 Just v ->
                     let
-                        newGd =
+                        newgd =
                             { gd | volume = v }
+
+                        newEnv =
+                            { env | globalData = newgd }
                     in
-                    ( { model | currentGlobalData = newGd }, Cmd.none, Audio.cmdNone )
+                    ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
                 Nothing ->
                     ( model, config.ports.alert "Not a number", Audio.cmdNone )
@@ -301,10 +338,13 @@ update input audiodata msg model =
                 timeInterval =
                     Time.posixToMillis delta - Time.posixToMillis gd.currentTimeStamp
 
-                newGD =
+                newgd =
                     { gd | currentTimeStamp = delta, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + timeInterval }
+
+                newEnv =
+                    { env | globalData = newgd }
             in
-            gameUpdateInner (Tick timeInterval) { model | currentGlobalData = newGD }
+            gameUpdateInner (Tick timeInterval) { model | env = newEnv }
 
         WMouseWheel x ->
             gameUpdateInner (MouseWheel x) model

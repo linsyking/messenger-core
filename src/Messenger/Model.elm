@@ -20,15 +20,14 @@ We only use it in the main update.
 -}
 
 import Browser.Events exposing (Visibility(..))
-import Messenger.Base exposing (GlobalData)
+import Messenger.Base exposing (Env)
 import Messenger.Scene.Scene exposing (AbstractGlobalComponent, MAbstractScene)
 
 
 {-| The model for the game
 -}
 type alias Model userdata scenemsg =
-    { currentScene : MAbstractScene userdata scenemsg
-    , currentGlobalData : GlobalData userdata
+    { env : Env (MAbstractScene userdata scenemsg) userdata
     , globalComponents : List (AbstractGlobalComponent userdata scenemsg)
     }
 
@@ -39,12 +38,15 @@ updateSceneTime : Model userdata scenemsg -> Int -> Model userdata scenemsg
 updateSceneTime m delta =
     let
         gd =
-            m.currentGlobalData
+            env.globalData
+
+        env =
+            m.env
 
         ngd =
             { gd | sceneStartTime = gd.sceneStartTime + delta, sceneStartFrame = gd.sceneStartFrame + 1 }
     in
-    { m | currentGlobalData = ngd }
+    { m | env = { env | globalData = ngd } }
 
 
 {-| Reset the scene starttime to 0.
@@ -52,10 +54,13 @@ updateSceneTime m delta =
 resetSceneStartTime : Model userdata scenemsg -> Model userdata scenemsg
 resetSceneStartTime m =
     let
-        ogd =
-            m.currentGlobalData
+        gd =
+            env.globalData
+
+        env =
+            m.env
 
         ngd =
-            { ogd | sceneStartTime = 0, sceneStartFrame = 0 }
+            { gd | sceneStartTime = 0, sceneStartFrame = 0 }
     in
-    { m | currentGlobalData = ngd }
+    { m | env = { env | globalData = ngd } }
