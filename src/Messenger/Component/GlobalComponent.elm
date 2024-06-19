@@ -1,6 +1,7 @@
 module Messenger.Component.GlobalComponent exposing
     ( genGlobalComponent
     , filterAliveGC
+    , combinePP
     )
 
 {-|
@@ -10,9 +11,11 @@ module Messenger.Component.GlobalComponent exposing
 
 @docs genGlobalComponent
 @docs filterAliveGC
+@docs combinePP
 
 -}
 
+import Canvas exposing (Renderable)
 import Messenger.GeneralModel as GM
 import Messenger.Scene.Scene exposing (AbstractGlobalComponent, ConcreteGlobalComponent, GCBaseData, GCCommonData, GCMsg, GCTarget, GlobalComponentStorage, MConcreteGeneralModel)
 
@@ -62,3 +65,10 @@ gcTransform concomp gctar =
 filterAliveGC : List (AbstractGlobalComponent userdata scenemsg) -> List (AbstractGlobalComponent userdata scenemsg)
 filterAliveGC xs =
     List.filter (\x -> not (GM.unroll x).baseData.dead) xs
+
+
+{-| Combine post processors of all global components.
+-}
+combinePP : List (AbstractGlobalComponent userdata scenemsg) -> List (Renderable -> Renderable)
+combinePP xs =
+    List.concatMap (\gc -> (GM.unroll gc).baseData.postProcessor) xs

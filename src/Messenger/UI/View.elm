@@ -12,13 +12,14 @@ View the game via Canvas
 -}
 
 import Audio exposing (Audio, AudioData)
-import Canvas
+import Canvas exposing (Renderable)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import Html.Events exposing (on)
 import Json.Decode as Decode
 import Messenger.Audio.Internal exposing (getAudio)
 import Messenger.Base exposing (WorldEvent(..))
+import Messenger.Component.GlobalComponent exposing (combinePP)
 import Messenger.GeneralModel exposing (viewModelList)
 import Messenger.Model exposing (Model)
 import Messenger.Resources.Base exposing (getTexture)
@@ -59,7 +60,7 @@ view input _ model =
                     ++ gd.canvasAttributes
                 )
                 ([ config.background gd
-                 , sceneView
+                 , postProcess sceneView <| combinePP model.globalComponents
                  ]
                     ++ gcView
                 )
@@ -83,3 +84,8 @@ audio : AudioData -> Model userdata scenemsg -> Audio
 audio _ model =
     Audio.group (getAudio model.env.globalData.internalData.audioRepo)
         |> Audio.scaleVolume model.env.globalData.volume
+
+
+postProcess : Renderable -> List (Renderable -> Renderable) -> Renderable
+postProcess x xs =
+    List.foldl (\le uni -> le uni) x xs
