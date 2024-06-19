@@ -77,9 +77,6 @@ update env evnt data bdata =
             if trans0.currentTransition == 0 && data.filterSOM then
                 -- Disable SOM messages
                 let
-                    _ =
-                        Debug.log "Change" 0
-
                     newScene =
                         updateResultRemap remap env.commonData
                 in
