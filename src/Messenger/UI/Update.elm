@@ -15,6 +15,7 @@ import Audio exposing (AudioCmd, AudioData)
 import Canvas.Texture
 import Dict
 import Messenger.Base exposing (Env, UserEvent(..), WorldEvent(..), loadedResourceNum, removeCommonData)
+import Messenger.Component.GlobalComponent exposing (filterAliveGC)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
@@ -48,8 +49,11 @@ gameUpdate input evnt model =
             somHandler =
                 handleSOMs config scenes
 
-            ( gc1, gcsompre, ( env1c, block ) ) =
-                updateObjects (Env model.currentGlobalData model.currentScene) evnt model.globalComponents
+            gc1 =
+                filterAliveGC model.globalComponents
+
+            ( gc2, gcsompre, ( env1c, block ) ) =
+                updateObjects (Env model.currentGlobalData model.currentScene) evnt gc1
 
             gcsom =
                 filterSOM gcsompre
@@ -59,7 +63,7 @@ gameUpdate input evnt model =
 
             model1 : Model userdata scenemsg
             model1 =
-                { currentScene = env1c.commonData, currentGlobalData = env1c.globalData, globalComponents = gc1 }
+                { currentScene = env1c.commonData, currentGlobalData = env1c.globalData, globalComponents = gc2 }
 
             ( scene1, scenesom, env2 ) =
                 if block then

@@ -6,11 +6,10 @@ module Messenger.Scene.Scene exposing
     , SceneStorage, AllScenes
     , MMsg, MMsgBase
     , MConcreteGeneralModel, MAbstractGeneralModel
-    , GCCommonData, GCMsg, GCTarget
+    , GCCommonData, GCBaseData, GCMsg, GCTarget
     , AbstractGlobalComponent, ConcreteGlobalComponent
     , GlobalComponentInit, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView
     , GlobalComponentStorage
-    , genGlobalComponent
     )
 
 {-|
@@ -31,12 +30,10 @@ Gerneral Model and Basic types for Scenes
 
 # Global Component
 
-@docs GCCommonData, GCMsg, GCTarget
+@docs GCCommonData, GCBaseData, GCMsg, GCTarget
 @docs AbstractGlobalComponent, ConcreteGlobalComponent
 @docs GlobalComponentInit, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView
 @docs GlobalComponentStorage
-
-@docs genGlobalComponent
 
 -}
 
@@ -45,7 +42,7 @@ import Dict
 import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption)
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel as GM exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
+import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
 
 
 {-| Concrete Scene Model
@@ -271,43 +268,3 @@ Used for storage.
 -}
 type alias AbstractGlobalComponent userdata scenemsg =
     MAbstractGeneralModel (GCCommonData userdata scenemsg) userdata GCTarget GCMsg GCBaseData scenemsg
-
-
-{-| Generate abstract global component from concrete global component.
--}
-genGlobalComponent : ConcreteGlobalComponent data userdata scenemsg -> GCMsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
-genGlobalComponent conpcomp gcmsg gctar =
-    GM.abstract (gcTransform conpcomp gctar) <| gcmsg
-
-
-{-| Turn global component into a general model.
--}
-gcTransform : ConcreteGlobalComponent data userdata scenemsg -> Maybe GCTarget -> MConcreteGeneralModel data (GCCommonData userdata scenemsg) userdata GCTarget GCMsg GCBaseData scenemsg
-gcTransform concomp gctar =
-    let
-        id =
-            case gctar of
-                Just t ->
-                    t
-
-                Nothing ->
-                    concomp.id
-    in
-    { init = \env msg -> concomp.init env msg
-    , update =
-        \env evt data bdata ->
-            let
-                ( resData, resMsg, resEnv ) =
-                    concomp.update env evt data bdata
-            in
-            ( resData, resMsg, resEnv )
-    , updaterec =
-        \env msg data bdata ->
-            let
-                ( resData, resMsg, resEnv ) =
-                    concomp.updaterec env msg data bdata
-            in
-            ( resData, resMsg, resEnv )
-    , view = \env data bdata -> concomp.view env data bdata
-    , matcher = \_ _ tar -> tar == id
-    }
