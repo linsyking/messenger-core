@@ -123,7 +123,7 @@ handleSOM config scenes som model =
 
                 model1 : Model userdata scenemsg
                 model1 =
-                    { globalComponents = gc1, env = env1 }
+                    { globalComponents = gc1, env = env1, canvasRenderable = model.canvasRenderable }
             in
             if List.isEmpty som1 then
                 -- End
