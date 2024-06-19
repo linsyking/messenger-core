@@ -44,7 +44,7 @@ updateObjectsWithTarget env msgs objs =
 -}
 removeObjects : tar -> List (AbstractGeneralModel env event tar msg ren bdata sommsg) -> List (AbstractGeneralModel env event tar msg ren bdata sommsg)
 removeObjects t xs =
-    List.filter (\x -> (unroll x).matcher t) xs
+    List.filter (\x -> not <| (unroll x).matcher t) xs
 
 
 

@@ -9,9 +9,10 @@ module Scenes.Home.Model exposing (scene)
 import Canvas
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
+import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.TextBox exposing (renderTextBox)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
-import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage)
+import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 
 
 type alias Data =
@@ -25,7 +26,12 @@ init env msg =
 
 update : RawSceneUpdate Data UserData SceneMsg
 update env msg data =
-    ( data, [], env )
+    case msg of
+        KeyDown 49 ->
+            ( data, [ SOMChangeScene Nothing "Home2", SOMUnloadGC "fps" ], env )
+
+        _ ->
+            ( data, [], env )
 
 
 view : RawSceneView UserData Data
