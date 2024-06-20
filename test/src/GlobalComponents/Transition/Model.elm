@@ -192,9 +192,6 @@ updateNoMix env evnt data bdata =
 
                 data2 =
                     { data | transition = { trans0 | currentTransition = newTime } }
-
-                _ =
-                    Debug.log "hihi" ( trans0.currentTransition, newTime, trans0.outT )
             in
             if newTime >= trans0.inT + trans0.outT then
                 -- End
