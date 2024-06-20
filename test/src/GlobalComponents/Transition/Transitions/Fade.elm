@@ -2,6 +2,7 @@ module GlobalComponents.Transition.Transitions.Fade exposing
     ( fadeIn, fadeOut
     , fadeOutBlack, fadeInBlack
     , fadeOutWithRenderable, fadeInWithRenderable
+    , fadeOutTransparent, fadeInTransparent
     )
 
 {-| Fading Effects
@@ -9,6 +10,7 @@ module GlobalComponents.Transition.Transitions.Fade exposing
 @docs fadeIn, fadeOut
 @docs fadeOutBlack, fadeInBlack
 @docs fadeOutWithRenderable, fadeInWithRenderable
+@docs fadeOutTransparent, fadeInTransparent
 
 -}
 
@@ -56,6 +58,24 @@ fadeOutBlack =
 fadeInBlack : SingleTrans
 fadeInBlack =
     fadeIn Color.black
+
+
+{-| Fade Out with transparent
+-}
+fadeOutTransparent : SingleTrans
+fadeOutTransparent _ rd v =
+    group [ alpha v ]
+        [ rd
+        ]
+
+
+{-| Fade In with transparent
+-}
+fadeInTransparent : SingleTrans
+fadeInTransparent _ rd v =
+    group [ alpha (1 - v) ]
+        [ rd
+        ]
 
 
 {-| Fade Out with Renderable

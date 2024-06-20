@@ -59,7 +59,7 @@ view input _ model =
                  ]
                     ++ gd.canvasAttributes
                 )
-                ([ config.background gd
+                ([ config.background gd.internalData
                  , postProcess sceneView <| combinePP model.globalComponents
                  ]
                     ++ gcView

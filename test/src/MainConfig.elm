@@ -28,7 +28,7 @@ module MainConfig exposing
 import Canvas exposing (Renderable)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData, decodeUserData, encodeUserData)
-import Messenger.Base exposing (UserViewGlobalData)
+import Messenger.Base exposing (InternalData, UserViewGlobalData)
 import Messenger.UserConfig exposing (TimeInterval(..), transparentBackground)
 
 
@@ -62,7 +62,7 @@ debug =
 
 {-| Background of the scene
 -}
-background : Messenger.Base.GlobalData userdata -> Renderable
+background : InternalData -> Renderable
 background =
     transparentBackground
 

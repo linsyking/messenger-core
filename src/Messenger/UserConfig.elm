@@ -27,7 +27,7 @@ import Color exposing (Color)
 import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Messenger.Base exposing (GlobalData, UserViewGlobalData, WorldEvent)
+import Messenger.Base exposing (InternalData, UserViewGlobalData, WorldEvent)
 import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
 
 
@@ -80,7 +80,7 @@ type alias UserConfig userdata scenemsg =
         , height : Float
         }
     , debug : Bool
-    , background : GlobalData userdata -> Renderable
+    , background : InternalData -> Renderable
     , timeInterval : TimeInterval
     , ports : PortDefs
     }
@@ -127,17 +127,17 @@ type alias PortDefs =
 
 {-| A transparent background. You should use this for release.
 -}
-transparentBackground : GlobalData userdata -> Renderable
+transparentBackground : InternalData -> Renderable
 transparentBackground gd =
-    Canvas.clear ( 0, 0 ) gd.internalData.realWidth gd.internalData.realHeight
+    Canvas.clear ( 0, 0 ) gd.realWidth gd.realHeight
 
 
 {-| A colored background.
 -}
-coloredBackground : Color -> GlobalData userdata -> Renderable
+coloredBackground : Color -> InternalData -> Renderable
 coloredBackground color gd =
     Canvas.shapes
         [ Canvas.Settings.fill color
         ]
-        [ Canvas.rect ( 0, 0 ) gd.internalData.realWidth gd.internalData.realHeight
+        [ Canvas.rect ( 0, 0 ) gd.realWidth gd.realHeight
         ]
