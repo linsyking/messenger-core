@@ -12,6 +12,7 @@ import Duration
 import GlobalComponents.Transition.Model as Transition
 import GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
 import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
+import GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
@@ -64,6 +65,13 @@ update env msg data =
             , env
             )
 
+        KeyDown 53 ->
+            ( data
+            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( scrollOut Color.black, Duration.seconds 1 ) ( scrollIn Color.black, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+              ]
+            , env
+            )
+
         _ ->
             ( data, [], env )
 
@@ -73,7 +81,7 @@ view env data =
     Canvas.group []
         [ coloredBackground Color.white env.globalData.internalData
         , renderSprite env.globalData.internalData [] ( 0, 300 ) ( 1920, 0 ) "ship"
-        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential" "Courier" Color.red ( 1920 / 2, 25 )
+        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential\n4: Fade out black + Fade in black, sequential\n5: Scroll out black + Scroll in black, sequential" "Courier" Color.red ( 1920 / 2, 25 )
         , renderText env.globalData.internalData 50 (fromInt env.globalData.sceneStartFrame) "Courier" ( 0, 100 )
         ]
 

@@ -116,8 +116,7 @@ updateMix env evnt data bdata =
         ( data1, soms ) =
             case data.vsr of
                 Nothing ->
-                    -- Save the current scene
-                    ( { data | vsr = Just (VSR (removeCommonData env) env.commonData) }, [ Parent <| SOMMsg <| SOMChangeScene scenemsg scene ] )
+                    ( data, [] )
 
                 Just vsr ->
                     let
@@ -132,12 +131,23 @@ updateMix env evnt data bdata =
                 newTime =
                     trans0.currentTransition + delta
 
+                ( data1_1, soms1 ) =
+                    case data.vsr of
+                        Nothing ->
+                            -- Save the current scene
+                            ( { data | vsr = Just (VSR (removeCommonData env) env.commonData) }
+                            , [ Parent <| SOMMsg <| SOMChangeScene scenemsg scene ]
+                            )
+
+                        Just _ ->
+                            ( data1, soms )
+
                 data2 =
-                    { data1 | transition = { trans0 | currentTransition = newTime } }
+                    { data1_1 | transition = { trans0 | currentTransition = newTime } }
             in
             if newTime >= max trans0.inT trans0.outT then
                 -- End
-                ( ( data2, { bdata | dead = True } ), soms, ( env, False ) )
+                ( ( data2, { bdata | dead = True } ), soms1, ( env, False ) )
 
             else
                 let
@@ -162,10 +172,10 @@ updateMix env evnt data bdata =
                             , data.transition.outTrans env.globalData.internalData oldSceneView outProgress
                             ]
                 in
-                ( ( data2, { bdata | postProcessor = [ pp ] } ), soms, ( env, False ) )
+                ( ( data2, { bdata | postProcessor = [ pp ] } ), soms1, ( env, False ) )
 
         _ ->
-            ( ( data, bdata ), soms, ( env, False ) )
+            ( ( data1, bdata ), soms, ( env, False ) )
 
 
 updateNoMix : GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
