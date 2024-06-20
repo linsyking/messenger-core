@@ -55,7 +55,7 @@ view : RawSceneView UserData Data
 view env data =
     Canvas.group []
         [ coloredBackground Color.yellow env.globalData.internalData
-        , renderTextBox env.globalData.internalData 50 "Menu\n1. Test Transition\n2. Rendering Stress Test" "Courier" ( 0, 0 )
+        , renderTextBox env.globalData.internalData 50 "Menu\n1. Test Transition\n2. Rendering Stress Test" "Courier" ( 0, 0 ) ( 1920, 1080 )
         ]
 
 

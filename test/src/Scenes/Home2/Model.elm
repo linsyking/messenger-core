@@ -81,7 +81,7 @@ view env data =
     Canvas.group []
         [ coloredBackground Color.white env.globalData.internalData
         , renderSprite env.globalData.internalData [] ( 0, 300 ) ( 1920, 0 ) "ship"
-        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential\n4: Fade out black + Fade in black, sequential\n5: Scroll out black + Scroll in black, sequential" "Courier" Color.red ( 1920 / 2, 25 )
+        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential\n4: Fade out black + Fade in black, sequential\n5: Scroll out black + Scroll in black, sequential" "Courier" Color.red ( 1920 / 2, 25 ) ( 1920, 500 )
         , renderText env.globalData.internalData 50 (fromInt env.globalData.sceneStartFrame) "Courier" ( 0, 100 )
         ]
 
