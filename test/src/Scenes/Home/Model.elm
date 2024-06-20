@@ -8,7 +8,6 @@ module Scenes.Home.Model exposing (scene)
 
 import Canvas
 import Duration
-import GlobalComponents.FPS.Model as FPS
 import GlobalComponents.Transition.Model as Transition
 import GlobalComponents.Transition.Transitions.Base exposing (genTransition)
 import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeOutBlack)

@@ -64,7 +64,7 @@ fadeInBlack =
 -}
 fadeOutTransparent : SingleTrans
 fadeOutTransparent _ rd v =
-    group [ alpha v ]
+    group [ alpha (1 - v) ]
         [ rd
         ]
 
@@ -73,7 +73,7 @@ fadeOutTransparent _ rd v =
 -}
 fadeInTransparent : SingleTrans
 fadeInTransparent _ rd v =
-    group [ alpha (1 - v) ]
+    group [ alpha v ]
         [ rd
         ]
 
