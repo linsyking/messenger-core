@@ -72,7 +72,7 @@ view : RawSceneView UserData Data
 view env data =
     Canvas.group []
         [ coloredBackground Color.white env.globalData.internalData
-        , renderSprite env.globalData.internalData [] ( 0, 0 ) ( 1920, 0 ) "ship"
+        , renderSprite env.globalData.internalData [] ( 0, 300 ) ( 1920, 0 ) "ship"
         , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential" "Courier" Color.red ( 1920 / 2, 25 )
         , renderText env.globalData.internalData 50 (fromInt env.globalData.sceneStartFrame) "Courier" ( 0, 100 )
         ]
