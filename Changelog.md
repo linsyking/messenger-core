@@ -8,6 +8,7 @@
 - Remove `SOMMsg` related to transition and scene context management
 - Add basic support for global component
 - `AllScenes` changed to `Dict` instead of `List`
+- Use new `elm-canvas` `DrawText` API to draw multi-line text
 
 ## [12.1.0]
 
