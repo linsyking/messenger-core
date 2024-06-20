@@ -12,16 +12,17 @@ Initialize the game
 -}
 
 import Audio exposing (AudioCmd)
+import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (Visibility(..))
 import Canvas
 import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
-import Messenger.Coordinate.Coordinates exposing (getStartPoint, maxHandW)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
 import Messenger.UI.Input exposing (Input)
 import Messenger.UserConfig exposing (UserConfig)
+import Task
 import Time exposing (millisToPosix)
 
 
@@ -86,20 +87,9 @@ init input flags =
         ms =
             loadSceneByName config.initScene scenes config.initSceneMsg { im | env = newEnv1 }
 
-        ( gw, gh ) =
-            maxHandW ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )
-
-        ( fl, ft ) =
-            getStartPoint ( config.virtualSize.width, config.virtualSize.height ) ( flags.windowWidth, flags.windowHeight )
-
         newIT =
             { emptyInternalData
-                | browserViewPort = ( flags.windowWidth, flags.windowHeight )
-                , realWidth = gw
-                , realHeight = gh
-                , startLeft = fl
-                , startTop = ft
-                , virtualWidth = config.virtualSize.width
+                | virtualWidth = config.virtualSize.width
                 , virtualHeight = config.virtualSize.height
             }
 
@@ -125,4 +115,4 @@ init input flags =
         newEnv2 =
             { env2 | globalData = newgd }
     in
-    ( { ms | env = newEnv2, globalComponents = gcs }, Cmd.none, Audio.cmdBatch audioLoad )
+    ( { ms | env = newEnv2, globalComponents = gcs }, Task.perform (\res -> NewWindowSize ( res.viewport.width, res.viewport.height )) getViewport, Audio.cmdBatch audioLoad )

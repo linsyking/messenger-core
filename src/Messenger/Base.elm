@@ -276,8 +276,6 @@ Get info from js script.
 
 -}
 type alias Flags =
-    { windowWidth : Float
-    , windowHeight : Float
-    , timeStamp : Int
+    { timeStamp : Int
     , info : String
     }

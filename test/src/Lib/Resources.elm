@@ -42,6 +42,7 @@ allTexture : Dict String String
 allTexture =
     Dict.fromList
         [ ( "ship", "assets/enemy.png" )
+        , ( "bg", "assets/bg.jpg" )
         ]
 
 
