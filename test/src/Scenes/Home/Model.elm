@@ -7,16 +7,18 @@ module Scenes.Home.Model exposing (scene)
 -}
 
 import Canvas
+import Color
 import Duration
 import GlobalComponents.Transition.Model as Transition
-import GlobalComponents.Transition.Transitions.Base exposing (genTransition)
-import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeOutBlack)
+import GlobalComponents.Transition.Transitions.Base exposing (genTransition, nullTransition)
+import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.TextBox exposing (renderTextBox)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
+import Messenger.UserConfig exposing (coloredBackground)
 
 
 type alias Data =
@@ -33,10 +35,7 @@ update env msg data =
     case msg of
         KeyDown 49 ->
             ( data
-            , [ --     SOMUnloadGC "fps"
-                --   , SOMLoadGC (FPS.genGC (FPS.InitOption 100) Nothing)
-                --   ,
-                SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing) ( "Home2", Nothing ) True) Nothing)
+            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) Nothing) ( "Home2", Nothing ) True) Nothing)
               ]
             , env
             )
@@ -55,7 +54,8 @@ update env msg data =
 view : RawSceneView UserData Data
 view env data =
     Canvas.group []
-        [ renderTextBox env.globalData.internalData 50 "Menu\n1. Test Rendering\n2. Test Layer\n3. Test Component\n4. Test Transition" "Courier" ( 0, 0 )
+        [ coloredBackground Color.yellow env.globalData.internalData
+        , renderTextBox env.globalData.internalData 50 "Menu\n1. Test Rendering\n2. Test Layer\n3. Test Component\n4. Test Transition" "Courier" ( 0, 0 )
         ]
 
 

@@ -76,23 +76,23 @@ update env evnt data bdata =
         trans0 =
             data.transition
 
-        env1 =
-            if trans0.currentTransition == 0 && data.filterSOM then
+        ( env1, data1 ) =
+            if data.filterSOM then
                 -- Disable SOM messages
                 let
                     newScene =
                         updateResultRemap remap env.commonData
                 in
-                { env | commonData = newScene }
+                ( { env | commonData = newScene }, { data | filterSOM = False } )
 
             else
-                env
+                ( env, data )
     in
     if trans0.options.mix then
-        updateMix env1 evnt data bdata
+        updateMix env1 evnt data1 bdata
 
     else
-        updateNoMix env1 evnt data bdata
+        updateNoMix env1 evnt data1 bdata
 
 
 max1 : Float -> Float
@@ -182,40 +182,50 @@ updateNoMix env evnt data bdata =
 
                 data2 =
                     { data | transition = { trans0 | currentTransition = newTime } }
+
+                _ =
+                    Debug.log "hihi" ( trans0.currentTransition, newTime, trans0.outT )
             in
             if newTime >= trans0.inT + trans0.outT then
                 -- End
                 ( ( data, { bdata | dead = True } ), [], ( env, False ) )
 
-            else if trans0.currentTransition < trans0.outT then
+            else if trans0.currentTransition <= trans0.outT then
                 let
                     progress =
-                        max1 <| toFloat data.transition.currentTransition / toFloat data.transition.outT
+                        max1 <| toFloat trans0.currentTransition / toFloat trans0.outT
 
                     outPP : Renderable -> Renderable
                     outPP ren =
-                        data.transition.outTrans env.globalData.internalData ren progress
+                        trans0.outTrans env.globalData.internalData ren progress
                 in
                 if newTime >= trans0.outT then
                     -- Needs to change scene
                     let
                         ( scene, scenemsg ) =
                             data.scene
+
+                        progress2 =
+                            max1 <| toFloat (newTime - trans0.outT) / toFloat trans0.inT
+
+                        inPP : Renderable -> Renderable
+                        inPP ren =
+                            trans0.inTrans env.globalData.internalData ren progress2
                     in
-                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
+                    ( ( data2, { bdata | postProcessor = [ inPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
 
                 else
                     ( ( data2, { bdata | postProcessor = [ outPP ] } ), [], ( env, False ) )
 
             else
-                -- Implies trans0.outT + trans0.inT > trans0.currentTransition >= trans0.outT
+                -- Implies trans0.outT + trans0.inT > trans0.currentTransition > trans0.outT
                 let
                     progress =
-                        max1 <| toFloat (data.transition.currentTransition - data.transition.outT) / toFloat data.transition.inT
+                        max1 <| toFloat (trans0.currentTransition - trans0.outT) / toFloat trans0.inT
 
                     inPP : Renderable -> Renderable
                     inPP ren =
-                        data.transition.inTrans env.globalData.internalData ren progress
+                        trans0.inTrans env.globalData.internalData ren progress
                 in
                 ( ( data2, { bdata | postProcessor = [ inPP ] } ), [], ( env, False ) )
 

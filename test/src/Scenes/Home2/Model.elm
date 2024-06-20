@@ -11,14 +11,17 @@ import Color
 import Duration
 import GlobalComponents.Transition.Model as Transition
 import GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
-import GlobalComponents.Transition.Transitions.Fade exposing (fadeInTransparent, fadeInWithRenderable, fadeOutTransparent, fadeOutWithRenderable)
+import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Render.Sprite exposing (renderSprite)
+import Messenger.Render.Text exposing (renderText, renderTextWithColorCenter)
 import Messenger.Render.TextBox exposing (renderTextBoxWithColorCenter)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
+import Messenger.UserConfig exposing (coloredBackground)
+import String exposing (fromInt)
 
 
 type alias Data =
@@ -54,6 +57,13 @@ update env msg data =
             , env
             )
 
+        KeyDown 52 ->
+            ( data
+            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+              ]
+            , env
+            )
+
         _ ->
             ( data, [], env )
 
@@ -61,8 +71,10 @@ update env msg data =
 view : RawSceneView UserData Data
 view env data =
     Canvas.group []
-        [ renderSprite env.globalData.internalData [] ( 0, 0 ) ( 1920, 0 ) "ship"
-        , renderTextBoxWithColorCenter env.globalData.internalData 50 "HELLO\nWORLD!" "Courier" Color.blue ( 1920 / 2, 1080 / 2 )
+        [ coloredBackground Color.white env.globalData.internalData
+        , renderSprite env.globalData.internalData [] ( 0, 0 ) ( 1920, 0 ) "ship"
+        , renderTextBoxWithColorCenter env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential" "Courier" Color.red ( 1920 / 2, 25 )
+        , renderText env.globalData.internalData 50 (fromInt env.globalData.sceneStartFrame) "Courier" ( 0, 100 )
         ]
 
 
