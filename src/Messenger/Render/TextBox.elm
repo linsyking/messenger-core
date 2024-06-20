@@ -2,108 +2,103 @@ module Messenger.Render.TextBox exposing
     ( renderTextBox, renderTextBoxWithStyle
     , renderTextBoxWithColor, renderTextBoxWithColorStyle
     , renderTextBoxWithColorCenter, renderTextBoxWithColorCenterStyle
-    , renderTextBoxWithColorAlignBaseline, renderTextBoxWithColorAlignBaselineStyle
-    , renderTextBoxWithSettings, renderTextBoxWithSettingsStyle
+    , renderTextBoxWithAll, renderTextBoxWithLineHeight
     )
 
 {-|
 
 
-# Text Box Rendering
+# Text box Rendering
 
 @docs renderTextBox, renderTextBoxWithStyle
 @docs renderTextBoxWithColor, renderTextBoxWithColorStyle
 @docs renderTextBoxWithColorCenter, renderTextBoxWithColorCenterStyle
-@docs renderTextBoxWithColorAlignBaseline, renderTextBoxWithColorAlignBaselineStyle
-@docs renderTextBoxWithSettings, renderTextBoxWithSettingsStyle
+@docs renderTextBoxWithAll, renderTextBoxWithLineHeight
 
 -}
 
-import Canvas exposing (Renderable)
-import Canvas.Settings exposing (Setting)
-import Canvas.Settings.Text exposing (TextAlign, TextBaseLine, align, font)
+import Canvas exposing (Renderable, textbox)
+import Canvas.Settings exposing (fill)
+import Canvas.Settings.Text exposing (align, font)
 import Color exposing (Color)
 import Messenger.Base exposing (InternalData)
-import Messenger.Render.Text exposing (renderTextWithColorAlignBaselineStyle, renderTextWithColorCenterStyle, renderTextWithColorStyle, renderTextWithSettingsStyle, renderTextWithStyle)
+import Messenger.Coordinate.Coordinates exposing (lengthToReal, posToReal)
 
 
-{-| Turn a string to list of text.
+{-| Render text box. Black color, left top align.
 -}
-box : String -> ( Float, Float ) -> Float -> (String -> ( Float, Float ) -> Renderable) -> Renderable
-box content ( startx, starty ) size f =
-    let
-        spiltText =
-            String.split "\n" content
-    in
-    Canvas.group [] <|
-        List.indexedMap (\idx single -> f single ( startx, starty + size * toFloat idx )) spiltText
+renderTextBox : InternalData -> Float -> String -> String -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBox gd size content font =
+    renderTextBoxWithStyle gd size content font ""
 
 
-{-| Render Text Box. Black color, left top align.
+{-| Render text box with line height.
 -}
-renderTextBox : InternalData -> Float -> String -> String -> ( Float, Float ) -> Renderable
-renderTextBox gd size content font pos =
-    renderTextBoxWithStyle gd size content font "" pos
+renderTextBoxWithLineHeight : InternalData -> Float -> String -> String -> ( Float, Float ) -> ( Float, Float ) -> Float -> Renderable
+renderTextBoxWithLineHeight gd fontsize content ft pos size lheight =
+    renderTextBoxWithAll gd fontsize content ft "" pos size Color.black "left" "top" "" "" (Just lheight) False
 
 
-{-| Render Text Box. Black color, left top align with style.
+{-| Render text box. Black color, left top align with style.
 -}
-renderTextBoxWithStyle : InternalData -> Float -> String -> String -> String -> ( Float, Float ) -> Renderable
-renderTextBoxWithStyle gd size content ft style pos =
-    box content pos size (\s posr -> renderTextWithStyle gd size s ft style posr)
+renderTextBoxWithStyle : InternalData -> Float -> String -> String -> String -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBoxWithStyle gd fontsize content ft style pos size =
+    renderTextBoxWithAll gd fontsize content ft style pos size Color.black "left" "top" "" "" Nothing False
 
 
 {-| Render colorful text box.
 -}
-renderTextBoxWithColor : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
-renderTextBoxWithColor gd size content font color position =
-    renderTextBoxWithColorStyle gd size content font color "" position
+renderTextBoxWithColor : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBoxWithColor gd size content font color =
+    renderTextBoxWithColorStyle gd size content font color ""
 
 
 {-| Render colorful text box with style.
 -}
-renderTextBoxWithColorStyle : InternalData -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
-renderTextBoxWithColorStyle gd size content ft color style pos =
-    box content pos size (\s posr -> renderTextWithColorStyle gd size s ft color style posr)
+renderTextBoxWithColorStyle : InternalData -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBoxWithColorStyle gd fontsize content ft color style pos size =
+    renderTextBoxWithAll gd fontsize content ft style pos size color "left" "top" "" "" Nothing False
 
 
 {-| Render text box with color and align.
 -}
-renderTextBoxWithColorCenter : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
-renderTextBoxWithColorCenter gd size content font color position =
-    renderTextBoxWithColorCenterStyle gd size content font color "" position
+renderTextBoxWithColorCenter : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBoxWithColorCenter gd size content font color =
+    renderTextBoxWithColorCenterStyle gd size content font color ""
 
 
 {-| Render text box with color, align and style.
 -}
-renderTextBoxWithColorCenterStyle : InternalData -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
-renderTextBoxWithColorCenterStyle gd size content ft color style pos =
-    box content pos size (\s posr -> renderTextWithColorCenterStyle gd size s ft color style posr)
+renderTextBoxWithColorCenterStyle : InternalData -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> ( Float, Float ) -> Renderable
+renderTextBoxWithColorCenterStyle gd fontsize content ft color style pos size =
+    renderTextBoxWithAll gd fontsize content ft style pos size color "center" "middle" "" "" Nothing False
 
 
-{-| Render texts with color, align and baseline.
+{-| Render text box with all settings.
 -}
-renderTextBoxWithColorAlignBaseline : InternalData -> Float -> String -> String -> Color -> TextAlign -> TextBaseLine -> ( Float, Float ) -> Renderable
-renderTextBoxWithColorAlignBaseline gd size content font color align baseline position =
-    renderTextBoxWithColorAlignBaselineStyle gd size content font color align baseline "" position
+renderTextBoxWithAll : InternalData -> Float -> String -> String -> String -> ( Float, Float ) -> ( Float, Float ) -> Color -> String -> String -> String -> String -> Maybe Float -> Bool -> Renderable
+renderTextBoxWithAll gd fontsize content ft style pos ( w, h ) color align baseline variant weight height justify =
+    let
+        rx =
+            lengthToReal gd fontsize
 
+        rp =
+            posToReal gd pos
 
-{-| Render texts with color, align and baseline with style.
--}
-renderTextBoxWithColorAlignBaselineStyle : InternalData -> Float -> String -> String -> Color -> TextAlign -> TextBaseLine -> String -> ( Float, Float ) -> Renderable
-renderTextBoxWithColorAlignBaselineStyle gd size content ft color al bl style pos =
-    box content pos size (\s posr -> renderTextWithColorAlignBaselineStyle gd size s ft color al bl style posr)
-
-
-{-| Use customized settings to render text box.
--}
-renderTextBoxWithSettings : InternalData -> Float -> String -> String -> List Setting -> ( Float, Float ) -> Renderable
-renderTextBoxWithSettings gd size content font settings pos =
-    renderTextBoxWithSettingsStyle gd size content font settings "" pos
-
-
-{-| Use customized settings to render text box with style.
--}
-renderTextBoxWithSettingsStyle : InternalData -> Float -> String -> String -> List Setting -> String -> ( Float, Float ) -> Renderable
-renderTextBoxWithSettingsStyle gd size content ft settings style pos =
-    box content pos size (\s posr -> renderTextWithSettingsStyle gd size s ft settings style posr)
+        rsize =
+            ( lengthToReal gd w, lengthToReal gd h )
+    in
+    textbox [ fill color ]
+        { point = rp
+        , size = rsize
+        , text = content
+        , align = Just align
+        , baseLine = Just baseline
+        , fontSize = Just rx
+        , font = Just ft
+        , fontStyle = Just style
+        , fontVariant = Just variant
+        , fontWeight = Just weight
+        , lineHeight = height
+        , justify = Just justify
+        }
