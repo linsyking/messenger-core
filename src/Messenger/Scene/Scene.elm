@@ -237,7 +237,7 @@ type alias GCCommonData userdata scenemsg =
 -}
 type alias GCBaseData =
     { dead : Bool
-    , postProcessor : List (Renderable -> Renderable)
+    , postProcessor : Renderable -> Renderable
     }
 
 

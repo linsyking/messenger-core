@@ -71,4 +71,4 @@ filterAliveGC xs =
 -}
 combinePP : List (AbstractGlobalComponent userdata scenemsg) -> List (Renderable -> Renderable)
 combinePP xs =
-    List.concatMap (\gc -> (GM.unroll gc).baseData.postProcessor) xs
+    List.map (\gc -> (GM.unroll gc).baseData.postProcessor) xs

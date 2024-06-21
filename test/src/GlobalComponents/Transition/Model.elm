@@ -46,7 +46,7 @@ init opts _ _ =
       , vsr = Nothing
       }
     , { dead = False
-      , postProcessor = []
+      , postProcessor = identity
       }
     )
 
@@ -172,7 +172,7 @@ updateMix env evnt data bdata =
                             , data.transition.outTrans env.globalData.internalData oldSceneView outProgress
                             ]
                 in
-                ( ( data2, { bdata | postProcessor = [ pp ] } ), soms1, ( env, False ) )
+                ( ( data2, { bdata | postProcessor = pp } ), soms1, ( env, False ) )
 
         _ ->
             ( ( data1, bdata ), soms, ( env, False ) )
@@ -219,10 +219,10 @@ updateNoMix env evnt data bdata =
                         inPP ren =
                             trans0.inTrans env.globalData.internalData ren progress2
                     in
-                    ( ( data2, { bdata | postProcessor = [ inPP ] } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
+                    ( ( data2, { bdata | postProcessor = inPP } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
 
                 else
-                    ( ( data2, { bdata | postProcessor = [ outPP ] } ), [], ( env, False ) )
+                    ( ( data2, { bdata | postProcessor = outPP } ), [], ( env, False ) )
 
             else
                 -- Implies trans0.outT + trans0.inT > trans0.currentTransition > trans0.outT
@@ -234,7 +234,7 @@ updateNoMix env evnt data bdata =
                     inPP ren =
                         trans0.inTrans env.globalData.internalData ren progress
                 in
-                ( ( data2, { bdata | postProcessor = [ inPP ] } ), [], ( env, False ) )
+                ( ( data2, { bdata | postProcessor = inPP } ), [], ( env, False ) )
 
         _ ->
             ( ( data, bdata ), [], ( env, False ) )
