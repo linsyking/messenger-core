@@ -11,12 +11,12 @@ module GlobalComponents.Transition.Model exposing (InitOption, genGC)
 
 import Canvas exposing (Renderable)
 import GlobalComponents.Transition.Transitions.Base exposing (Transition)
+import GlobalComponents.Transition.VSR exposing (VSR, updateVSR, viewVSR)
 import Json.Encode exposing (null)
 import Messenger.Base exposing (UserEvent(..), removeCommonData)
 import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
 import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
 import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), updateResultRemap)
-import Messenger.Scene.VSR exposing (VSR, updateVSR, viewVSR)
 
 
 {-| Options

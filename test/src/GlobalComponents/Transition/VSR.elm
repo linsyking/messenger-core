@@ -1,4 +1,4 @@
-module Messenger.Scene.VSR exposing
+module GlobalComponents.Transition.VSR exposing
     ( VSR
     , updateVSR, viewVSR
     )

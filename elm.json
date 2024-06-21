@@ -19,7 +19,6 @@
             "Messenger.Scene.Scene",
             "Messenger.Scene.RawScene",
             "Messenger.Scene.LayeredScene",
-            "Messenger.Scene.VSR",
             "Messenger.Render.Shape",
             "Messenger.Render.Sprite",
             "Messenger.Render.SpriteSheet",

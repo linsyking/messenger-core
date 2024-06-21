@@ -5,7 +5,7 @@ module GlobalComponents exposing (allGlobalComopnents)
 
 # Global Component Configuration
 
-Record all the global components to load at the beginning here
+Record all the global components to load at the beginning here.
 
 @docs allGlobalComopnents
 
