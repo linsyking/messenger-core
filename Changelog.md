@@ -10,6 +10,10 @@
 - `AllScenes` changed to `Dict` instead of `List`
 - Use new `elm-canvas` `DrawText` API to draw multi-line text
 
+### Fix
+
+- Viewport initialization in Elm
+
 ## [12.1.0]
 
 ### Features
