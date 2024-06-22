@@ -9,16 +9,16 @@ module Scenes.Home2.Model exposing (scene)
 import Canvas
 import Color
 import Duration
-import GlobalComponents.Transition.Model as Transition
-import GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
-import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
-import GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
+import Messenger.GlobalComponents.Transition.Model as Transition
+import Messenger.GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
+import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
+import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
 import Messenger.Render.Sprite exposing (renderSprite)
-import Messenger.Render.Text exposing (renderText, renderTextWithColorCenter)
-import Messenger.Render.TextBox exposing (renderTextBoxWithColor, renderTextBoxWithColorCenter)
+import Messenger.Render.Text exposing (renderText)
+import Messenger.Render.TextBox exposing (renderTextBoxWithColor)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (coloredBackground)

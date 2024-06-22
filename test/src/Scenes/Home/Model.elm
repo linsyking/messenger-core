@@ -9,12 +9,12 @@ module Scenes.Home.Model exposing (scene)
 import Canvas
 import Color
 import Duration
-import GlobalComponents.Transition.Model as Transition
-import GlobalComponents.Transition.Transitions.Base exposing (genTransition, nullTransition)
-import GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
+import Messenger.GlobalComponents.Transition.Model as Transition
+import Messenger.GlobalComponents.Transition.Transitions.Base exposing (genTransition)
+import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInTransparent, fadeOutTransparent)
 import Messenger.Render.TextBox exposing (renderTextBox)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)

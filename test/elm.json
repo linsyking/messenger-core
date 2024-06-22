@@ -2,7 +2,8 @@
     "type": "application",
     "source-directories": [
         "src",
-        "../src"
+        "../src",
+        "messenger-extra/src"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -15,10 +16,10 @@
             "ianmackenzie/elm-units": "2.10.0",
             "elm/browser": "1.0.2",
             "elm/time": "1.0.0",
+            "elm/random": "1.0.0",
             "avh4/elm-color": "1.0.0"
         },
         "indirect": {
-            "elm/random": "1.0.0",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.3",
             "mgold/elm-nonempty-list": "4.2.0"
