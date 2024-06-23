@@ -35,7 +35,7 @@ update env msg data =
     case msg of
         KeyDown 49 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) Nothing) ( "Home2", Nothing ) True) Nothing)
+            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) Nothing) ( "Transition", Nothing ) True) Nothing)
               ]
             , env
             )
@@ -43,6 +43,13 @@ update env msg data =
         KeyDown 50 ->
             ( data
             , [ SOMChangeScene Nothing "Stress"
+              ]
+            , env
+            )
+
+        KeyDown 51 ->
+            ( data
+            , [ SOMChangeScene Nothing "Audio"
               ]
             , env
             )
@@ -55,7 +62,7 @@ view : RawSceneView UserData Data
 view env data =
     Canvas.group []
         [ coloredBackground Color.yellow env.globalData.internalData
-        , renderTextBox env.globalData.internalData 50 "Menu\n1. Test Transition\n2. Rendering Stress Test" "Courier" ( 0, 0 ) ( 1920, 1080 )
+        , renderTextBox env.globalData.internalData 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "Courier" ( 0, 0 ) ( 1920, 1080 )
         ]
 
 

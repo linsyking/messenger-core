@@ -1,11 +1,11 @@
-module Messenger.Audio.Base exposing (AudioOption(..), AudioTarget(..))
+module Messenger.Audio.Base exposing (AudioOption(..), AudioTarget(..), AudioCommonOption)
 
 {-|
 
 
 # Audio Base
 
-@docs AudioOption, AudioTarget
+@docs AudioOption, AudioTarget, AudioCommonOption
 
 -}
 

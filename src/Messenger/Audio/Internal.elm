@@ -80,11 +80,8 @@ playAudio rawrepo channel name opt t =
                         config1 =
                             Maybe.withDefault Audio.audioDefaultConfig (Maybe.map (\topt -> { rawDefault | startAt = topt.start, playbackRate = topt.rate }) comopt)
 
-                        loopConfig =
-                            Audio.LoopConfig (Duration.seconds 0) duration
-
                         audioWC =
-                            Audio.audioWithConfig { config1 | loop = Just loopConfig } source t
+                            Audio.audioWithConfig config1 source t
 
                         newPA =
                             { channel = channel
@@ -145,15 +142,16 @@ stopAudio rawrepo t target =
         newPlaying =
             List.filter
                 (\pa ->
-                    case target of
-                        AllAudio ->
-                            False
+                    not <|
+                        case target of
+                            AllAudio ->
+                                True
 
-                        AudioChannel c ->
-                            pa.channel == c
+                            AudioChannel c ->
+                                pa.channel == c
 
-                        AudioName id name ->
-                            pa.channel == id && pa.name == name
+                            AudioName id name ->
+                                pa.channel == id && pa.name == name
                 )
                 playing
     in

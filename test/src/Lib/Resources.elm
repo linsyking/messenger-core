@@ -80,4 +80,6 @@ The format is the same with `allTexture`.
 -}
 allAudio : Dict.Dict String String
 allAudio =
-    Dict.empty
+    Dict.fromList
+        [ ( "test", "assets/test.ogg" )
+        ]
