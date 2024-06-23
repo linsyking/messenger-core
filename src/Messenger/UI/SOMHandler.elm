@@ -10,7 +10,7 @@ module Messenger.UI.SOMHandler exposing (handleSOMs, handleSOM)
 -}
 
 import Audio exposing (AudioCmd)
-import Messenger.Audio.Internal exposing (playAudio, stopAudio)
+import Messenger.Audio.Internal exposing (playAudio, stopAudio, updateAudio)
 import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime)
@@ -116,10 +116,10 @@ handleSOM config scenes som model =
         SOMUnloadGC gctar ->
             ( { model | globalComponents = removeObjects gctar model.globalComponents }, [], [] )
 
-        SOMCallGC calls ->
+        SOMCallGC call ->
             let
                 ( gc1, som1, env1 ) =
-                    updateObjectsWithTarget env calls model.globalComponents
+                    updateObjectsWithTarget env [ call ] model.globalComponents
 
                 model1 : Model userdata scenemsg
                 model1 =
@@ -131,3 +131,13 @@ handleSOM config scenes som model =
 
             else
                 handleSOMs config scenes (filterSOM som1) model1
+
+        SOMTransformAudio tar trans ->
+            let
+                newAR =
+                    updateAudio gdid.audioRepo tar trans
+
+                newModel =
+                    { model | env = { env | globalData = { gd | internalData = { gdid | audioRepo = newAR } } } }
+            in
+            ( newModel, [], [] )

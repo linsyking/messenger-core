@@ -1,4 +1,7 @@
-module Messenger.Audio.Audio exposing (newAudioChannel)
+module Messenger.Audio.Audio exposing
+    ( newAudioChannel
+    , audioDuration
+    )
 
 {-|
 
@@ -16,20 +19,23 @@ However, when you stop the channel, all audio on the channel will be stopped.
 If an audio is finished playing, it will be removed from the playing channel.
 
 @docs newAudioChannel
+@docs audioDuration
 
 -}
 
+import Dict
+import Duration exposing (Duration)
 import List exposing (maximum)
-import Messenger.Base exposing (GlobalData)
+import Messenger.Base exposing (InternalData)
 
 
 {-| Generate a new unique audio channel number.
 -}
-newAudioChannel : GlobalData userdata -> Int
-newAudioChannel globalData =
+newAudioChannel : InternalData -> Int
+newAudioChannel idata =
     let
         playingChannels =
-            List.map (\pl -> pl.channel) globalData.internalData.audioRepo.playing
+            List.map (\pl -> pl.channel) idata.audioRepo.playing
     in
     case maximum playingChannels of
         Just maxChannel ->
@@ -37,3 +43,15 @@ newAudioChannel globalData =
 
         Nothing ->
             0
+
+
+{-| Get the duration of an audio by its ID.
+-}
+audioDuration : InternalData -> String -> Maybe Duration
+audioDuration internalData audioId =
+    case Dict.get audioId internalData.audioRepo.audio of
+        Just ( _, duration ) ->
+            Just duration
+
+        _ ->
+            Nothing

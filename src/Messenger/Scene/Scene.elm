@@ -43,10 +43,11 @@ Gerneral Model and Basic types for Scenes
 
 -}
 
+import Audio exposing (Audio)
 import Canvas exposing (Renderable)
 import Dict
 import Json.Decode
-import Messenger.Audio.Base exposing (AudioOption)
+import Messenger.Audio.Base exposing (AudioOption, AudioTarget)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
 
@@ -152,12 +153,13 @@ type SceneOutputMsg scenemsg userdata
     | SOMAlert String
     | SOMPrompt String String
     | SOMPlayAudio Int String AudioOption
-    | SOMStopAudio Int
+    | SOMTransformAudio AudioTarget (Audio -> Audio)
+    | SOMStopAudio AudioTarget
     | SOMSetVolume Float
     | SOMSaveGlobalData
     | SOMLoadGC (GlobalComponentStorage userdata scenemsg)
     | SOMUnloadGC GCTarget
-    | SOMCallGC (List ( GCTarget, GCMsg ))
+    | SOMCallGC ( GCTarget, GCMsg )
 
 
 {-| The type used to store the scene data.

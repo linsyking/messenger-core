@@ -2,6 +2,7 @@ module Messenger.Audio.Internal exposing
     ( playAudio
     , stopAudio
     , getAudio
+    , updateAudio
     , AudioRepo, emptyRepo
     )
 
@@ -17,6 +18,7 @@ This module is used to manage audios.
 @docs playAudio
 @docs stopAudio
 @docs getAudio
+@docs updateAudio
 @docs AudioRepo, emptyRepo
 
 -}
@@ -24,7 +26,7 @@ This module is used to manage audios.
 import Audio
 import Dict exposing (Dict)
 import Duration
-import Messenger.Audio.Base exposing (AudioOption(..))
+import Messenger.Audio.Base exposing (AudioOption(..), AudioTarget(..))
 import Time
 
 
@@ -45,13 +47,19 @@ playAudio rawrepo channel name opt t =
     case audio of
         Just ( source, duration ) ->
             case opt of
-                ALoop ->
+                ALoop comopt loopopt ->
                     let
-                        defaultConfig =
+                        rawDefault =
                             Audio.audioDefaultConfig
 
+                        config1 =
+                            Maybe.withDefault Audio.audioDefaultConfig (Maybe.map (\topt -> { rawDefault | startAt = topt.start, playbackRate = topt.rate }) comopt)
+
+                        loopConfig =
+                            Maybe.withDefault (Audio.LoopConfig (Duration.seconds 0) duration) loopopt
+
                         audioWC =
-                            Audio.audioWithConfig { defaultConfig | loop = Just (Audio.LoopConfig (Duration.seconds 0) duration) } source t
+                            Audio.audioWithConfig { config1 | loop = Just loopConfig } source t
 
                         newPA =
                             { channel = channel
@@ -64,12 +72,24 @@ playAudio rawrepo channel name opt t =
                     in
                     { repo | playing = newPA :: playing }
 
-                AOnce ->
+                AOnce comopt ->
                     let
+                        rawDefault =
+                            Audio.audioDefaultConfig
+
+                        config1 =
+                            Maybe.withDefault Audio.audioDefaultConfig (Maybe.map (\topt -> { rawDefault | startAt = topt.start, playbackRate = topt.rate }) comopt)
+
+                        loopConfig =
+                            Audio.LoopConfig (Duration.seconds 0) duration
+
+                        audioWC =
+                            Audio.audioWithConfig { config1 | loop = Just loopConfig } source t
+
                         newPA =
                             { channel = channel
                             , name = name
-                            , audio = Audio.audio source t
+                            , audio = audioWC
                             , opt = opt
                             , duration = duration
                             , startTime = t
@@ -79,6 +99,18 @@ playAudio rawrepo channel name opt t =
 
         Nothing ->
             repo
+
+
+{-| Check if audio option is loop.
+-}
+audioLoop : AudioOption -> Bool
+audioLoop ao =
+    case ao of
+        ALoop _ _ ->
+            True
+
+        AOnce _ ->
+            False
 
 
 {-| Remove finished audio.
@@ -92,7 +124,7 @@ removeFinishedAudio repo t =
         newPlaying =
             List.filter
                 (\pa ->
-                    pa.opt == ALoop || Time.posixToMillis t - Time.posixToMillis pa.startTime < ceiling (Duration.inMilliseconds pa.duration)
+                    audioLoop pa.opt || Time.posixToMillis t - Time.posixToMillis pa.startTime < ceiling (Duration.inMilliseconds pa.duration)
                 )
                 playing
     in
@@ -101,8 +133,8 @@ removeFinishedAudio repo t =
 
 {-| Stop an audio by id.
 -}
-stopAudio : AudioRepo -> Time.Posix -> Int -> AudioRepo
-stopAudio rawrepo t s =
+stopAudio : AudioRepo -> Time.Posix -> AudioTarget -> AudioRepo
+stopAudio rawrepo t target =
     let
         repo =
             removeFinishedAudio rawrepo t
@@ -111,7 +143,19 @@ stopAudio rawrepo t s =
             repo.playing
 
         newPlaying =
-            List.filter (\pa -> pa.channel /= s) playing
+            List.filter
+                (\pa ->
+                    case target of
+                        AllAudio ->
+                            False
+
+                        AudioChannel c ->
+                            pa.channel == c
+
+                        AudioName id name ->
+                            pa.channel == id && pa.name == name
+                )
+                playing
     in
     { repo | playing = newPlaying }
 
@@ -152,3 +196,37 @@ emptyRepo =
     { audio = Dict.empty
     , playing = []
     }
+
+
+{-| Update audio based on transformation.
+-}
+updateAudio : AudioRepo -> AudioTarget -> (Audio.Audio -> Audio.Audio) -> AudioRepo
+updateAudio repo target f =
+    let
+        playing =
+            repo.playing
+
+        newPlaying =
+            List.map
+                (\pa ->
+                    case target of
+                        AllAudio ->
+                            { pa | audio = f pa.audio }
+
+                        AudioChannel c ->
+                            if pa.channel == c then
+                                { pa | audio = f pa.audio }
+
+                            else
+                                pa
+
+                        AudioName id name ->
+                            if pa.channel == id && pa.name == name then
+                                { pa | audio = f pa.audio }
+
+                            else
+                                pa
+                )
+                playing
+    in
+    { repo | playing = newPlaying }
