@@ -1,6 +1,7 @@
 module Messenger.Render.Sprite exposing
     ( renderSprite, renderSpriteWithRev
     , renderSpriteCropped
+    , textureDim
     )
 
 {-|
@@ -10,6 +11,7 @@ module Messenger.Render.Sprite exposing
 
 @docs renderSprite, renderSpriteWithRev
 @docs renderSpriteCropped
+@docs textureDim
 
 -}
 
@@ -210,3 +212,18 @@ renderSpriteWithRev_ gd settings position ( w, h ) t =
             settings
             ( newx, newy )
             t
+
+
+{-| Get the width and height of a sprite.
+-}
+textureDim : InternalData -> String -> Maybe ( Float, Float )
+textureDim gd name =
+    Maybe.map
+        (\t ->
+            let
+                dim =
+                    dimensions t
+            in
+            ( dim.width, dim.height )
+        )
+        (igetSprite name gd.sprites)
