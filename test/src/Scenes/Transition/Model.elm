@@ -12,7 +12,7 @@ import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
-import Messenger.GlobalComponents.Transition.Model as Transition
+import Messenger.GlobalComponents.Transition.Model as Transition exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
 import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
@@ -39,35 +39,35 @@ update env msg data =
     case msg of
         KeyDown 49 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) (Just <| TransitionOption True)) ( "Home", Nothing ) True) Nothing)
+            , [ genMixedTransitionSOM ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 50 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+            , [ genSequentialTransitionSOM ( fadeOutTransparent, Duration.seconds 1 ) ( fadeInTransparent, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 51 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( nullTransition, Duration.seconds 0 ) ( fadeInWithRenderable <| view env data, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+            , [ genSequentialTransitionSOM ( nullTransition, Duration.seconds 0 ) ( fadeInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 52 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+            , [ genSequentialTransitionSOM ( fadeOutBlack, Duration.seconds 1 ) ( fadeInBlack, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 53 ->
             ( data
-            , [ SOMLoadGC (Transition.genGC (Transition.InitOption (genTransition ( scrollOut Color.black, Duration.seconds 1 ) ( scrollIn Color.black, Duration.seconds 1 ) Nothing) ( "Home", Nothing ) True) Nothing)
+            , [ genSequentialTransitionSOM ( scrollOut Color.black, Duration.seconds 1 ) ( scrollIn Color.black, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
