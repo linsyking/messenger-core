@@ -15,9 +15,10 @@ import Dict
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Scene.Scene exposing (AllScenes)
+import Scenes.Audio.Model as Audio
 import Scenes.Home.Model as Home
-import Scenes.Home2.Model as Home2
 import Scenes.Stress.Model as Stress
+import Scenes.Transition.Model as Transition
 
 
 {-| All Scenes
@@ -29,6 +30,7 @@ allScenes : AllScenes UserData SceneMsg
 allScenes =
     Dict.fromList
         [ ( "Home", Home.scene )
-        , ( "Home2", Home2.scene )
+        , ( "Transition", Transition.scene )
         , ( "Stress", Stress.scene )
+        , ( "Audio", Audio.scene )
         ]

@@ -1,4 +1,4 @@
-module Scenes.Home2.Model exposing (scene)
+module Scenes.Transition.Model exposing (scene)
 
 {-| Scene configuration module
 

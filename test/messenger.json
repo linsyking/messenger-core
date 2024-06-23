@@ -6,11 +6,15 @@
             "components": {},
             "layers": []
         },
-        "Home2": {
+        "Stress": {
             "components": {},
             "layers": []
         },
-        "Stress": {
+        "Audio": {
+            "components": {},
+            "layers": []
+        },
+        "Transition": {
             "components": {},
             "layers": []
         }
