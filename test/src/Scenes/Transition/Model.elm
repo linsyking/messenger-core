@@ -6,22 +6,25 @@ module Scenes.Transition.Model exposing (scene)
 
 -}
 
-import Canvas
+import Canvas exposing (Renderable, group, shapes)
+import Canvas.Settings exposing (fill)
 import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
-import Messenger.Base exposing (UserEvent(..))
-import Messenger.GlobalComponents.Transition.Model as Transition exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
-import Messenger.GlobalComponents.Transition.Transitions.Base exposing (TransitionOption, genTransition, nullTransition)
+import Messenger.Base exposing (InternalData, UserEvent(..))
+import Messenger.GlobalComponents.Transition.Model exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
+import Messenger.GlobalComponents.Transition.Transitions.Base exposing (nullTransition)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
 import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
+import Messenger.Render.Shape exposing (rect)
 import Messenger.Render.Sprite exposing (renderSprite)
 import Messenger.Render.Text exposing (renderText)
 import Messenger.Render.TextBox exposing (renderTextBoxWithColor)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (coloredBackground)
+import Scenes.Transition.Scroll as Scroll
 import String exposing (fromInt)
 
 
@@ -72,8 +75,26 @@ update env msg data =
             , env
             )
 
+        KeyDown 54 ->
+            ( data
+            , [ genSequentialTransitionSOM ( Scroll.scrollOut <| transitionTo env data, Duration.seconds 1 ) ( fadeInWithRenderable <| transitionTo env data, Duration.seconds 10 ) ( "Home", Nothing )
+              ]
+            , env
+            )
+
         _ ->
             ( data, [], env )
+
+
+transitionTo : RawSceneView UserData Data
+transitionTo env _ =
+    group []
+        [ renderSprite env.globalData.internalData [] ( 200, 0 ) ( 1920, 0 ) "ship"
+        , shapes [ fill Color.red ]
+            [ rect env.globalData.internalData ( 300, 300 ) ( 500, 200 )
+            ]
+        , coloredBackground Color.blue env.globalData.internalData
+        ]
 
 
 view : RawSceneView UserData Data
