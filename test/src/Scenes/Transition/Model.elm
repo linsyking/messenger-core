@@ -6,17 +6,17 @@ module Scenes.Transition.Model exposing (scene)
 
 -}
 
-import Canvas exposing (Renderable, group, shapes)
+import Canvas exposing (group, shapes)
 import Canvas.Settings exposing (fill)
 import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
-import Messenger.Base exposing (InternalData, UserEvent(..))
+import Messenger.Base exposing (UserEvent(..))
 import Messenger.GlobalComponents.Transition.Model exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions.Base exposing (nullTransition)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
-import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
+import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollInWithRenderable, scrollOut, scrollOutWithRenderable)
 import Messenger.Render.Shape exposing (circle, rect)
 import Messenger.Render.Sprite exposing (renderSprite)
 import Messenger.Render.Text exposing (renderText)
@@ -24,8 +24,7 @@ import Messenger.Render.TextBox exposing (renderTextBoxWithColor)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (coloredBackground)
-import Quantity exposing (Quantity)
-import Scenes.Transition.Scroll as Scroll
+import Quantity
 import String exposing (fromInt)
 
 
@@ -78,14 +77,14 @@ update env msg data =
 
         KeyDown 54 ->
             ( data
-            , [ genSequentialTransitionSOM ( Scroll.scrollOutWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( Scroll.scrollInWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( "Home", Nothing )
+            , [ genSequentialTransitionSOM ( scrollOutWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( scrollInWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 55 ->
             ( data
-            , [ genSequentialTransitionSOM ( nullTransition, Quantity.zero ) ( Scroll.scrollInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
+            , [ genSequentialTransitionSOM ( nullTransition, Quantity.zero ) ( scrollInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
