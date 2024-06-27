@@ -17,13 +17,14 @@ import Messenger.GlobalComponents.Transition.Model exposing (genMixedTransitionS
 import Messenger.GlobalComponents.Transition.Transitions.Base exposing (nullTransition)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInBlack, fadeInTransparent, fadeInWithRenderable, fadeOutBlack, fadeOutTransparent, fadeOutWithRenderable)
 import Messenger.GlobalComponents.Transition.Transitions.Scroll exposing (scrollIn, scrollOut)
-import Messenger.Render.Shape exposing (rect)
+import Messenger.Render.Shape exposing (circle, rect)
 import Messenger.Render.Sprite exposing (renderSprite)
 import Messenger.Render.Text exposing (renderText)
 import Messenger.Render.TextBox exposing (renderTextBoxWithColor)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (coloredBackground)
+import Quantity exposing (Quantity)
 import Scenes.Transition.Scroll as Scroll
 import String exposing (fromInt)
 
@@ -56,7 +57,7 @@ update env msg data =
 
         KeyDown 51 ->
             ( data
-            , [ genSequentialTransitionSOM ( nullTransition, Duration.seconds 0 ) ( fadeInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
+            , [ genSequentialTransitionSOM ( nullTransition, Quantity.zero ) ( fadeInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
@@ -77,7 +78,14 @@ update env msg data =
 
         KeyDown 54 ->
             ( data
-            , [ genSequentialTransitionSOM ( Scroll.scrollOut <| transitionTo env data, Duration.seconds 1 ) ( fadeInWithRenderable <| transitionTo env data, Duration.seconds 10 ) ( "Home", Nothing )
+            , [ genSequentialTransitionSOM ( Scroll.scrollOutWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( Scroll.scrollInWithRenderable <| transitionTo env data, Duration.seconds 1 ) ( "Home", Nothing )
+              ]
+            , env
+            )
+
+        KeyDown 55 ->
+            ( data
+            , [ genSequentialTransitionSOM ( nullTransition, Quantity.zero ) ( Scroll.scrollInWithRenderable <| view env data, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
@@ -89,12 +97,26 @@ update env msg data =
 transitionTo : RawSceneView UserData Data
 transitionTo env _ =
     group []
-        [ renderSprite env.globalData.internalData [] ( 200, 0 ) ( 1920, 0 ) "ship"
+        [ coloredBackground Color.blue env.globalData.internalData
         , shapes [ fill Color.red ]
-            [ rect env.globalData.internalData ( 300, 300 ) ( 500, 200 )
+            [ rect env.globalData.internalData ( 100, 300 ) ( 500, 200 )
+            , circle env.globalData.internalData ( 150, 500 ) 200
             ]
-        , coloredBackground Color.blue env.globalData.internalData
+        , renderSprite env.globalData.internalData [] ( 200, 0 ) ( 1920, 0 ) "ship"
         ]
+
+
+comment : String
+comment =
+    """Mode:
+1: Fade out + Fade in, mixed
+2: Fade out transparent + Fade in transparent, sequential
+3: null + Fade in with Renderable, sequential
+4: Fade out black + Fade in black, sequential
+5: Scroll out black + Scroll in black, sequential
+6: Scroll out to renderable + Scroll in to renderable, sequential
+7: null + Scroll in with renderable, sequential
+"""
 
 
 view : RawSceneView UserData Data
@@ -102,7 +124,7 @@ view env data =
     Canvas.group []
         [ coloredBackground Color.white env.globalData.internalData
         , renderSprite env.globalData.internalData [] ( 0, 300 ) ( 1920, 0 ) "ship"
-        , renderTextBoxWithColor env.globalData.internalData 50 "Mode:\n1: Fade out + Fade in, mixed\n2: Fade out transparent + Fade in transparent, sequential\n3: null + Fade in with Renderable, sequential\n4: Fade out black + Fade in black, sequential\n5: Scroll out black + Scroll in black, sequential" "Courier" Color.red ( 0, 0 ) ( 1920, 500 )
+        , renderTextBoxWithColor env.globalData.internalData 50 comment "Courier" Color.red ( 0, 0 ) ( 1920, 500 )
         , renderText env.globalData.internalData 50 (fromInt env.globalData.sceneStartFrame) "Courier" ( 0, 900 )
         ]
 
