@@ -43,7 +43,7 @@
         "elm/json": "1.0.0 <= v < 2.0.0",
         "elm/time": "1.0.0 <= v < 2.0.0",
         "ianmackenzie/elm-units": "2.10.0 <= v < 3.0.0",
-        "linsyking/elm-canvas": "4.1.0 <= v < 5.0.0"
+        "linsyking/elm-canvas": "4.4.0 <= v < 5.0.0"
     },
     "test-dependencies": {}
 }

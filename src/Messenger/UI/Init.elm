@@ -115,4 +115,4 @@ init input flags =
         newEnv2 =
             { env2 | globalData = newgd }
     in
-    ( { ms | env = newEnv2, globalComponents = gcs }, Task.perform (\res -> NewWindowSize ( res.viewport.width, res.viewport.height )) getViewport, Audio.cmdBatch audioLoad )
+    ( { ms | env = newEnv2, globalComponents = gcs }, Task.perform (\res -> NewWindowSize ( res.scene.width, res.scene.height )) getViewport, Audio.cmdBatch audioLoad )
