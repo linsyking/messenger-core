@@ -34,8 +34,8 @@ Usage: renderSprite gd settings position size name
       - Note: The renderSprite automatically does posToReal and lengthToReal for you. No need to call them again.
   - size is the size of the sprite.
       - Note: You can leave one or two of the size field to be empty. For the usage of it, please read the manual. In short, leaving the length/width to
-        zero will let Messenger deduce the argument based on the existing argument and the initial length-width ratio of the sprite. Leaving both to be zero
-        yields a picture that is in initial size.
+        zero(or any negative number) will let Messenger deduce the argument based on the existing length and the initial length-width ratio of the sprite.
+        Leaving both length to be zero yields a picture that is in initial size in the image file.
   - Name is the name of the sprite image configed in resources.elm.
 
 -}
