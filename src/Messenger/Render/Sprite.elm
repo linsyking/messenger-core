@@ -25,6 +25,7 @@ import Messenger.Resources.Base exposing (igetSprite)
 
 
 {-| Render a single sprite.
+
 Usage: renderSprite gd settings position size name
 
   - gd is the internal data type. You should always put globaldata.internaldata as your first parameter.
@@ -52,7 +53,24 @@ renderSprite gd settings position size name =
             empty
 
 
-{-| Render a single sprite with crop.
+{-| Render a single sprite with crop, which means only render selected parts of the sprite.
+
+Usage: renderSprite gd settings position size spconf name
+
+  - gd is the internal data type. You should always put globaldata.internaldata as your first parameter.
+  - settings is a list of Setting. For the usage of settings, see the elm package on Canvas.Settings and Canvas.Settings.Extra.
+  - The position is the start point of the sprite from the left-top corner in virtual coordinates.
+      - Note: The renderSprite automatically does posToReal and lengthToReal for you. No need to call them again.
+  - size is the size of the sprite.
+      - Note: You can leave one or two of the size field to be empty. For the usage of it, please read the manual. In short, leaving the length/width to
+        zero will let Messenger deduce the argument based on the existing argument and the initial length-width ratio of the sprite. Leaving both to be zero
+        yields a picture that is in initial size.
+  - spconf is a record with 4 entries: x,y,width and height. the x and y mark the starting point of the desired sprite, while the width and height marks the size of it.
+      - For example, renderspriteCropped gd [] pos siz {x=0,y=60,height=120,width=120} "HappyDoggy" will render the cropped version of the image "HappyDoggy".
+        It will render the rectangle from (0,60) to (120,180) in the original picture. If the selected area exceeds the boundary of the origin image,
+        the exceeding part will be transparent.
+  - Name is the name of the sprite image configed in resources.elm.
+
 -}
 renderSpriteCropped : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> { x : Float, y : Float, width : Float, height : Float } -> String -> Renderable
 renderSpriteCropped gd settings position size spconf name =
@@ -138,7 +156,18 @@ renderSprite_ gd settings position ( w, h ) t =
 
 {-| Render a single sprite with (possible) reverse.
 
-The first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.
+Usage: renderSpriteWithRev flag gd settings position size name
+
+  - Flag is the reverse flag. Sent True to make the sprite being rendered in (left-right) reverse.
+  - gd is the internal data type. You should pThe first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.ut globaldata.internaldata as your second parameter.
+  - settings is a list of Setting. For the usage of settings, see the elm package on Canvas.Settings and Canvas.Settings.Extra.
+  - The position is the start point of the sprite from the left-top corner in virtual coordinates.
+      - Note: The renderSprite automatically does posToReal and lengthToReal for you. No need to call them again.
+  - size is the size of the sprite.
+      - Note: You can leave one or two of the size field to be empty. For the usage of it, please read the manual. In short, leaving the length/width to
+        zero will let Messenger deduce the argument based on the existing argument and the initial length-width ratio of the sprite. Leaving both to be zero
+        yields a picture that is in initial size.
+  - Name is the name of the sprite image configed in resources.elm.
 
 -}
 renderSpriteWithRev : Bool -> InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
@@ -226,7 +255,13 @@ renderSpriteWithRev_ gd settings position ( w, h ) t =
             t
 
 
-{-| Get the width and height of a sprite.
+{-| Get the actual width and height of a sprite in the original image file in pixels.
+
+Usage: textureDim gd name
+
+  - gd is the internal data in globalData.
+  - name is the name of the chosen sprite.
+
 -}
 textureDim : InternalData -> String -> Maybe ( Float, Float )
 textureDim gd name =
