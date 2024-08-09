@@ -25,6 +25,18 @@ import Messenger.Resources.Base exposing (igetSprite)
 
 
 {-| Render a single sprite.
+Usage: renderSprite gd settings position size name
+
+  - gd is the internal data type. You should always put globaldata.internaldata as your first parameter.
+  - settings is a list of Setting. For the usage of settings, see the elm package on Canvas.Settings and Canvas.Settings.Extra.
+  - The position is the start point of the sprite from the left-top corner in virtual coordinates.
+      - Note: The renderSprite automatically does posToReal and lengthToReal for you. No need to call them again.
+  - size is the size of the sprite.
+      - Note: You can leave one or two of the size field to be empty. For the usage of it, please read the manual. In short, leaving the length/width to
+        zero will let Messenger deduce the argument based on the existing argument and the initial length-width ratio of the sprite. Leaving both to be zero
+        yields a picture that is in initial size.
+  - Name is the name of the sprite image configed in resources.elm.
+
 -}
 renderSprite : InternalData -> List Setting -> ( Float, Float ) -> ( Float, Float ) -> String -> Renderable
 renderSprite gd settings position size name =
