@@ -158,7 +158,7 @@ renderSprite_ gd settings position ( w, h ) t =
 
 Usage: renderSpriteWithRev flag gd settings position size name
 
-  - Flag is the reverse flag. Sent True to make the sprite being rendered in (left-right) reverse.
+  - Flag is the reverse flag. Sent True to make the sprite being rendered in (left-right) reverse. Note that the image will not change if you left both length to be zero.
   - gd is the internal data type. You should pThe first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.ut globaldata.internaldata as your second parameter.
   - settings is a list of Setting. For the usage of settings, see the elm package on Canvas.Settings and Canvas.Settings.Extra.
   - The position is the start point of the sprite from the left-top corner in virtual coordinates.
@@ -261,6 +261,9 @@ Usage: textureDim gd name
 
   - gd is the internal data in globalData.
   - name is the name of the chosen sprite.
+
+The return value is the size of the desired sprite, in bool, wrapped in Maybe type. YOu should use a WithDefault function or a
+case expression the extract the value.
 
 -}
 textureDim : InternalData -> String -> Maybe ( Float, Float )
