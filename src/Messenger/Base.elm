@@ -2,11 +2,11 @@ module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..)
     , GlobalData, InternalData, loadedResourceNum
-    , Env
     , Flags
     , removeCommonData, addCommonData
     , UserViewGlobalData
     , emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
+    , EnvGlobalData
     )
 
 {-|
