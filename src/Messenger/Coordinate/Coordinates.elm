@@ -181,7 +181,10 @@ judgeMouseRect ( mx, my ) ( x, y ) ( w, h ) =
     x <= mx && mx <= x + w && y <= my && my <= y + h
 
 
-{-| fromMouseToVirtual conveys the mouse position in the Screen coordinate to the virtual coordinate. It can be used
+{-| fromMouseToVirtual conveys the mouse position in the Screen coordinate to the virtual coordinate. In most cases Messenger does this for you.
+
+The coordinate in the globalData is already in virtual coordinates.
+
 -}
 fromMouseToVirtual : InternalData -> ( Float, Float ) -> ( Float, Float )
 fromMouseToVirtual gd ( px, py ) =
