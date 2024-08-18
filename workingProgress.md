@@ -11,7 +11,7 @@ Messenger
     ├── Coordinate
     │   ├── Coordinates.elm #done
     │   └── HTML.elm #delayed
-    ├── GeneralModel.elm
+    ├── GeneralModel.elm #done
     ├── Layer
     │   └── Layer.elm #done
     ├── Model.elm
