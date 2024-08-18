@@ -207,6 +207,8 @@ Useful when there are several component lists.
 
 The output should be used as the input of `viewComponentsRenderList`.
 
+  - Not very likely to be used. The messenger template will handle this for you automatically.
+
 -}
 genComponentsRenderList : Env cdata userdata -> List (AbstractComponent cdata userdata tar msg bdata scenemsg) -> List ( Renderable, Int )
 genComponentsRenderList env compls =

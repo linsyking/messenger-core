@@ -7,13 +7,13 @@ Messenger
     ├── Base.elm
     ├── Component
     │   ├── Component.elm #done
-    │   └── GlobalComponent.elm
+    │   └── GlobalComponent.elm #delayed
     ├── Coordinate
-    │   ├── Coordinates.elm
-    │   └── HTML.elm
+    │   ├── Coordinates.elm #done
+    │   └── HTML.elm #delayed
     ├── GeneralModel.elm
     ├── Layer
-    │   └── Layer.elm
+    │   └── Layer.elm #done
     ├── Model.elm
     ├── Recursion.elm
     ├── Render

@@ -162,7 +162,7 @@ Usage: renderSpriteWithRev flag gd settings position size name
   - gd is the internal data type. You should pThe first argument is the reverse flag. Sent true to make the sprite being rendered in reverse.ut globaldata.internaldata as your second parameter.
   - settings is a list of Setting. For the usage of settings, see the elm package on Canvas.Settings and Canvas.Settings.Extra.
   - The position is the start point of the sprite from the left-top corner in virtual coordinates.
-      - Note: The renderSprite automatically does posToReal and lengthToReal for you. No need to call them again.
+      - Note: The renderSprite matically does posToReal and lengthToReal for you. No need to call them again.
   - size is the size of the sprite.
       - Note: You can leave one or two of the size field to be empty. For the usage of it, please read the manual. In short, leaving the length/width to
         zero will let Messenger deduce the argument based on the existing argument and the initial length-width ratio of the sprite. Leaving both to be zero

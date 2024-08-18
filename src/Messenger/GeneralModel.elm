@@ -48,6 +48,12 @@ import Messenger.Base exposing (Env, UserEvent)
 Used when sending a msg to parent object.
 
 Using **SOMMsg** when sending a `SceneOutputMsg`, which will be directedly handled by Top-level.
+Use **OtherMsg** when sending a normal message to parent.
+
+Examples:
+
+  - Parent <| SOMMsg <| SOMChangeScene (Just NullSceneMsg) "SelectLevel" -- SOMMsg
+  - Parent <| OtherMsg <| genMeteor env.commonData.playerPos env.globalData.globalStartTime -- In a component. This genMeteor message will be handled in the layer containing the component.
 
 -}
 type MsgBase othermsg sommsg
@@ -56,6 +62,9 @@ type MsgBase othermsg sommsg
 
 
 {-| Filter SOMMsg from list of MsgBase.
+
+  - Not very likely to be used. The messenger template will handle this for you automatically.
+
 -}
 filterSOM : List (MsgBase othermsg sommsg) -> List sommsg
 filterSOM xs =
@@ -76,6 +85,11 @@ filterSOM xs =
 Using **Other** when sending msg to objects in the same type.
 Make sure the `othertar` can pass the matcher of target object.
 
+Examples:
+
+  - Parent <| SOMMsg <| SOMChangeScene (Just NullSceneMsg) "SelectLevel" -- Parent
+  - Other <| ( Type "Camera", CameraShakeMsg 1 200 ) -- Note here Type "Camera" is of Matcher Type (Defined by the user) which indicates the target of the message, and the desired message is the second entry of the tuple.
+
 -}
 type Msg othertar msg sommsg
     = Parent (MsgBase msg sommsg)
@@ -84,7 +98,7 @@ type Msg othertar msg sommsg
 
 {-| Concrete General Model.
 
-Users deal with the fields in concrete model.
+Users deal with the fields in concrete model. That is to say, you should implement the init,update,updaterec,view and matcher function in the model.
 
 -}
 type alias ConcreteGeneralModel data env event tar msg ren bdata sommsg =
@@ -98,7 +112,7 @@ type alias ConcreteGeneralModel data env event tar msg ren bdata sommsg =
 
 {-| Unrolled Abstract General Model.
 
-the unrolled abstract model. Used internally.
+the unrolled abstract model. Used internally, but it the actual model for storaging data for models. It is sealed by roll in most of the time. See the manual and unroll function for more information.
 
 -}
 type alias UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg =
@@ -120,7 +134,14 @@ type AbstractGeneralModel env event tar msg ren bdata sommsg
     = Roll (UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg)
 
 
-{-| Unroll a rolled abstract model.
+{-| Unroll a rolled abstract model. In this way, you retrieve the data from the storage.
+This is useful when you want to manipulate and calculate the reactions between components, like in collision handling process.
+For example, the following function called by the layer can read the position of from AbstractComponent.
+let
+x\_data = unroll x
+posX=x\_data.baseData.position
+in
+...
 -}
 unroll : AbstractGeneralModel env event tar msg ren bdata sommsg -> UnrolledAbstractGeneralModel env event tar msg ren bdata sommsg
 unroll (Roll un) =
@@ -130,6 +151,7 @@ unroll (Roll un) =
 {-| Abstract a concrete model to an abstract model.
 
 Initialize it with env and msg.
+Messenger will handle this for you.
 
 -}
 abstract : ConcreteGeneralModel data env event tar msg ren bdata sommsg -> msg -> env -> AbstractGeneralModel env event tar msg ren bdata sommsg
@@ -181,6 +203,9 @@ abstract conmodel initMsg initEnv =
 
 
 {-| View model list.
+
+  - Not very likely to be used. The messenger template will handle this for you automatically.
+
 -}
 viewModelList : Env common userdata -> List (AbstractGeneralModel (Env common userdata) UserEvent tar msg Renderable bdata sommsg) -> List Renderable
 viewModelList env models =
@@ -188,12 +213,18 @@ viewModelList env models =
 
 
 {-| A general matcher type sugar
+
+Similar to the matcher function implemented by user in the components and layers.
+
 -}
 type alias Matcher data tar =
     data -> tar -> Bool
 
 
 {-| Change the `update` function to remap the result and return the changed abstract general model.
+
+  - Not very likely to be used. The messenger template will handle this for you automatically.
+
 -}
 updateResultRemap : (( List (Msg tar msg sommsg), ( env, Bool ) ) -> ( List (Msg tar msg sommsg), ( env, Bool ) )) -> AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
 updateResultRemap f model =
@@ -221,6 +252,9 @@ updateResultRemap f model =
 
 
 {-| Change the `updaterec` function to remap the result and return the changed abstract general model.
+
+  - Not very likely to be used. The messenger template will handle this for you automatically.
+
 -}
 updaterecResultRemap : (( List (Msg tar msg sommsg), env ) -> ( List (Msg tar msg sommsg), env )) -> AbstractGeneralModel env event tar msg ren bdata sommsg -> AbstractGeneralModel env event tar msg ren bdata sommsg
 updaterecResultRemap f model =
