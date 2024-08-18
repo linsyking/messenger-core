@@ -69,6 +69,8 @@ type alias ConcreteUserComponent data cdata userdata tar msg bdata scenemsg =
 Receives the environment and the initializing message (from which you can extract the parameters used to initialize the object, for example position),
 and returns a tuple of (Data, BaseData).
 
+  - Note: data is somehow private, but baseData is public. More precisely, baseData can be accessed safely at layer level since it is the same for every component in the layer.
+
 -}
 type alias ComponentInit cdata userdata msg data bdata =
     Env cdata userdata -> msg -> ( data, bdata )
@@ -84,6 +86,8 @@ Receives the environment env, the UserEvent evnt, the currect data and basedata 
   - Note: The last bool determines if the message would be blocked from the next component. If it is set to be True, then all the components behind it will
     not receive this UserEvent. This is useful when you want the action of the player only influence the front component, but not the conponents behind them.
 
+  - Note: data is somehow private, but baseData is public. More precisely, baseData can be accessed safely at layer level since it is the same for every component in the layer.
+
 -}
 type alias ComponentUpdate cdata data userdata scenemsg tar msg bdata =
     Env cdata userdata -> UserEvent -> data -> bdata -> ( ( data, bdata ), List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) )
@@ -94,6 +98,8 @@ type alias ComponentUpdate cdata data userdata scenemsg tar msg bdata =
 Determines the behaviour when other components, layers or scene sends messages to the component. For example, a knife component may send a message to the monster component to decrease its blood.
 
 Receives the environment env, the component messages (defined in ComponentBase.elm), the currect data and basedata ,and returns a structure in ((Data,BaseData),List Msg, Env).
+
+  - Note: data is somehow private, but baseData is public. More precisely, baseData can be accessed safely at layer level since it is the same for every component in the layer.
 
 -}
 type alias ComponentUpdateRec cdata data userdata scenemsg tar msg bdata =
