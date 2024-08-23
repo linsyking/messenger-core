@@ -154,8 +154,9 @@ It receives data, basedata, and the componentMatcher value of the incoming messa
 
 Here is an example of it:
 
-matcher : ComponentMatcher Data BaseData ComponentTarget
-matcher data basedata tar = (tar == Type basedata.ty || tar == Id basedata.id)
+    matcher : ComponentMatcher Data BaseData ComponentTarget
+    matcher data basedata tar =
+        tar == Type basedata.ty || tar == Id basedata.id
 
 Where the matcher will return true if the id or the name matches the incoming message.
 
