@@ -276,6 +276,19 @@ renderTextWithColorAlignBaselineStyle gd size content ft color al bl style ( x, 
 
 
 {-| Use customized settings to render texts.
+
+  - gd is the internal data. You should put env.globalData.internalData as the first parameter to the function.
+
+  - size is the size of the font in pounds.
+
+  - content is the string you may want to display.
+
+  - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
+
+  - settings is the list of Canvas.Settings. See Canvas.Setting package for more detail.
+
+  - color is a color type object. See Color elm package for more detail. For example, yellow or (Color.rgb255 17 232 234).
+
 -}
 renderTextWithSettings : InternalData -> Float -> String -> String -> List Setting -> ( Float, Float ) -> Renderable
 renderTextWithSettings gd size content font settings pos =
@@ -283,6 +296,25 @@ renderTextWithSettings gd size content font settings pos =
 
 
 {-| Use customized settings to render texts with style.
+
+  - gd is the internal data. You should put env.globalData.internalData as the first parameter to the function.
+      - size is the size of the font in pounds.
+
+      - content is the string you may want to display.
+
+      - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
+
+      - settings is the list of Canvas.Settings. See Canvas.Setting package for more detail.
+
+      - color is a color type object. See Color elm package for more detail. For example, yellow or (Color.rgb255 17 232 234).
+
+      - style is the basic setting of the font, for example, "italic bold" will set the font to be italic and bold. See more styles at here:
+        [fonts](https://www.w3schools.com/cssref/pr_font_font.php) and here [sandbox](https://www.w3schools.com/cssref/playdemo.php?filename=playcss_font-weight).
+          - Note: The style here is not completely equal to font-style. Instead, it is in the format of "style variant weight", whose sequence order cannot be switched.
+              - style is the style of the font. You could use "normal", "italic" or "oblique". Note italic is slight more handwriting, but oblique is just the slanted version of the normal font.
+              - variant has only one option: "normal" or "small-caps", which will display all lowercase letters in smaller uppercase letters.
+              - weight is the boldness of the font. You may choose from "normal", "bold", "bolder", or "lighter", or specific boldness numbers, set the website above.
+
 -}
 renderTextWithSettingsStyle : InternalData -> Float -> String -> String -> List Setting -> String -> ( Float, Float ) -> Renderable
 renderTextWithSettingsStyle gd size content ft settings style ( x, y ) =
