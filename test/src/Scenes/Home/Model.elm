@@ -14,7 +14,8 @@ import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInTransparent, fadeOutTransparent)
-import Messenger.Render.TextBox exposing (renderTextBox)
+import Messenger.Render.Text exposing (renderText)
+import Messenger.Render.TextBox exposing (..)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (coloredBackground)
@@ -59,10 +60,13 @@ update env msg data =
 
 view : RawSceneView UserData Data
 view env data =
-    Canvas.group []
-        [ coloredBackground Color.yellow env.globalData.internalData
-        , renderTextBox env.globalData.internalData 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "Courier" ( 0, 0 ) ( 1920, 1080 )
-        ]
+    [ coloredBackground Color.yellow env.globalData.internalData
+    ]
+        ++ [ renderTextBoxWithLineHeight env.globalData.internalData 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "Courier" ( 0, 0 ) ( 400, 300 ) 50
+           ]
+        ++ [ renderText env.globalData.internalData 50 "Hello?" "Consola" ( 400, 700 )
+           ]
+        |> Canvas.group []
 
 
 scenecon : MConcreteScene Data UserData SceneMsg
