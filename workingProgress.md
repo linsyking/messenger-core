@@ -17,11 +17,11 @@ Messenger
     ├── Model.elm
     ├── Recursion.elm
     ├── Render
-    │   ├── Shape.elm
+    │   ├── Shape.elm #done
     │   ├── Sprite.elm #done
     │   ├── SpriteSheet.elm #done
     │   ├── TextBox.elm
-    │   └── Text.elm
+    │   └── Text.elm #done
     ├── Resources
     │   └── Base.elm
     ├── Scene
@@ -29,7 +29,7 @@ Messenger
     │   ├── Loader.elm
     │   ├── RawScene.elm
     │   └── Scene.elm
-    ├── UI
+    ├── UI #excluded
     │   ├── Init.elm
     │   ├── Input.elm
     │   ├── SOMHandler.elm

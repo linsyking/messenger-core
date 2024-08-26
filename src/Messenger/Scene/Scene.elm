@@ -56,6 +56,10 @@ import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralMod
 
 Users deal with the fields in concrete model.
 
+  - Note: Since there should only be one scene running at a time, a scene needed to receive messages from other, so updateRec is unnecessary.
+    However, as we introduce GlobalComponent, this assumption is weakened. Also matcher is also unnecessary since we may use name as matcher.
+    Therefore, we should only determine init, update and view function.
+
 -}
 type alias ConcreteScene data env event ren scenemsg userdata =
     { init : env -> Maybe scenemsg -> data
@@ -67,6 +71,8 @@ type alias ConcreteScene data env event ren scenemsg userdata =
 {-| Unrolled Abstract Scene Model
 
 The unrolled abstract model. Used internally.
+
+  - Note: The init function will only be called once when the object is created, so there is no need to store it in actual running models.
 
 -}
 type alias UnrolledAbstractScene env event ren scenemsg userdata =

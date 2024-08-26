@@ -45,7 +45,7 @@ import Messenger.Coordinate.Coordinates exposing (lengthToReal, posToReal)
   - size is the size of the font in pounds.
   - content is the string you may want to display.
   - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
-  - pos is the position of the left-top corner of the text.
+  - pos is the position of the left-buttom corner of the text.
 
 -}
 renderText : InternalData -> Float -> String -> String -> ( Float, Float ) -> Renderable
@@ -65,7 +65,7 @@ renderText gd size content font pos =
           - style is the style of the font. You could use "normal", "italic" or "oblique". Note italic is slight more handwriting, but oblique is just the slanted version of the normal font.
           - variant has only one option: "normal" or "small-caps", which will display all lowercase letters in smaller uppercase letters.
           - weight is the boldness of the font. You may choose from "normal", "bold", "bolder", or "lighter", or specific boldness numbers, set the website above.
-  - pos is the position of the left-top corner of the text.
+  - pos is the position of the left-buttom corner of the text.
 
 -}
 renderTextWithStyle : InternalData -> Float -> String -> String -> String -> ( Float, Float ) -> Renderable
@@ -94,7 +94,7 @@ renderTextWithStyle gd size content ft style ( x, y ) =
   - content is the string you may want to display.
   - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
   - color is a color type object. See Color elm package for more detail. For example, yellow or (Color.rgb255 17 232 234).
-  - pos is the position of the left-top corner of the text.
+  - pos is the position of the left-buttom corner of the text.
 
 -}
 renderTextWithColor : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable
@@ -115,7 +115,7 @@ renderTextWithColor gd size content font color position =
           - style is the style of the font. You could use "normal", "italic" or "oblique". Note italic is slight more handwriting, but oblique is just the slanted version of the normal font.
           - variant has only one option: "normal" or "small-caps", which will display all lowercase letters in smaller uppercase letters.
           - weight is the boldness of the font. You may choose from "normal", "bold", "bolder", or "lighter", or specific boldness numbers, set the website above.
-  - pos is the position of the left-top corner of the text.
+  - pos is the position of the left-buttom corner of the text.
 
 -}
 renderTextWithColorStyle : InternalData -> Float -> String -> String -> Color -> String -> ( Float, Float ) -> Renderable
@@ -144,7 +144,7 @@ renderTextWithColorStyle gd size content ft color style ( x, y ) =
   - content is the string you may want to display.
   - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
   - color is a color type object. See Color elm package for more detail. For example, yellow or (Color.rgb255 17 232 234).
-  - pos is the position of the MIDDLE-top corner of the text.
+  - pos is the position of the MIDDLE-buttom corner of the text.
 
 -}
 renderTextWithColorCenter : InternalData -> Float -> String -> String -> Color -> ( Float, Float ) -> Renderable

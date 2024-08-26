@@ -2,11 +2,11 @@ module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..)
     , GlobalData, InternalData, loadedResourceNum
+    , Env
     , Flags
     , removeCommonData, addCommonData
     , UserViewGlobalData
     , emptyInternalData, userGlobalDataToGlobalData, globalDataToUserGlobalData
-    , EnvGlobalData
     )
 
 {-|
@@ -68,7 +68,7 @@ This is the User Event for the game.
 
 Users can get outside information through these events.
 
-`Tick` is triggered every timeInterval.
+`Tick` is triggered every timeInterval. The int attacked to it is
 
 `KeyDown`, `KeyUp` records the keyboard events.
 "KeyDown" event is sent when the key is pressed, "KeyUp" is sent when the key is released.

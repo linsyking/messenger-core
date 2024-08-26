@@ -66,7 +66,7 @@ audioDuration : InternalData -> String -> Maybe Duration
 audioDuration internalData audioId =
     case Dict.get audioId internalData.audioRepo.audio of
         Just ( _, duration ) ->
-            Just Quantity.toFloat duration
+            Just duration
 
         _ ->
             Nothing

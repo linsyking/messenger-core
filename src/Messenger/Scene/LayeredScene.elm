@@ -37,7 +37,20 @@ import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract)
 
     - `renderSettings` is used in `group` while viewing the layers as a whole
     - `commonData` is the common data for the whole scene
-    - `layers` are the layers of the scene with type `AbstractLayer`
+    - `layers` are the layers of the scene with type `AbstractLayer`  DO REMEMBER TO ADD YOUR LAYERS HERE!
+
+Here is an example for it:
+
+    { renderSettings = []
+    , commonData = cd
+    , layers =
+        [ Main.layer (MainInitData { components = comps, fakeBricks = fakes, isBoss = isBoss }) envcd
+        , TechTree.layer NullLayerMsg envcd
+        , TextLayer.layer (TextInitData levelName) envcd
+        , PauseLayer.layer NullLayerMsg envcd
+        , Guide.layer NullLayerMsg envcd
+        ]
+    }
 
 -}
 type alias LayeredSceneData cdata userdata tar msg scenemsg =
