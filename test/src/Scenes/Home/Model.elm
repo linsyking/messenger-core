@@ -7,6 +7,8 @@ module Scenes.Home.Model exposing (scene)
 -}
 
 import Canvas
+import Canvas.Settings as CS
+import Canvas.Settings.Advanced as CAD
 import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
@@ -14,6 +16,8 @@ import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions.Fade exposing (fadeInTransparent, fadeOutTransparent)
+import Messenger.Render.Shape exposing (circle, rect)
+import Messenger.Render.Sprite exposing (..)
 import Messenger.Render.Text exposing (renderText)
 import Messenger.Render.TextBox exposing (..)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
@@ -62,10 +66,13 @@ view : RawSceneView UserData Data
 view env data =
     [ coloredBackground Color.yellow env.globalData.internalData
     ]
-        ++ [ renderTextBoxWithLineHeight env.globalData.internalData 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "Courier" ( 0, 0 ) ( 400, 300 ) 50
+        ++ [ Canvas.shapes [ CS.fill Color.lightBlue ] [ rect env.globalData.internalData ( 0, 0 ) ( 600, 300 ) ] ]
+        ++ [ Canvas.shapes [ CS.fill Color.red ] [ circle env.globalData.internalData ( 0, 150 ) 5 ] ]
+        ++ [ renderTextBoxWithAll env.globalData.internalData 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "Courier" "" ( 0, 0 ) ( 600, 300 ) Color.black "" "" "" "bolder" Nothing True
            ]
         ++ [ renderText env.globalData.internalData 50 "Hello?" "Consola" ( 400, 700 )
            ]
+        ++ [ renderSprite env.globalData.internalData [] ( 300, 400 ) ( 300, 400 ) "ship" ]
         |> Canvas.group []
 
 
