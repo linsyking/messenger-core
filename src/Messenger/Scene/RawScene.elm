@@ -9,7 +9,8 @@ module Messenger.Scene.RawScene exposing
 
 # RawScene
 
-Raw Scene is a scene without anything. Users can add whatever they like in the raw scene!
+Raw Scene is a scene without anything. Users can add whatever they like in the raw scene. It is suitable for those who want to imply
+their own logic and framework(instead of layer/component) or do a minimum amount of work to achieve simple tasks, like displaying Hello world.
 
 @docs RawSceneInit, RawSceneUpdate, RawSceneView
 @docs genRawScene

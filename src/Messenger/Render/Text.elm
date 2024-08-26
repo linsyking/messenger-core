@@ -194,7 +194,7 @@ renderTextWithColorCenterStyle gd size content ft color style ( x, y ) =
   - content is the string you may want to display.
   - font is the name of the font. You can choose to use a font in Google font, or put your font file in the misc folder.
   - color is a color type object. See Color elm package for more detail. For example, yellow or (Color.rgb255 17 232 234).
-  - align is the align scheme used.
+  - align is the align option of the display string.
       - Note: align controls the horizontal relation between the displayed string and the given point. The possible arguments are:
           - Left : The text is aligned to the left -- (The given position is at the left of the string).
           - Right : The text is aligned to the right. -- (The given position is at the right of the string).
