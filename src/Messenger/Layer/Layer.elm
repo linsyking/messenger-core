@@ -5,6 +5,7 @@ module Messenger.Layer.Layer exposing
     , handleComponentMsgs
     , LayerInit, LayerUpdate, LayerUpdateRec, LayerView
     , LayerStorage
+    , LayerUpdateMiddleStep, LayerUpdateRecMiddleStep
     )
 
 {-|
@@ -79,6 +80,20 @@ Receives the environment and the data of the layer.
 -}
 type alias LayerView cdata userdata data =
     Env cdata userdata -> data -> Renderable
+
+
+{-| This is a type sugar for dividing a long update function into smaller pieces to enhance code quality. It receives a ((Data,BaseData),List Msg, (Env,bool)) and returns a tuple of same kind.
+It is really similar to UpdateMiddleStep(which is in Component.elm), see the examples there.
+-}
+type alias LayerUpdateMiddleStep cdata data userdata scenemsg tar msg =
+    ( data, List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) ) -> ( data, List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) )
+
+
+{-| This is a type sugar for dividing a long updateRec function into smaller pieces to enhance code quality. It receives a ((Data,BaseData),List Msg, Env) and returns a tuple of same kind.
+It is really similar to UpdateMiddleStep(which is in Component.elm), see the examples there.
+-}
+type alias LayerUpdateRecMiddleStep cdata data userdata scenemsg tar msg =
+    ( data, List (MMsg tar msg scenemsg userdata), Env cdata userdata ) -> ( data, List (MMsg tar msg scenemsg userdata), Env cdata userdata )
 
 
 {-| Layer Storage
