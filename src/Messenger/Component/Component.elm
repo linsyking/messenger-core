@@ -8,6 +8,7 @@ module Messenger.Component.Component exposing
     , viewComponents
     , ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
     , ComponentStorage, LevelComponentStorage
+    , UpdateMiddleStep, UpdateRecMiddleStep
     )
 
 {-|
@@ -126,6 +127,40 @@ type alias ComponentView cdata userdata data bdata =
 -}
 type alias ComponentStorage cdata userdata tar msg bdata scenemsg =
     msg -> LevelComponentStorage cdata userdata tar msg bdata scenemsg
+
+
+{-| This is a type sugar for dividing a long update function into smaller pieces to enhance code quality. It receives a ((Data,BaseData),List Msg, (Env, Bool)) and returns a tuple of same kind.
+Here is a piece of sample code:
+
+    judgeMsg : UpdateMiddleStep SceneCommonData Data UserData SceneMsg ComponentTarget ComponentMsg BaseData
+    judgeMsg ( ( data, basedata ), msg, ( env, bool ) ) =
+        ( ( data, basedata ), msg, ( env, False ) )
+
+After defining this, using this in Update is as simple a a cup of tea.
+
+    case evnt of
+        Tick t ->
+            ( ( data, basedata ), [], ( env, False ) )
+                |> judgeMsg
+
+  - Note: you may add extra argument to your function like this:
+
+    `myFunc : Int -> UpdateMiddleStep`
+
+    and call like this:
+
+    `( ( data, basedata ), [], ( env, False ) ) |> myFunc 1`
+
+-}
+type alias UpdateMiddleStep cdata data userdata scenemsg tar msg bdata =
+    ( ( data, bdata ), List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) ) -> ( ( data, bdata ), List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) )
+
+
+{-| This is a type sugar for dividing a long updateRec function into smaller pieces to enhance code quality. It receives a ((Data,BaseData),List Msg, Env) and returns a tuple of same kind.
+It is really similar to UpdateMiddleStep, see the examples there.
+-}
+type alias UpdateRecMiddleStep cdata data userdata scenemsg tar msg bdata =
+    ( ( data, bdata ), List (MMsg tar msg scenemsg userdata), Env cdata userdata ) -> ( ( data, bdata ), List (MMsg tar msg scenemsg userdata), Env cdata userdata )
 
 
 {-| Level component storage type sugar
