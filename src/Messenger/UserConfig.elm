@@ -94,6 +94,7 @@ type alias UserConfig userdata scenemsg =
     name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
     Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
   - `allAudio` stores all the audio assets users will use in the game. **format: Dict name path**
+  - Note: You don't have to deal with them, messenger will generate them for you in resource.elm
 
 -}
 type alias Resources =

@@ -78,25 +78,43 @@ viewLayeredScene env { renderSettings, commonData, layers } =
         |> group renderSettings
 
 
-{-| init type sugar
+{-| init type sugar for normal (not prototype) layered scenes
+Receives Enviroment and sceneMsg (which stores the initial data), and return a record of data, for example this:
+
+       { renderSettings = []
+        , commonData = cd
+        , layers =
+            [ Opening.layer NullLayerMsg envcd ]
+        }
+
+  - Note: The most important part here is the initialization of scenecommondata. This is so important that it usually takes a separate function to do it.
+
 -}
 type alias LayeredSceneInit cdata userdata tar msg scenemsg =
     Env () userdata -> Maybe scenemsg -> LayeredSceneData cdata userdata tar msg scenemsg
 
 
-{-| init type sugar for levels
+{-| init type sugar for levels.
+Normally it is used internally. No need to worry about it.
 -}
 type alias LayeredSceneLevelInit userdata scenemsg idata =
     Env () userdata -> Maybe scenemsg -> Maybe idata
 
 
 {-| init type sugar for scene prototypes
+This defines the initializing function for a scene prototype. It should be like this:
+
+LayeredSceneProtoInit SceneCommonData UserData LayerTarget (LayerMsg SceneMsg) SceneMsg (InitData SceneMsg)
+
+It receives environment, the initial data to initialize the prototype, and return a layeredSceneData.
+
 -}
 type alias LayeredSceneProtoInit cdata userdata tar msg scenemsg idata =
     Env () userdata -> Maybe idata -> LayeredSceneData cdata userdata tar msg scenemsg
 
 
 {-| settingsFunc type sugar
+This function takes the environment, userevent, the data of the scene and add visual effects to the scene.
 -}
 type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
     Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting
@@ -105,6 +123,7 @@ type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
 {-| This creates a layered scene.
 
   - `init` creates the initial layered scene from env data and init msg.
+
   - `settingsFunc` is a user provided function to modify `renderSettings` each time the scene updates. If you don't need `settingsFunc`, simply provide a `func _ _ _ = settings`
 
 -}
