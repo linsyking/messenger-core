@@ -92,12 +92,16 @@ type AbstractScene env event ren scenemsg userdata
 
 
 {-| Specialized Concrete scene for Messenger
+
+  - Note: MConcreteScene concretes the concrete general model with Event type and renderable type that is static regardless of what userdata, data, basedata or commondata is..
+
 -}
 type alias MConcreteScene data userdata scenemsg =
     ConcreteScene data (Env () userdata) UserEvent Renderable scenemsg userdata
 
 
 {-| Specialized Abstract scene for Messenger
+Note: MAbstractScene concretes the abstract general model with Event type and renderable type that is static regardless of what userdata, data, basedata or commondata is..
 -}
 type alias MAbstractScene userdata scenemsg =
     AbstractScene (Env () userdata) UserEvent Renderable scenemsg userdata
@@ -196,6 +200,9 @@ type alias MMsgBase othermsg scenemsg userdata =
 
 
 {-| Messenger Msg
+
+  - Note: This is similar to MMsg, by using which messenger can know what is SOMMsg and make reaction to it accordingly.
+
 -}
 type alias MMsg othertar msg scenemsg userdata =
     Msg othertar msg (SceneOutputMsg scenemsg userdata)
