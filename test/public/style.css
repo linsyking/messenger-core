@@ -1,3 +1,9 @@
 body{
     margin: 0;
 }
+
+@font-face {
+    font-family: 'Jersey';
+    src: url(../assets/levi-adobe-dia.regular.ttf);
+  }
+  

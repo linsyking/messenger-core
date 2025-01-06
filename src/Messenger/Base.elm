@@ -68,10 +68,13 @@ This is the User Event for the game.
 
 Users can get outside information through these events.
 
-`Tick` is triggered every timeInterval.
+`Tick` is triggered every timeInterval. The int attacked to it is
 
 `KeyDown`, `KeyUp` records the keyboard events.
-check all the keycodes [here](https://www.toptal.com/developers/keycode).
+"KeyDown" event is sent when the key is pressed, "KeyUp" is sent when the key is released.
+
+  - Note: if you just want to check if a key is pressed or not, use globalData.pressedKeys instead.
+    check all the keycodes [here](https://www.toptal.com/developers/keycode).
 
 `MouseDown`, `MouseUp` records the button code and position when mouse up and down.
 Mouse code 0 represents the left mouse button, 1 represents middle mouse button and 2 represents
@@ -137,6 +140,7 @@ type alias GlobalData userdata =
 
 
 {-| This type is for user to use when initializing the messenger.
+It is very useful when dealing with local storage.
 -}
 type alias UserViewGlobalData userdata =
     { sceneStartTime : Int

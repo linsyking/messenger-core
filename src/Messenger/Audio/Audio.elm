@@ -27,9 +27,14 @@ import Dict
 import Duration exposing (Duration)
 import List exposing (maximum)
 import Messenger.Base exposing (InternalData)
+import Quantity
 
 
 {-| Generate a new unique audio channel number.
+
+    You should add the internal data in globaldata as the parameter, and the returning value is a integer which is the grnerated channel number.
+        - Note: It is really similar to GenUID.
+
 -}
 newAudioChannel : InternalData -> Int
 newAudioChannel idata =
@@ -46,6 +51,16 @@ newAudioChannel idata =
 
 
 {-| Get the duration of an audio by its ID.
+
+Usage : audioDuration internalData audioId
+
+  - internalData is just env.globaldata.internalData. Just pass it as your first argument.
+  - audioID is the NAME (not ID!) of the desired audio, which should be registered in the resources.elm.
+
+The output of the function is a Maybe Duration, with which you can extract the Float value of the length in seconds via Duration.inSeconds.
+
+Example: audioDuration id "Boom" |> Duration.inSeconds == 1.274 -- the duration in seconds.
+
 -}
 audioDuration : InternalData -> String -> Maybe Duration
 audioDuration internalData audioId =

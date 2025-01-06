@@ -56,6 +56,10 @@ import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralMod
 
 Users deal with the fields in concrete model.
 
+  - Note: Since there should only be one scene running at a time, a scene needed to receive messages from other, so updateRec is unnecessary.
+    However, as we introduce GlobalComponent, this assumption is weakened. Also matcher is also unnecessary since we may use name as matcher.
+    Therefore, we should only determine init, update and view function.
+
 -}
 type alias ConcreteScene data env event ren scenemsg userdata =
     { init : env -> Maybe scenemsg -> data
@@ -67,6 +71,8 @@ type alias ConcreteScene data env event ren scenemsg userdata =
 {-| Unrolled Abstract Scene Model
 
 The unrolled abstract model. Used internally.
+
+  - Note: The init function will only be called once when the object is created, so there is no need to store it in actual running models. Also the data is stored in globalData, so there is no need to store data.
 
 -}
 type alias UnrolledAbstractScene env event ren scenemsg userdata =
@@ -86,12 +92,16 @@ type AbstractScene env event ren scenemsg userdata
 
 
 {-| Specialized Concrete scene for Messenger
+
+  - Note: MConcreteScene concretes the concrete general model with Event type and renderable type that is static regardless of what userdata, data, basedata or commondata is..
+
 -}
 type alias MConcreteScene data userdata scenemsg =
     ConcreteScene data (Env () userdata) UserEvent Renderable scenemsg userdata
 
 
 {-| Specialized Abstract scene for Messenger
+Note: MAbstractScene concretes the abstract general model with Event type and renderable type that is static regardless of what userdata, data, basedata or commondata is..
 -}
 type alias MAbstractScene userdata scenemsg =
     AbstractScene (Env () userdata) UserEvent Renderable scenemsg userdata
@@ -139,13 +149,19 @@ abstract conmodel initMsg initEnv =
 `scenemsg` is a custom type which represents the message type users wants
 to send to a scene when switching scenes.
 
-  - `SOMChangeScene` is used to change to a target scene by giving a **initMsg name**
+  - `SOMChangeScene (Maybe scenemsg) name` is used to change to a target scene by giving the initial message and name of the scene.
+      - Note: initial message is defined in Scene.elm or Scenebase.elm, depending on whether you use sceneproto or not.
   - `SOMPlayAudio channel name option` is used to play an audio resource by giving **channel name option**
-  - `SOMStopAudio` is used to stop a playing audio by giving its **name**
+      - Note: See the docs in Audio.elm for more information on options.
+  - `SOMStopAudio` is used to stop a playing audio by giving the desired AudioTarget(see the docs on AudioTarget)
   - `SOMSetVolume` is used to set the volume with a value **from 0 to 1**
   - `SOMAlert` makes an alert
-  - `SOMPromp name title` makes a prompt with **name title**
+  - `SOMPrompt name title` makes a prompt with name and title. This means the system will eject a some textbox with the given title and name.
+      - Note: The returning message from the user will be given as a worldevent.
   - `SOMSaveGlobalData` saves the global by encode funtion given in UserConfig
+      - Note: At the beginning of the game messenger will load the stored data into userdata (which is also the only chance to load it)
+        We urge you to store these data elsewhere and use userData as a local storage "in game", and only update the userData whenever the user save data.
+  - The GC section is under construction.
 
 -}
 type SceneOutputMsg scenemsg userdata
@@ -163,6 +179,7 @@ type SceneOutputMsg scenemsg userdata
 
 
 {-| The type used to store the scene data.
+You should not handle this by yourself.
 -}
 type alias SceneStorage userdata scenemsg =
     Maybe scenemsg -> Env () userdata -> MAbstractScene userdata scenemsg
@@ -175,12 +192,17 @@ type alias AllScenes userdata scenemsg =
 
 
 {-| Messsenger MsgBase
+This message base make concrete MMsg type from abstract Msg type. By using MMsgBase, messenger can know what is SOMMsg and make reaction to it accordingly.
+Users should use Msg at most of the time.
 -}
 type alias MMsgBase othermsg scenemsg userdata =
     MsgBase othermsg (SceneOutputMsg scenemsg userdata)
 
 
 {-| Messenger Msg
+
+  - Note: This is similar to MMsg, by using which messenger can know what is SOMMsg and make reaction to it accordingly.
+
 -}
 type alias MMsg othertar msg scenemsg userdata =
     Msg othertar msg (SceneOutputMsg scenemsg userdata)
@@ -261,7 +283,8 @@ type alias GlobalComponentInit userdata scenemsg data =
     Env (GCCommonData userdata scenemsg) userdata -> GCMsg -> ( data, GCBaseData )
 
 
-{-| update type sugar
+{-| update type sugar.
+In a layered scene, the job is done by Messenger, so you don't have to write this. However, in a raw scene, the logic is up to you to decide, so you are supposed to imply this.
 -}
 type alias GlobalComponentUpdate userdata scenemsg data =
     Env (GCCommonData userdata scenemsg) userdata -> UserEvent -> data -> GCBaseData -> ( ( data, GCBaseData ), List (MMsg GCTarget GCMsg scenemsg userdata), ( Env (GCCommonData userdata scenemsg) userdata, Bool ) )
