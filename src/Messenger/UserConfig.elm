@@ -3,6 +3,7 @@ module Messenger.UserConfig exposing
     , UserConfig, PortDefs
     , Resources
     , resourceNum
+    , EnabledBuiltinProgram(..)
     )
 
 {-|
@@ -14,6 +15,7 @@ module Messenger.UserConfig exposing
 @docs UserConfig, PortDefs
 @docs Resources
 @docs resourceNum
+@docs EnabledBuiltinProgram
 
 -}
 
@@ -23,6 +25,7 @@ import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (UserViewGlobalData, WorldEvent)
+import REGL
 import REGL.Program
 
 
@@ -37,6 +40,24 @@ import REGL.Program
 type TimeInterval
     = Fixed Float
     | Animation
+
+
+{-| Enabled Builtin Program
+
+  - `NoBuiltinProgram` represents enabling no builtin program
+  - `CustomBuiltinProgramList` represents enabling a list of custom builtin programs
+  - `TextOnlyBuiltinProgram` represents enabling the builtin program for text only
+  - `BasicShapesBuiltinProgram` represents enabling the builtin programs for basic shapes
+  - `CommonBuiltinProgram` represents enabling the builtin programs for common shapes
+  - `AllBuiltinProgram` represents enabling all builtin programs (Recommended)
+
+-}
+type EnabledBuiltinProgram
+    = NoBuiltinProgram
+    | CustomBuiltinProgramList (List String)
+    | TextOnlyBuiltinProgram
+    | BasicShapesBuiltinProgram
+    | AllBuiltinProgram
 
 
 {-| User Configuration for the messenger.
@@ -77,6 +98,7 @@ type alias UserConfig userdata scenemsg =
     , debug : Bool
     , timeInterval : TimeInterval
     , ports : PortDefs
+    , enabledProgram : EnabledBuiltinProgram
     }
 
 
@@ -89,9 +111,9 @@ type alias UserConfig userdata scenemsg =
 
 -}
 type alias Resources =
-    { allTexture : Dict String String
+    { allTexture : Dict String ( String, Maybe REGL.TextureOptions )
     , allAudio : Dict String String
-    , allFont : List ( String, String )
+    , allFont : List ( String, String, String )
     , allProgram : List ( String, REGL.Program.REGLProgram )
     }
 

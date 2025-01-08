@@ -14,14 +14,14 @@ Initialize the game
 import Audio exposing (AudioCmd)
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (Visibility(..))
-import REGL
 import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
 import Messenger.UI.Input exposing (Input)
-import Messenger.UserConfig exposing (UserConfig)
+import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), TimeInterval(..), UserConfig)
+import REGL
 import Task
 
 
@@ -113,5 +113,67 @@ init input flags =
 
         newEnv2 =
             { env2 | globalData = newgd }
+
+        loadtexturecmds =
+            List.map
+                (\key ->
+                    let
+                        ( url, opts ) =
+                            Maybe.withDefault ( "", Nothing ) (Dict.get key resources.allTexture)
+                    in
+                    REGL.loadTexture key url opts
+                )
+                (Dict.keys resources.allTexture)
+
+        loadfontcmds =
+            List.map
+                (\( key, url1, url2 ) ->
+                    REGL.loadMSDFFont key url1 url2
+                )
+                resources.allFont
+
+        loadprograms =
+            List.map
+                (\( key, program ) ->
+                    REGL.createREGLProgram key program
+                )
+                resources.allProgram
     in
-    ( { ms | env = newEnv2, globalComponents = gcs }, Task.perform (\res -> NewWindowSize ( res.scene.width, res.scene.height )) getViewport, Audio.cmdBatch audioLoad )
+    ( { ms | env = newEnv2, globalComponents = gcs }
+    , Cmd.batch <|
+        Task.perform (\res -> NewWindowSize ( res.scene.width, res.scene.height )) getViewport
+            :: (REGL.batchExec config.ports.execREGLCmd <|
+                    REGL.startREGL (REGL.REGLStartConfig config.virtualSize.width config.virtualSize.height 5 (bulitinPrograms config.enabledProgram))
+                        :: REGL.configREGL
+                            (REGL.REGLConfig
+                                (case config.timeInterval of
+                                    Animation ->
+                                        REGL.AnimationFrame
+
+                                    Fixed t ->
+                                        REGL.Millisecond t
+                                )
+                            )
+                        :: (loadtexturecmds ++ loadfontcmds ++ loadprograms)
+               )
+    , Audio.cmdBatch audioLoad
+    )
+
+
+bulitinPrograms : EnabledBuiltinProgram -> Maybe (List String)
+bulitinPrograms c =
+    case c of
+        CustomBuiltinProgramList xs ->
+            Just xs
+
+        NoBuiltinProgram ->
+            Just []
+
+        TextOnlyBuiltinProgram ->
+            Just [ "textbox" ]
+
+        BasicShapesBuiltinProgram ->
+            Just [ "textbox", "triangle", "circle", "quad", "poly" ]
+
+        AllBuiltinProgram ->
+            Nothing
