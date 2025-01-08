@@ -7,7 +7,7 @@ module Scenes.Audio.Model exposing (scene)
 -}
 
 import Audio exposing (LoopConfig, scaleVolume, scaleVolumeAt)
-import Canvas
+import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
@@ -15,9 +15,9 @@ import Messenger.Audio.Audio exposing (audioDuration)
 import Messenger.Audio.Base exposing (AudioCommonOption, AudioOption(..), AudioTarget(..))
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
-import Messenger.Render.TextBox exposing (renderTextBox)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
+import REGL
 import Time
 
 
@@ -73,13 +73,13 @@ update env msg data =
                     env.globalData.currentTimeStamp
 
                 nts =
-                    Time.millisToPosix <| Time.posixToMillis ts + 2000
+                    Time.millisToPosix <| floor ts + 2000
 
                 lts =
-                    Time.millisToPosix <| Time.posixToMillis ts + 6000
+                    Time.millisToPosix <| floor ts + 6000
             in
             ( data
-            , [ SOMStopAudio <| AudioName 0 "test", SOMPlayAudio 0 "test" <| ALoop Nothing Nothing, SOMTransformAudio (AudioName 0 "test") (scaleVolumeAt [ ( env.globalData.currentTimeStamp, 0 ), ( nts, 2 ), ( lts, 0 ) ]) ]
+            , [ SOMStopAudio <| AudioName 0 "test", SOMPlayAudio 0 "test" <| ALoop Nothing Nothing, SOMTransformAudio (AudioName 0 "test") (scaleVolumeAt [ ( Time.millisToPosix <| floor env.globalData.currentTimeStamp, 0 ), ( nts, 2 ), ( lts, 0 ) ]) ]
             , env
             )
 
@@ -89,7 +89,10 @@ update env msg data =
 
 view : RawSceneView UserData Data
 view env data =
-    renderTextBox env.globalData.internalData 50 "Mode:\n1: Play once\n2. Play once with 0.5 speed and some offset\n3. Play loop with 1 to 2 seconds\n4. Play loop with 1 to the end\n5. Scale audio to 0.5\n6. Audio fading out and in" "Courier" ( 0, 0 ) ( 1920, 1080 )
+    REGL.group []
+        [ REGL.clear (Color.rgb 1.0 0.0 0.0)
+        , REGL.textbox ( 0, 1080 ) 50 "Mode:\n1: Play once\n2. Play once with 0.5 speed and some offset\n3. Play loop with 1 to 2 seconds\n4. Play loop with 1 to the end\n5. Scale audio to 0.5\n6. Audio fading out and in" "arial"
+        ]
 
 
 scenecon : MConcreteScene Data UserData SceneMsg

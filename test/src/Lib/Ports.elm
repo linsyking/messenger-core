@@ -1,6 +1,7 @@
 port module Lib.Ports exposing
     ( audioPortFromJS, audioPortToJS
     , alert, prompt, promptReceiver, sendInfo
+    , setView, execREGLCmd, recvREGLCmd, reglupdate
     )
 
 {-|
@@ -12,6 +13,7 @@ The ports that will be used in the game.
 
 @docs audioPortFromJS, audioPortToJS
 @docs alert, prompt, promptReceiver, sendInfo
+@docs setView, execREGLCmd, recvREGLCmd, reglupdate
 
 -}
 
@@ -47,3 +49,15 @@ port prompt : { name : String, title : String } -> Cmd msg
 {-| Port to receive prompt
 -}
 port promptReceiver : ({ name : String, result : String } -> msg) -> Sub msg
+
+
+port setView : Encode.Value -> Cmd msg
+
+
+port execREGLCmd : Encode.Value -> Cmd msg
+
+
+port recvREGLCmd : (Encode.Value -> msg) -> Sub msg
+
+
+port reglupdate : (Float -> msg) -> Sub msg

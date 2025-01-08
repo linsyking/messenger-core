@@ -6,12 +6,12 @@ module Scenes.Stress.Model exposing (scene)
 
 -}
 
-import Canvas
+import Color
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
-import Messenger.Render.Sprite exposing (renderSprite)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage)
+import REGL
 
 
 type alias Data =
@@ -34,17 +34,19 @@ view env data =
         time =
             env.globalData.sceneStartFrame
     in
-    Canvas.group [] <|
-        List.concat <|
-            List.map
-                (\x ->
+    REGL.group [] <|
+        REGL.clear Color.white
+            :: (List.concat <|
                     List.map
-                        (\y ->
-                            renderSprite env.globalData.internalData [] ( toFloat x * 20 + toFloat time, toFloat y * 20 ) ( 20, 20 ) "ship"
+                        (\x ->
+                            List.map
+                                (\y ->
+                                    REGL.centeredTexture ( toFloat x * 20 + toFloat time, toFloat y * 20 + 20 ) ( 20, 20 ) 0 "ship"
+                                )
+                                (List.range 0 50)
                         )
-                        (List.range 0 50)
-                )
-                (List.range 0 100)
+                        (List.range 0 100)
+               )
 
 
 scenecon : MConcreteScene Data UserData SceneMsg

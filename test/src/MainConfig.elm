@@ -1,6 +1,5 @@
 module MainConfig exposing
-    ( background
-    , debug
+    ( debug
     , initGlobalData
     , initScene
     , initSceneMsg
@@ -14,7 +13,6 @@ module MainConfig exposing
 
 # Main Config
 
-@docs background
 @docs debug
 @docs initGlobalData
 @docs initScene
@@ -27,7 +25,7 @@ module MainConfig exposing
 
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData, decodeUserData, encodeUserData)
-import Messenger.Base exposing (InternalData, UserViewGlobalData)
+import Messenger.Base exposing (UserViewGlobalData)
 import REGL
 
 

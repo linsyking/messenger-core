@@ -11,6 +11,7 @@ module Lib.Resources exposing (resources)
 
 import Dict exposing (Dict)
 import Messenger.UserConfig exposing (Resources)
+import REGL
 
 
 {-| Resources
@@ -19,6 +20,8 @@ resources : Resources
 resources =
     { allTexture = allTexture
     , allAudio = allAudio
+    , allFont = []
+    , allProgram = []
     }
 
 
@@ -36,10 +39,10 @@ Example:
         ]
 
 -}
-allTexture : Dict String String
+allTexture : Dict String ( String, Maybe REGL.TextureOptions )
 allTexture =
     Dict.fromList
-        [ ( "ship", "assets/enemy.png" )
+        [ ( "ship", ( "assets/enemy.png", Nothing ) )
         ]
 
 
