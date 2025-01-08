@@ -18,6 +18,7 @@ import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import REGL
+import REGL.BuiltinPrograms as P
 import Time
 
 
@@ -90,8 +91,8 @@ update env msg data =
 view : RawSceneView UserData Data
 view env data =
     REGL.group []
-        [ REGL.clear (Color.rgb 1.0 0.0 0.0)
-        , REGL.textbox ( 0, 1080 ) 50 "Mode:\n1: Play once\n2. Play once with 0.5 speed and some offset\n3. Play loop with 1 to 2 seconds\n4. Play loop with 1 to the end\n5. Scale audio to 0.5\n6. Audio fading out and in" "arial"
+        [ P.clear (Color.rgb 1.0 0.0 0.0)
+        , P.textbox ( 0, 1080 ) 50 "Mode:\n1: Play once\n2. Play once with 0.5 speed and some offset\n3. Play loop with 1 to 2 seconds\n4. Play loop with 1 to the end\n5. Scale audio to 0.5\n6. Audio fading out and in" "arial" Color.black
         ]
 
 

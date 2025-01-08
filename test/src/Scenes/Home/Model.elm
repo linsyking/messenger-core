@@ -7,13 +7,13 @@ module Scenes.Home.Model exposing (scene)
 -}
 
 import Color
-import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import REGL
+import REGL.BuiltinPrograms as P
 
 
 type alias Data =
@@ -49,8 +49,8 @@ update env msg data =
 view : RawSceneView UserData Data
 view env data =
     REGL.group []
-        [ REGL.clear Color.lightYellow
-        , REGL.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "arial"
+        [ P.clear Color.lightYellow
+        , P.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "arial" Color.black
         ]
 
 

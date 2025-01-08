@@ -12,6 +12,7 @@ import Lib.UserData exposing (UserData)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneStorage)
 import REGL
+import REGL.BuiltinPrograms as P
 
 
 type alias Data =
@@ -35,13 +36,13 @@ view env data =
             env.globalData.sceneStartFrame
     in
     REGL.group [] <|
-        REGL.clear Color.white
+        P.clear Color.white
             :: (List.concat <|
                     List.map
                         (\x ->
                             List.map
                                 (\y ->
-                                    REGL.centeredTexture ( toFloat x * 20 + toFloat time, toFloat y * 20 + 20 ) ( 20, 20 ) 0 "ship"
+                                    P.centeredTexture ( toFloat x * 20 + toFloat time, toFloat y * 20 + 20 ) ( 20, 20 ) 0 "ship"
                                 )
                                 (List.range 0 50)
                         )
