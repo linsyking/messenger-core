@@ -14,7 +14,7 @@ Initialize the game
 import Audio exposing (AudioCmd)
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (Visibility(..))
-import Canvas
+import REGL
 import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Model exposing (Model)
@@ -38,7 +38,7 @@ emptyScene =
             in
             Roll
                 { update = updates
-                , view = \_ -> Canvas.empty
+                , view = \_ -> REGL.empty
                 }
     in
     abstractRec ()

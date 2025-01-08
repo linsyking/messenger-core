@@ -22,7 +22,7 @@ their own logic and framework(instead of layer/component) or do a minimum amount
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg, SceneStorage, abstract)
 

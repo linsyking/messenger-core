@@ -24,8 +24,7 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 
 -}
 
-import Canvas exposing (Renderable, group)
-import Canvas.Settings exposing (Setting)
+import REGL exposing (Renderable, group, Effect)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.GeneralModel exposing (MsgBase(..), filterSOM, viewModelList)
 import Messenger.Layer.Layer exposing (AbstractLayer)
@@ -54,7 +53,7 @@ Here is an example for it:
 
 -}
 type alias LayeredSceneData cdata userdata tar msg scenemsg =
-    { renderSettings : List Setting
+    { renderSettings : List Effect
     , commonData : cdata
     , layers : List (AbstractLayer cdata userdata tar msg scenemsg)
     }

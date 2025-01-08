@@ -15,7 +15,7 @@ module Messenger.Component.GlobalComponent exposing
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.GeneralModel as GM
 import Messenger.Scene.Scene exposing (AbstractGlobalComponent, ConcreteGlobalComponent, GCBaseData, GCCommonData, GCMsg, GCTarget, GlobalComponentStorage, MConcreteGeneralModel)
 

@@ -32,7 +32,7 @@ General Model and Helper functions for Layers.
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (Matcher, abstract)
 import Messenger.Scene.Scene exposing (MAbstractGeneralModel, MConcreteGeneralModel, MMsg, MMsgBase)

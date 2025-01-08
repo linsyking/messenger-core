@@ -12,7 +12,7 @@ View the game via Canvas
 -}
 
 import Audio exposing (Audio, AudioData)
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import Html.Events exposing (on)

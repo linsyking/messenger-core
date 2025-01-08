@@ -29,7 +29,7 @@ Some Basic Data Types for the game
 
 import Audio
 import Browser.Events exposing (Visibility(..))
-import Canvas.Texture exposing (Texture)
+import REGL
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Messenger.Audio.Internal exposing (AudioRepo, emptyRepo)
@@ -52,7 +52,8 @@ type WorldEvent
     | NewWindowSize ( Float, Float )
     | WindowVisibility Visibility
     | SoundLoaded String (Result Audio.LoadError Audio.Source)
-    | TextureLoaded String (Maybe Texture)
+    -- | TextureLoaded String (Maybe Texture)
+    | REGLRecv (Maybe REGL.Texture)
     | WMouseDown Int ( Float, Float )
     | WMouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
@@ -264,7 +265,7 @@ type alias InternalData =
     , realHeight : Float
     , startLeft : Float
     , startTop : Float
-    , sprites : Dict String Texture
+    , sprites : Dict String REGL.Texture
     , virtualWidth : Float
     , virtualHeight : Float
     , audioRepo : AudioRepo

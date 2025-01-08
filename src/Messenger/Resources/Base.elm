@@ -1,6 +1,5 @@
 module Messenger.Resources.Base exposing
     ( saveSprite
-    , getTexture
     , igetSprite
     )
 
@@ -20,22 +19,13 @@ If some asset is not found, the game will panic and throw an error (alert).
 After the resources are loaded, we can get those data from globaldata.sprites.
 
 @docs saveSprite
-@docs getTexture
 @docs igetSprite
 
 -}
 
-import Canvas.Texture as Texture exposing (Texture)
+
 import Dict exposing (Dict)
-import Messenger.Base exposing (WorldEvent(..))
-import Messenger.UserConfig exposing (Resources)
-
-
-{-| Return all the textures.
--}
-getTexture : Resources -> List (Texture.Source WorldEvent)
-getTexture res =
-    List.map (\( x, y ) -> Texture.loadFromImageUrl y (TextureLoaded x)) <| Dict.toList res.allTexture
+import REGL exposing (Texture)
 
 
 {-| Save the sprite.

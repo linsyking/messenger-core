@@ -39,7 +39,7 @@ A General model has the ability to:
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
 
 

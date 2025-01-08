@@ -44,7 +44,7 @@ General Model and Basic types for Scenes
 -}
 
 import Audio exposing (Audio)
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Dict
 import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption, AudioTarget)
