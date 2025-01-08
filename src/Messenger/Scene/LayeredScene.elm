@@ -79,7 +79,7 @@ viewLayeredScene env { renderSettings, commonData, layers } =
 
 
 {-| init type sugar for normal (not prototype) layered scenes
-Receives Enviroment and sceneMsg (which stores the initial data), and return a record of data, for example this:
+Receives Environment and sceneMsg (which stores the initial data), and return a record of data, for example this:
 
        { renderSettings = []
         , commonData = cd

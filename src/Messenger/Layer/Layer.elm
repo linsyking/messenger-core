@@ -13,7 +13,7 @@ module Messenger.Layer.Layer exposing
 
 # Layer
 
-Gerneral Model and Helper functions for Layers.
+General Model and Helper functions for Layers.
 
 @docs ConcreteLayer, AbstractLayer
 

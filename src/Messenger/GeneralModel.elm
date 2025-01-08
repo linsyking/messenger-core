@@ -14,7 +14,7 @@ module Messenger.GeneralModel exposing
 
 General model is designed to be an abstract interface of layers, components, etc..
 
-A Gernel model has the ability to:
+A General model has the ability to:
 
   - specialize its own data types
   - share some data types with objects in the same type
@@ -33,7 +33,7 @@ A Gernel model has the ability to:
 @docs Matcher
 
 
-## Result Remapper
+## Result Remap
 
 @docs updateResultRemap, updaterecResultRemap
 
@@ -47,7 +47,7 @@ import Messenger.Base exposing (Env, UserEvent)
 
 Used when sending a msg to parent object.
 
-Using **SOMMsg** when sending a `SceneOutputMsg`, which will be directedly handled by Top-level.
+Using **SOMMsg** when sending a `SceneOutputMsg`, which will be directly handled by Top-level.
 Use **OtherMsg** when sending a normal message to parent.
 
 Examples:

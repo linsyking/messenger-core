@@ -16,7 +16,7 @@ import Duration exposing (Duration)
 {-| Audio common options.
 
   - rate refers to the playing speed of the audio. For example, setting rate to 2 will make Messenger play the music at 2x Speed.
-  - start is the starting point where messenger starts to play music. It is a Duration value, and can be transfered from float by Duration.seconds
+  - start is the starting point where messenger starts to play music. It is a Duration value, and can be transferred from float by Duration.seconds
 
 Example: AudioCommonOption 1.5 <| Duration.seconds 30 -- The audio will be played at 1.5x speed and start from 30.0s.
 
@@ -42,7 +42,7 @@ type AudioTarget
 
 {-| You can play one audio once or loop it.
 
-  - ALoop means the audio will be played repeatly until a SOMStopAudio is called.
+  - ALoop means the audio will be played repeatedly until a SOMStopAudio is called.
   - AOnce means the audio will be played only once.
 
 -}

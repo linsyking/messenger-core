@@ -18,7 +18,7 @@ module Messenger.Scene.Scene exposing
 
 # Scene Base
 
-Gerneral Model and Basic types for Scenes
+General Model and Basic types for Scenes
 
 @docs AbstractScene
 @docs MConcreteScene, MAbstractScene
@@ -144,7 +144,7 @@ abstract conmodel initMsg initEnv =
     abstractRec (conmodel.init initEnv initMsg)
 
 
-{-| Scene Output Msg is the message that directedly handled by the top-level core.
+{-| Scene Output Msg is the message directly handled by the top-level core.
 
 `scenemsg` is a custom type which represents the message type users wants
 to send to a scene when switching scenes.
@@ -158,7 +158,7 @@ to send to a scene when switching scenes.
   - `SOMAlert` makes an alert
   - `SOMPrompt name title` makes a prompt with name and title. This means the system will eject a some textbox with the given title and name.
       - Note: The returning message from the user will be given as a worldevent.
-  - `SOMSaveGlobalData` saves the global by encode funtion given in UserConfig
+  - `SOMSaveGlobalData` saves the global by encode function given in UserConfig
       - Note: At the beginning of the game messenger will load the stored data into userdata (which is also the only chance to load it)
         We urge you to store these data elsewhere and use userData as a local storage "in game", and only update the userData whenever the user save data.
   - The GC section is under construction.
@@ -321,7 +321,7 @@ type alias ConcreteGlobalComponent data userdata scenemsg =
 
 {-| Abstract GlobalComponent Model.
 
-Cannot be directedly modified.
+Cannot be directly modified.
 Used for storage.
 
 -}

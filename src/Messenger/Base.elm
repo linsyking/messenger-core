@@ -81,8 +81,8 @@ right mouse button.
 
 We have provide some key and mouse codes in messenger-extra.
 
-`MouseWheel` records the wheel event for mouse, positive value means sroll down while
-negative value means scroll up. It can be also used for touchpad.
+`MouseWheel` records the wheel event for mouse, positive value means scrolling down while
+negative value means scrolling up. It can be also used for touchpad.
 
 `Prompt name result` gives the result user entered in the prompt window.
 
