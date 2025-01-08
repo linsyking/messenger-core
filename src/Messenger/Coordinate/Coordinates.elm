@@ -48,7 +48,9 @@ floatpairadd ( x, y ) ( z, w ) =
 
 {-| fixedPosToReal
 
-Same as posToReal, but add the initial position of canvas.
+Same as posToReal, but add the initial position of canvas. That is to say, the function returns the actual coordinate of the point **on the whole screen** of your computer, so it is dependent on the location of your browser windows.
+
+Example: If your screen is 2560\*1440, the virtual canvas size is 1920\*1080 and the actual window size 960\*540 at the center of screen, then the function will map (600,300) to (2560/2-960/2+(960/1920)\*600,1440/2-540/2+(540/1080)\*300) = (1100,600)
 
 -}
 fixedPosToReal : InternalData -> ( Float, Float ) -> ( Float, Float )
@@ -59,6 +61,12 @@ fixedPosToReal gd ( x, y ) =
 {-| posToReal
 
 Transform from the virtual coordinate system to the real pixel system.
+
+For example, if you virtual canvas is 1920\*1080 but your real window is 960\*540, then the function will map a point at (1200,600) to (600,300).
+
+Usage : posToReal gd ( x, y ) where (x,y) is the virtual coordinates and gd the internal data.
+
+The function returns the position in real canvas.
 
 -}
 posToReal : InternalData -> ( Float, Float ) -> ( Float, Float )
@@ -73,7 +81,11 @@ posToReal gd ( x, y ) =
     ( realWidth * (x / gd.virtualWidth), realHeight * (y / gd.virtualHeight) )
 
 
-{-| Inverse of posToReal.
+{-| Inverse of posToReal. This is helpful if you need to render sprite with real coordinates.
+
+Usage : posToReal gd ( x, y ) where (x,y) is the real coordinates and gd the internal data.
+The function returns the coordinate in virtual coordinate system.
+
 -}
 posToVirtual : InternalData -> ( Float, Float ) -> ( Float, Float )
 posToVirtual gd ( x, y ) =
@@ -89,7 +101,17 @@ posToVirtual gd ( x, y ) =
 
 {-| widthToReal
 
-Use this if you want to draw something based on the length.
+Use this if you want to draw something based on the length. It turns the virtual length to real length.
+For example, if the actual window is 960\*540 and the virtual one is 1920\*1080, then the function will map 300(virtual length) to 150(real length)
+
+  - Note: In the case the actual width-length ratio of the window is different from the virtual ratio, the zooming ratio is calculated based on the WIDTH ratio between the real and virtual canvas size.
+
+Usage: lengthToReal gd x
+
+  - gd is the internal data.
+  - x is the length in virtual coordinate system.
+
+The function returns the length in real coordinate system.
 
 -}
 lengthToReal : InternalData -> Float -> Float
@@ -97,7 +119,17 @@ lengthToReal gd x =
     gd.realWidth * (x / gd.virtualWidth)
 
 
-{-| The inverse function of widthToReal.
+{-| The inverse function of widthToReal. Turns the length in real length to virtual length.
+
+  - Note: In the case the actual width-length ratio of the window is different from the virtual ratio, the zooming ratio is calculated based on the WIDTH ratio between the real and virtual canvas size.
+    Usage: lengthToReal gd x
+
+  - gd is the internal data.
+
+  - x is the length in real coordinate system.
+
+The function returns the length in virtual coordinate system.
+
 -}
 fromRealLength : InternalData -> Float -> Float
 fromRealLength gd x =
@@ -135,13 +167,24 @@ getStartPoint vsize ( w, h ) =
 
 {-| judgeMouseRect
 Judge whether the mouse position is in the rectangle.
+Usage: judgeMouseRect ( mx, my ) ( x, y ) ( w, h )
+
+  - (mx,my) is the coordinate of the mouse, which you can get easily from globalData.
+  - (x,y) is the starting point(left-top corner) of the desired rectangle.
+  - (w,h) is the width and length of the desired rectangle.
+
+The function returns a bool indicating whether the mouse is in the rectangle.
+
 -}
 judgeMouseRect : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float ) -> Bool
 judgeMouseRect ( mx, my ) ( x, y ) ( w, h ) =
     x <= mx && mx <= x + w && y <= my && my <= y + h
 
 
-{-| fromMouseToVirtual
+{-| fromMouseToVirtual conveys the mouse position in the Screen coordinate to the virtual coordinate. In most cases Messenger does this for you.
+
+The coordinate in the globalData is already in virtual coordinates.
+
 -}
 fromMouseToVirtual : InternalData -> ( Float, Float ) -> ( Float, Float )
 fromMouseToVirtual gd ( px, py ) =

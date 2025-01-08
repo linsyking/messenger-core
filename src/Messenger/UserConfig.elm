@@ -84,6 +84,7 @@ type alias UserConfig userdata scenemsg =
   - `allTexture` stores all the texture assets users will use in the game. The path is based on the project folder.
     **format: Dict name path**
   - `allAudio` stores all the audio assets users will use in the game. **format: Dict name path**
+  - Note: You don't have to deal with them, messenger will generate them for you in resource.elm
 
 -}
 type alias Resources =
