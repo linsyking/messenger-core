@@ -46,14 +46,15 @@ In this case, your basedata would be a record with these properties.
 
 @docs ComponentInit, ComponentUpdate, ComponentUpdateRec, ComponentView, ComponentMatcher
 @docs ComponentStorage, LevelComponentStorage
+@docs UpdateMiddleStep, UpdateRecMiddleStep
 
 -}
 
-import REGL exposing (Renderable, group)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, abstract, unroll)
 import Messenger.Recursion exposing (updateObjects, updateObjectsWithTarget)
 import Messenger.Scene.Scene exposing (MMsg, MMsgBase, SceneOutputMsg)
+import REGL exposing (Renderable, group)
 
 
 {-| ConcreteUserComponent

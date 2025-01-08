@@ -17,10 +17,7 @@ Messenger
     ├── Model.elm #excluded
     ├── Recursion.elm #excluded
     ├── Render
-    │   ├── Shape.elm #done
-    │   ├── Sprite.elm #done
-    │   ├── TextBox.elm #done
-    │   └── Text.elm #done
+    │   ├── Texture.elm #done
     ├── Resources
     │   └── Base.elm #excluded
     ├── Scene

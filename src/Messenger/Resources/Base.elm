@@ -23,7 +23,6 @@ After the resources are loaded, we can get those data from globaldata.sprites.
 
 -}
 
-
 import Dict exposing (Dict)
 import REGL exposing (Texture)
 

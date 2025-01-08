@@ -29,13 +29,14 @@ General Model and Helper functions for Layers.
 @docs handleComponentMsgs
 @docs LayerInit, LayerUpdate, LayerUpdateRec, LayerView
 @docs LayerStorage
+@docs LayerUpdateMiddleStep, LayerUpdateRecMiddleStep
 
 -}
 
-import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (Matcher, abstract)
 import Messenger.Scene.Scene exposing (MAbstractGeneralModel, MConcreteGeneralModel, MMsg, MMsgBase)
+import REGL exposing (Renderable)
 
 
 {-| init type sugar
