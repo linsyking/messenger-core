@@ -43,6 +43,7 @@ allTexture : Dict String ( String, Maybe REGL.TextureOptions )
 allTexture =
     Dict.fromList
         [ ( "ship", ( "assets/enemy.png", Nothing ) )
+        , ( "mask", ( "assets/mask.jpg", Nothing ) )
         ]
 
 

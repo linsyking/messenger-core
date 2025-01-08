@@ -13,7 +13,7 @@ import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.GlobalComponents.Transition.Base exposing (nullTransition)
 import Messenger.GlobalComponents.Transition.Model exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
-import Messenger.GlobalComponents.Transition.Transitions exposing (fadeIn, fadeInWithRenderable, fadeMix, fadeOut)
+import Messenger.GlobalComponents.Transition.Transitions exposing (fadeImgMix, fadeIn, fadeInWithRenderable, fadeMix, fadeOut, fadeOutImg)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Quantity
@@ -55,6 +55,20 @@ update env msg data =
             , env
             )
 
+        KeyDown 52 ->
+            ( data
+            , [ genMixedTransitionSOM ( fadeImgMix "mask", Duration.seconds 1 ) ( "Home", Nothing )
+              ]
+            , env
+            )
+
+        KeyDown 53 ->
+            ( data
+            , [ genSequentialTransitionSOM ( fadeOutImg "mask", Duration.seconds 1 ) ( fadeIn, Duration.seconds 1 ) ( "Home", Nothing )
+              ]
+            , env
+            )
+
         _ ->
             ( data, [], env )
 
@@ -62,9 +76,11 @@ update env msg data =
 comment : String
 comment =
     """Mode:
-1: Fade out + Fade in, mixed
+1: Fading, mixed
 2: Fade out black + Fade in black, sequential
 3: null + Fade in with Renderable, sequential
+4: Clock, mixed
+5: Clock + Fade in black, sequential
 """
 
 
