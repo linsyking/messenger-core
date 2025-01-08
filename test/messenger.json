@@ -13,10 +13,6 @@
         "Audio": {
             "components": {},
             "layers": []
-        },
-        "Transition": {
-            "components": {},
-            "layers": []
         }
     },
     "sceneprotos": {}

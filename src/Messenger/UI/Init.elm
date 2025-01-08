@@ -20,7 +20,7 @@ import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
 import Messenger.UI.Input exposing (Input)
-import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), TimeInterval(..), UserConfig)
+import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig)
 import REGL
 import Task
 
@@ -145,15 +145,7 @@ init input flags =
             :: (REGL.batchExec config.ports.execREGLCmd <|
                     REGL.startREGL (REGL.REGLStartConfig config.virtualSize.width config.virtualSize.height 5 (bulitinPrograms config.enabledProgram))
                         :: REGL.configREGL
-                            (REGL.REGLConfig
-                                (case config.timeInterval of
-                                    Animation ->
-                                        REGL.AnimationFrame
-
-                                    Fixed t ->
-                                        REGL.Millisecond t
-                                )
-                            )
+                            (REGL.REGLConfig config.timeInterval)
                         :: (loadtexturecmds ++ loadfontcmds ++ loadprograms)
                )
     , Audio.cmdBatch audioLoad

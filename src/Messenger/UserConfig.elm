@@ -1,6 +1,5 @@
 module Messenger.UserConfig exposing
-    ( TimeInterval(..)
-    , UserConfig, PortDefs
+    ( UserConfig, PortDefs
     , Resources
     , resourceNum
     , EnabledBuiltinProgram(..)
@@ -11,7 +10,6 @@ module Messenger.UserConfig exposing
 
 # User Configuration
 
-@docs TimeInterval
 @docs UserConfig, PortDefs
 @docs Resources
 @docs resourceNum
@@ -27,19 +25,6 @@ import Json.Encode as Encode
 import Messenger.Base exposing (UserViewGlobalData, WorldEvent)
 import REGL
 import REGL.Program
-
-
-{-| Time interval between every two frames.
-
-  - `Fixed` represents the fixed time interval between every two frames.
-    The value is the time interval in milliseconds.
-  - `Animation` will use the browser's `requestAnimationFrame` to update the game.
-    The frame rate will be dependent on your device. This will make the animation looks smoother.
-
--}
-type TimeInterval
-    = Fixed Float
-    | Animation
 
 
 {-| Enabled Builtin Program
@@ -96,7 +81,7 @@ type alias UserConfig userdata scenemsg =
         , height : Float
         }
     , debug : Bool
-    , timeInterval : TimeInterval
+    , timeInterval : REGL.TimeInterval
     , ports : PortDefs
     , enabledProgram : EnabledBuiltinProgram
     }

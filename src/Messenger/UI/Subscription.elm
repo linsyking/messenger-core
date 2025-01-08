@@ -16,7 +16,7 @@ import Browser.Events exposing (onKeyDown, onKeyUp, onMouseDown, onMouseMove, on
 import Json.Decode as Decode
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
-import Messenger.UserConfig exposing (TimeInterval(..), UserConfig)
+import Messenger.UserConfig exposing (UserConfig)
 
 
 {-| The subscriptions for the game.

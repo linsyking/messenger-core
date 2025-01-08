@@ -25,18 +25,17 @@ module MainConfig exposing
 
 -}
 
-import Canvas exposing (Renderable)
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData, decodeUserData, encodeUserData)
 import Messenger.Base exposing (InternalData, UserViewGlobalData)
-import Messenger.UserConfig exposing (TimeInterval(..), transparentBackground)
+import REGL
 
 
 {-| Initial scene
 -}
 initScene : String
 initScene =
-    "Transition"
+    "Home"
 
 
 {-| Initial scene message
@@ -60,18 +59,11 @@ debug =
     True
 
 
-{-| Background of the scene
--}
-background : InternalData -> Renderable
-background =
-    transparentBackground
-
-
 {-| Interval between two Tick messages
 -}
-timeInterval : TimeInterval
+timeInterval : REGL.TimeInterval
 timeInterval =
-    Animation
+    REGL.AnimationFrame
 
 
 {-| Initialize the global data with the user data.
