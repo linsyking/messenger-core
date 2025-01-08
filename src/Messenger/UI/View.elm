@@ -59,10 +59,8 @@ view input _ model =
                  ]
                     ++ gd.canvasAttributes
                 )
-                ([ config.background gd.internalData
-                 , postProcess sceneView <| combinePP model.globalComponents
-                 ]
-                    ++ gcView
+                ((postProcess sceneView <| combinePP model.globalComponents)
+                    :: gcView
                 )
     in
     Html.div [ on "wheel" (Decode.map WMouseWheel (Decode.field "deltaY" Decode.int)) ]

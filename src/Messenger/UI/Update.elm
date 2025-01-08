@@ -333,13 +333,13 @@ update input audiodata msg model =
         WPrompt name result ->
             gameUpdateInner (Prompt name result) model
 
-        WTick delta ->
+        WTick ts ->
             let
                 timeInterval =
-                    Time.posixToMillis delta - Time.posixToMillis gd.currentTimeStamp
+                    ts - gd.currentTimeStamp
 
                 newgd =
-                    { gd | currentTimeStamp = delta, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + timeInterval }
+                    { gd | currentTimeStamp = ts, globalStartFrame = gd.globalStartFrame + 1, globalStartTime = gd.globalStartTime + timeInterval }
 
                 newEnv =
                     { env | globalData = newgd }

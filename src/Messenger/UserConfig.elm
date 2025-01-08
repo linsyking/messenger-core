@@ -1,7 +1,6 @@
 module Messenger.UserConfig exposing
     ( TimeInterval(..)
     , UserConfig, PortDefs
-    , coloredBackground, transparentBackground
     , Resources
     , resourceNum
     )
@@ -13,7 +12,6 @@ module Messenger.UserConfig exposing
 
 @docs TimeInterval
 @docs UserConfig, PortDefs
-@docs coloredBackground, transparentBackground
 @docs Resources
 @docs resourceNum
 
@@ -21,9 +19,6 @@ module Messenger.UserConfig exposing
 
 import Audio
 import Browser.Events exposing (Visibility(..))
-import Canvas exposing (Renderable)
-import Canvas.Settings
-import Color exposing (Color)
 import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -80,7 +75,6 @@ type alias UserConfig userdata scenemsg =
         , height : Float
         }
     , debug : Bool
-    , background : InternalData -> Renderable
     , timeInterval : TimeInterval
     , ports : PortDefs
     }
@@ -122,22 +116,5 @@ type alias PortDefs =
     , alert : String -> Cmd WorldEvent
     , prompt : { name : String, title : String } -> Cmd WorldEvent
     , promptReceiver : ({ name : String, result : String } -> WorldEvent) -> Sub WorldEvent
+    , reglupdate : (Float -> WorldEvent) -> Sub WorldEvent
     }
-
-
-{-| A transparent background. You should use this for release.
--}
-transparentBackground : InternalData -> Renderable
-transparentBackground gd =
-    Canvas.clear ( 0, 0 ) gd.realWidth gd.realHeight
-
-
-{-| A colored background.
--}
-coloredBackground : Color -> InternalData -> Renderable
-coloredBackground color gd =
-    Canvas.shapes
-        [ Canvas.Settings.fill color
-        ]
-        [ Canvas.rect ( 0, 0 ) gd.realWidth gd.realHeight
-        ]

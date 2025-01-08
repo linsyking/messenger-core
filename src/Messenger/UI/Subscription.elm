@@ -24,17 +24,8 @@ import Time
 -}
 subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scenemsg -> Sub WorldEvent
 subscriptions config _ _ =
-    let
-        timeSub =
-            case config.timeInterval of
-                Fixed time ->
-                    Time.every time WTick
-
-                Animation ->
-                    onAnimationFrame WTick
-    in
     Sub.batch
-        [ timeSub
+        [ config.ports.reglupdate WTick
         , onKeyDown
             (Decode.map2
                 (\x rep ->

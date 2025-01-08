@@ -97,7 +97,7 @@ init input flags =
             userGlobalDataToGlobalData (config.globalDataCodec.decode flags.info)
 
         newgd =
-            { initGlobalData | currentTimeStamp = millisToPosix flags.timeStamp, internalData = newIT, currentScene = config.initScene }
+            { initGlobalData | currentTimeStamp = flags.timeStamp, internalData = newIT, currentScene = config.initScene }
 
         audioLoad =
             List.map

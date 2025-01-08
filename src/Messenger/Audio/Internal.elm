@@ -32,7 +32,7 @@ import Time
 
 {-| Play audio by name.
 -}
-playAudio : AudioRepo -> Int -> String -> AudioOption -> Time.Posix -> AudioRepo
+playAudio : AudioRepo -> Int -> String -> AudioOption -> Float -> AudioRepo
 playAudio rawrepo channel name opt t =
     let
         repo =
@@ -59,7 +59,7 @@ playAudio rawrepo channel name opt t =
                             Maybe.withDefault (Audio.LoopConfig (Duration.seconds 0) duration) loopopt
 
                         audioWC =
-                            Audio.audioWithConfig { config1 | loop = Just loopConfig } source t
+                            Audio.audioWithConfig { config1 | loop = Just loopConfig } source (Time.millisToPosix (floor t))
 
                         newPA =
                             { channel = channel
@@ -81,7 +81,7 @@ playAudio rawrepo channel name opt t =
                             Maybe.withDefault Audio.audioDefaultConfig (Maybe.map (\topt -> { rawDefault | startAt = topt.start, playbackRate = topt.rate }) comopt)
 
                         audioWC =
-                            Audio.audioWithConfig config1 source t
+                            Audio.audioWithConfig config1 source (Time.millisToPosix <| floor t)
 
                         newPA =
                             { channel = channel
@@ -112,7 +112,7 @@ audioLoop ao =
 
 {-| Remove finished audio.
 -}
-removeFinishedAudio : AudioRepo -> Time.Posix -> AudioRepo
+removeFinishedAudio : AudioRepo -> Float -> AudioRepo
 removeFinishedAudio repo t =
     let
         playing =
@@ -121,7 +121,7 @@ removeFinishedAudio repo t =
         newPlaying =
             List.filter
                 (\pa ->
-                    audioLoop pa.opt || Time.posixToMillis t - Time.posixToMillis pa.startTime < ceiling (Duration.inMilliseconds pa.duration)
+                    audioLoop pa.opt || t - pa.startTime < toFloat (ceiling (Duration.inMilliseconds pa.duration))
                 )
                 playing
     in
@@ -130,7 +130,7 @@ removeFinishedAudio repo t =
 
 {-| Stop an audio by id.
 -}
-stopAudio : AudioRepo -> Time.Posix -> AudioTarget -> AudioRepo
+stopAudio : AudioRepo -> Float -> AudioTarget -> AudioRepo
 stopAudio rawrepo t target =
     let
         repo =
@@ -175,7 +175,7 @@ type alias PlayingAudio =
     , audio : Audio.Audio
     , opt : AudioOption
     , duration : Duration.Duration
-    , startTime : Time.Posix
+    , startTime : Float
     }
 
 

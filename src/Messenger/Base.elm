@@ -47,7 +47,7 @@ Basically users don't need to deal with the world events, they work with user ev
 
 -}
 type WorldEvent
-    = WTick Time.Posix
+    = WTick Float
     | WKeyDown Int
     | WKeyUp Int
     | NewWindowSize ( Float, Float )
@@ -86,7 +86,7 @@ negative value means scroll up. It can be also used for touchpad.
 
 -}
 type UserEvent
-    = Tick Int
+    = Tick Float
     | KeyDown Int
     | KeyUp Int
     | MouseDown Int ( Float, Float )
@@ -119,11 +119,11 @@ It is mainly used for display and reading/writing some localstorage data.
 -}
 type alias GlobalData userdata =
     { internalData : InternalData
-    , sceneStartTime : Int
-    , globalStartTime : Int
+    , sceneStartTime : Float
+    , globalStartTime : Float
     , globalStartFrame : Int
     , sceneStartFrame : Int
-    , currentTimeStamp : Time.Posix
+    , currentTimeStamp : Float
     , windowVisibility : Visibility
     , mousePos : ( Float, Float )
     , pressedMouseButtons : Set Int
@@ -139,8 +139,8 @@ type alias GlobalData userdata =
 {-| This type is for user to use when initializing the messenger.
 -}
 type alias UserViewGlobalData userdata =
-    { sceneStartTime : Int
-    , globalStartTime : Int
+    { sceneStartTime : Float
+    , globalStartTime : Float
     , sceneStartFrame : Int
     , globalStartFrame : Int
     , volume : Float
@@ -178,7 +178,7 @@ emptyInternalData =
 userGlobalDataToGlobalData : UserViewGlobalData userdata -> GlobalData userdata
 userGlobalDataToGlobalData user =
     { internalData = emptyInternalData
-    , currentTimeStamp = millisToPosix 0
+    , currentTimeStamp = 0
     , sceneStartTime = user.sceneStartTime
     , globalStartTime = user.globalStartTime
     , sceneStartFrame = user.sceneStartFrame
@@ -276,6 +276,6 @@ Get info from js script.
 
 -}
 type alias Flags =
-    { timeStamp : Int
+    { timeStamp : Float
     , info : String
     }
