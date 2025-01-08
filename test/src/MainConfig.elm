@@ -6,6 +6,7 @@ module MainConfig exposing
     , saveGlobalData
     , timeInterval
     , virtualSize
+    , fboNum
     )
 
 {-|
@@ -20,6 +21,7 @@ module MainConfig exposing
 @docs saveGlobalData
 @docs timeInterval
 @docs virtualSize
+@docs fboNum
 
 -}
 
@@ -94,3 +96,10 @@ Used when saving the user data to local storage.
 saveGlobalData : UserViewGlobalData UserData -> String
 saveGlobalData globalData =
     encodeUserData globalData.userData
+
+
+{-| The number of frame buffers used in the game.
+-}
+fboNum : Int
+fboNum =
+    5
