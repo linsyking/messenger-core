@@ -31,9 +31,9 @@ import Audio
 import Browser.Events exposing (Visibility(..))
 import Dict exposing (Dict)
 import Html exposing (Html)
+import Json.Encode as Encode
 import Messenger.Audio.Internal exposing (AudioRepo, emptyRepo)
 import REGL
-import Json.Encode as Encode
 import Set exposing (Set)
 
 
@@ -158,7 +158,7 @@ type alias UserViewGlobalData userdata =
 -}
 loadedResourceNum : GlobalData userdata -> Int
 loadedResourceNum globalData =
-    Dict.size globalData.internalData.sprites + Dict.size globalData.internalData.audioRepo.audio
+    Dict.size globalData.internalData.sprites + Dict.size globalData.internalData.audioRepo.audio + globalData.internalData.loadedFontNum + globalData.internalData.loadedProgramNum
 
 
 {-| Empty InternalData
@@ -174,6 +174,8 @@ emptyInternalData =
     , virtualWidth = 0
     , virtualHeight = 0
     , audioRepo = emptyRepo
+    , loadedFontNum = 0
+    , loadedProgramNum = 0
     }
 
 
@@ -266,6 +268,8 @@ type alias InternalData =
     , startLeft : Float
     , startTop : Float
     , sprites : Dict String REGL.Texture
+    , loadedFontNum : Int
+    , loadedProgramNum : Int
     , virtualWidth : Float
     , virtualHeight : Float
     , audioRepo : AudioRepo

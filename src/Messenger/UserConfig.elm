@@ -23,6 +23,7 @@ import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (UserViewGlobalData, WorldEvent)
+import REGL.Program
 
 
 {-| Time interval between every two frames.
@@ -90,6 +91,8 @@ type alias UserConfig userdata scenemsg =
 type alias Resources =
     { allTexture : Dict String String
     , allAudio : Dict String String
+    , allFont : List ( String, String )
+    , allProgram : List ( String, REGL.Program.REGLProgram )
     }
 
 
@@ -97,7 +100,7 @@ type alias Resources =
 -}
 resourceNum : Resources -> Int
 resourceNum resources =
-    Dict.size resources.allTexture + Dict.size resources.allAudio
+    Dict.size resources.allTexture + Dict.size resources.allAudio + List.length resources.allFont + List.length resources.allProgram
 
 
 {-| The ports that the user must provide to the messenger.
