@@ -304,9 +304,9 @@ update input audiodata msg model =
         WMouseWheel x ->
             gameUpdateInner (MouseWheel x) model
 
-        REGLRecv (Just recvmsg) ->
-            case recvmsg of
-                REGLTextureLoaded t ->
+        REGLRecv (v) ->
+            case REGL.decodeRecvMsg v of
+                Just (REGLTextureLoaded t) ->
                     let
                         newgd =
                             let
@@ -323,7 +323,7 @@ update input audiodata msg model =
                 _ ->
                     ( model, Cmd.none, Audio.cmdNone )
 
-        _ ->
+        NullEvent ->
             ( model, Cmd.none, Audio.cmdNone )
 
 

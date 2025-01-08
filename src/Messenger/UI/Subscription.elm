@@ -25,6 +25,7 @@ subscriptions : UserConfig userdata scenemsg -> AudioData -> Model userdata scen
 subscriptions config _ _ =
     Sub.batch
         [ config.ports.reglupdate WTick
+        , config.ports.recvREGLCmd REGLRecv
         , onKeyDown
             (Decode.map2
                 (\x rep ->

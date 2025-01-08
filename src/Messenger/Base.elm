@@ -29,10 +29,11 @@ Some Basic Data Types for the game
 
 import Audio
 import Browser.Events exposing (Visibility(..))
-import REGL
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Messenger.Audio.Internal exposing (AudioRepo, emptyRepo)
+import REGL
+import Json.Encode as Encode
 import Set exposing (Set)
 
 
@@ -52,8 +53,7 @@ type WorldEvent
     | NewWindowSize ( Float, Float )
     | WindowVisibility Visibility
     | SoundLoaded String (Result Audio.LoadError Audio.Source)
-    -- | TextureLoaded String (Maybe Texture)
-    | REGLRecv (Maybe REGL.REGLRecvMsg)
+    | REGLRecv Encode.Value
     | WMouseDown Int ( Float, Float )
     | WMouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
