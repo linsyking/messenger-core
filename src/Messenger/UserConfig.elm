@@ -84,6 +84,7 @@ type alias UserConfig userdata scenemsg =
     , timeInterval : REGL.TimeInterval
     , ports : PortDefs
     , enabledProgram : EnabledBuiltinProgram
+    , fboNum : Int
     }
 
 

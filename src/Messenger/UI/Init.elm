@@ -143,7 +143,7 @@ init input flags =
     , Cmd.batch <|
         Task.perform (\res -> NewWindowSize ( res.scene.width, res.scene.height )) getViewport
             :: (REGL.batchExec config.ports.execREGLCmd <|
-                    REGL.startREGL (REGL.REGLStartConfig config.virtualSize.width config.virtualSize.height 5 (bulitinPrograms config.enabledProgram))
+                    REGL.startREGL (REGL.REGLStartConfig config.virtualSize.width config.virtualSize.height config.fboNum (bulitinPrograms config.enabledProgram))
                         :: REGL.configREGL
                             (REGL.REGLConfig config.timeInterval)
                         :: (loadtexturecmds ++ loadfontcmds ++ loadprograms)
