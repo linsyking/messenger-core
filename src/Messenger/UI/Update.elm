@@ -25,7 +25,7 @@ import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.Input exposing (Input)
 import Messenger.UI.SOMHandler exposing (handleSOMs)
 import Messenger.UserConfig exposing (resourceNum)
-import REGL exposing (REGLRecvMsg(..), Renderable)
+import REGL exposing (Renderable)
 import Set
 
 
@@ -304,14 +304,42 @@ update input audiodata msg model =
         WMouseWheel x ->
             gameUpdateInner (MouseWheel x) model
 
-        REGLRecv (v) ->
+        REGLRecv v ->
             case REGL.decodeRecvMsg v of
-                Just (REGLTextureLoaded t) ->
+                Just (REGL.REGLTextureLoaded t) ->
                     let
                         newgd =
                             let
                                 newIT =
                                     { gdid | sprites = saveSprite gdid.sprites t.name t }
+                            in
+                            { gd | internalData = newIT }
+
+                        newEnv =
+                            { env | globalData = newgd }
+                    in
+                    ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
+
+                Just (REGL.REGLFontLoaded _) ->
+                    let
+                        newgd =
+                            let
+                                newIT =
+                                    { gdid | loadedFontNum = gdid.loadedFontNum + 1 }
+                            in
+                            { gd | internalData = newIT }
+
+                        newEnv =
+                            { env | globalData = newgd }
+                    in
+                    ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
+
+                Just (REGL.REGLProgramCreated _) ->
+                    let
+                        newgd =
+                            let
+                                newIT =
+                                    { gdid | loadedProgramNum = gdid.loadedProgramNum + 1 }
                             in
                             { gd | internalData = newIT }
 
