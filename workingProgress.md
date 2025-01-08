@@ -19,7 +19,6 @@ Messenger
     ├── Render
     │   ├── Shape.elm #done
     │   ├── Sprite.elm #done
-    │   ├── SpriteSheet.elm #done
     │   ├── TextBox.elm #done
     │   └── Text.elm #done
     ├── Resources

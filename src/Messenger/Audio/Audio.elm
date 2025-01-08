@@ -27,12 +27,11 @@ import Dict
 import Duration exposing (Duration)
 import List exposing (maximum)
 import Messenger.Base exposing (InternalData)
-import Quantity
 
 
 {-| Generate a new unique audio channel number.
 
-    You should add the internal data in globaldata as the parameter, and the returning value is a integer which is the grnerated channel number.
+    You should add the internal data in globaldata as the parameter, and the returning value is a integer which is the generated channel number.
         - Note: It is really similar to GenUID.
 
 -}
