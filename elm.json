@@ -21,7 +21,6 @@
             "Messenger.Scene.LayeredScene",
             "Messenger.Render.Shape",
             "Messenger.Render.Sprite",
-            "Messenger.Render.SpriteSheet",
             "Messenger.Render.Text",
             "Messenger.Render.TextBox",
             "Messenger.Layer.Layer",

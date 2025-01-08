@@ -22,8 +22,7 @@ import Browser.Events exposing (Visibility(..))
 import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Messenger.Base exposing (InternalData, UserViewGlobalData, WorldEvent)
-import Messenger.Render.SpriteSheet exposing (SpriteSheet, spriteSheetSize)
+import Messenger.Base exposing (UserViewGlobalData, WorldEvent)
 
 
 {-| Time interval between every two frames.
@@ -84,16 +83,12 @@ type alias UserConfig userdata scenemsg =
 
   - `allTexture` stores all the texture assets users will use in the game. The path is based on the project folder.
     **format: Dict name path**
-  - `allSpriteSheets` stores all the sprite sheets users set for this game. users should both
-    name the sprite sheets and every single sprite. Using it by **format: "sheet\_name.sprite\_name"**
-    Sprite sheets are useful when managing the art recourses or making frame-by-frame animations
   - `allAudio` stores all the audio assets users will use in the game. **format: Dict name path**
 
 -}
 type alias Resources =
     { allTexture : Dict String String
     , allAudio : Dict String String
-    , allSpriteSheets : SpriteSheet
     }
 
 
@@ -101,7 +96,7 @@ type alias Resources =
 -}
 resourceNum : Resources -> Int
 resourceNum resources =
-    Dict.size resources.allTexture + spriteSheetSize resources.allSpriteSheets + Dict.size resources.allAudio
+    Dict.size resources.allTexture + Dict.size resources.allAudio
 
 
 {-| The ports that the user must provide to the messenger.

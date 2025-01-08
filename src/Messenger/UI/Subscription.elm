@@ -12,12 +12,11 @@ The subscriptions for the game
 -}
 
 import Audio exposing (AudioData)
-import Browser.Events exposing (onAnimationFrame, onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp, onResize, onVisibilityChange)
+import Browser.Events exposing (onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp, onResize, onVisibilityChange)
 import Json.Decode as Decode
 import Messenger.Base exposing (WorldEvent(..))
 import Messenger.Model exposing (Model)
 import Messenger.UserConfig exposing (TimeInterval(..), UserConfig)
-import Time
 
 
 {-| The subscriptions for the game.

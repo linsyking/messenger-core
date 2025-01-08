@@ -35,9 +35,6 @@ view input _ model =
         resources =
             input.resources
 
-        config =
-            input.config
-
         gd =
             model.env.globalData
 

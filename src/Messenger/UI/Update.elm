@@ -12,7 +12,6 @@ Update the game
 -}
 
 import Audio exposing (AudioCmd, AudioData)
-import Canvas.Texture
 import Dict
 import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, loadedResourceNum, removeCommonData)
 import Messenger.Component.GlobalComponent exposing (filterAliveGC)
@@ -27,7 +26,6 @@ import Messenger.UI.Input exposing (Input)
 import Messenger.UI.SOMHandler exposing (handleSOMs)
 import Messenger.UserConfig exposing (resourceNum)
 import Set
-import Time
 
 
 {-| Main logic for updating the game.
@@ -121,9 +119,6 @@ update input audiodata msg model =
         config =
             input.config
 
-        resources =
-            input.resources
-
         gameUpdateInner =
             gameUpdate input
     in
@@ -134,38 +129,11 @@ update input audiodata msg model =
         TextureLoaded name (Just t) ->
             let
                 newgd =
-                    case Dict.get name resources.allSpriteSheets of
-                        Just sprites ->
-                            -- Save all sprites in the spritesheet
-                            List.foldl
-                                (\( n, s ) lastgd ->
-                                    let
-                                        ( x, y ) =
-                                            s.realStartPoint
-
-                                        ( w, h ) =
-                                            s.realSize
-
-                                        newTexture =
-                                            Canvas.Texture.sprite { x = x, y = y, width = w, height = h } t
-
-                                        oldIT =
-                                            lastgd.internalData
-
-                                        newIT =
-                                            { oldIT | sprites = saveSprite oldIT.sprites (name ++ "." ++ n) newTexture }
-                                    in
-                                    { lastgd | internalData = newIT }
-                                )
-                                gd
-                                sprites
-
-                        Nothing ->
-                            let
-                                newIT =
-                                    { gdid | sprites = saveSprite gdid.sprites name t }
-                            in
-                            { gd | internalData = newIT }
+                    let
+                        newIT =
+                            { gdid | sprites = saveSprite gdid.sprites name t }
+                    in
+                    { gd | internalData = newIT }
 
                 newEnv =
                     { env | globalData = newgd }
