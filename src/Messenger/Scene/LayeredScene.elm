@@ -1,7 +1,7 @@
 module Messenger.Scene.LayeredScene exposing
     ( LayeredSceneData
     , genLayeredScene
-    , LayeredSceneInit, LayeredSceneSettingsFunc
+    , LayeredSceneInit, LayeredSceneEffectFunc
     , LayeredSceneProtoInit, LayeredSceneLevelInit, initCompose
     )
 
@@ -15,7 +15,7 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 
 @docs LayeredSceneData
 @docs genLayeredScene
-@docs LayeredSceneInit, LayeredSceneSettingsFunc
+@docs LayeredSceneInit, LayeredSceneEffectFunc
 
 
 ## Scene Prototype
@@ -24,12 +24,12 @@ A layered scene can only handle a list of layers with fixed `cdata`, `userdata`,
 
 -}
 
-import REGL exposing (Renderable, group, Effect)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.GeneralModel exposing (MsgBase(..), filterSOM, viewModelList)
 import Messenger.Layer.Layer exposing (AbstractLayer)
 import Messenger.Recursion exposing (updateObjects)
 import Messenger.Scene.Scene exposing (SceneOutputMsg, SceneStorage, abstract)
+import REGL exposing (Effect, Renderable, group)
 
 
 {-| Layered Scene Data.
@@ -59,7 +59,7 @@ type alias LayeredSceneData cdata userdata tar msg scenemsg =
     }
 
 
-updateLayeredScene : (Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting) -> Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> ( LayeredSceneData cdata userdata tar msg scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
+updateLayeredScene : (Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Effect) -> Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> ( LayeredSceneData cdata userdata tar msg scenemsg, List (SceneOutputMsg scenemsg userdata), Env () userdata )
 updateLayeredScene settingsFunc env evt lsd =
     let
         ( newLayers, newMsgs, ( newEnv, _ ) ) =
@@ -115,8 +115,8 @@ type alias LayeredSceneProtoInit cdata userdata tar msg scenemsg idata =
 {-| settingsFunc type sugar
 This function takes the environment, userevent, the data of the scene and add visual effects to the scene.
 -}
-type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
-    Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Setting
+type alias LayeredSceneEffectFunc cdata userdata tar msg scenemsg =
+    Env () userdata -> UserEvent -> LayeredSceneData cdata userdata tar msg scenemsg -> List Effect
 
 
 {-| This creates a layered scene.
@@ -126,7 +126,7 @@ type alias LayeredSceneSettingsFunc cdata userdata tar msg scenemsg =
   - `settingsFunc` is a user provided function to modify `renderSettings` each time the scene updates. If you don't need `settingsFunc`, simply provide a `func _ _ _ = settings`
 
 -}
-genLayeredScene : LayeredSceneInit cdata userdata tar msg scenemsg -> LayeredSceneSettingsFunc cdata userdata tar msg scenemsg -> SceneStorage userdata scenemsg
+genLayeredScene : LayeredSceneInit cdata userdata tar msg scenemsg -> LayeredSceneEffectFunc cdata userdata tar msg scenemsg -> SceneStorage userdata scenemsg
 genLayeredScene init settingsFunc =
     abstract
         { init = init

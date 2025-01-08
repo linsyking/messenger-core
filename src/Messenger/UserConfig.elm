@@ -113,4 +113,7 @@ type alias PortDefs =
     , prompt : { name : String, title : String } -> Cmd WorldEvent
     , promptReceiver : ({ name : String, result : String } -> WorldEvent) -> Sub WorldEvent
     , reglupdate : (Float -> WorldEvent) -> Sub WorldEvent
+    , setView : Encode.Value -> Cmd WorldEvent
+    , execREGLCmd : Encode.Value -> Cmd WorldEvent
+    , recvREGLCmd : (Encode.Value -> WorldEvent) -> Sub WorldEvent
     }

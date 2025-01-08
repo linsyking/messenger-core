@@ -14,9 +14,9 @@ Update the game
 import Audio exposing (AudioCmd, AudioData)
 import Dict
 import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, loadedResourceNum, removeCommonData)
-import Messenger.Component.GlobalComponent exposing (filterAliveGC)
+import Messenger.Component.GlobalComponent exposing (combinePP, filterAliveGC)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
-import Messenger.GeneralModel exposing (filterSOM)
+import Messenger.GeneralModel exposing (filterSOM, viewModelList)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Recursion exposing (updateObjects)
 import Messenger.Resources.Base exposing (saveSprite)
@@ -25,6 +25,7 @@ import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.Input exposing (Input)
 import Messenger.UI.SOMHandler exposing (handleSOMs)
 import Messenger.UserConfig exposing (resourceNum)
+import REGL exposing (REGLRecvMsg(..), Renderable)
 import Set
 
 
@@ -123,23 +124,6 @@ update input audiodata msg model =
             gameUpdate input
     in
     case msg of
-        TextureLoaded name Nothing ->
-            ( model, config.ports.alert ("Failed to load sprite " ++ name), Audio.cmdNone )
-
-        TextureLoaded name (Just t) ->
-            let
-                newgd =
-                    let
-                        newIT =
-                            { gdid | sprites = saveSprite gdid.sprites name t }
-                    in
-                    { gd | internalData = newIT }
-
-                newEnv =
-                    { env | globalData = newgd }
-            in
-            ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
-
         SoundLoaded name result ->
             case result of
                 Ok sound ->
@@ -311,11 +295,58 @@ update input audiodata msg model =
 
                 newEnv =
                     { env | globalData = newgd }
+
+                ( model1, cmd1, acmd1 ) =
+                    gameUpdateInner (Tick timeInterval) { model | env = newEnv }
             in
-            gameUpdateInner (Tick timeInterval) { model | env = newEnv }
+            ( model1, renderModel input model1 cmd1, acmd1 )
 
         WMouseWheel x ->
             gameUpdateInner (MouseWheel x) model
 
-        NullEvent ->
+        REGLRecv (Just recvmsg) ->
+            case recvmsg of
+                REGLTextureLoaded t ->
+                    let
+                        newgd =
+                            let
+                                newIT =
+                                    { gdid | sprites = saveSprite gdid.sprites t.name t }
+                            in
+                            { gd | internalData = newIT }
+
+                        newEnv =
+                            { env | globalData = newgd }
+                    in
+                    ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
+
+                _ ->
+                    ( model, Cmd.none, Audio.cmdNone )
+
+        _ ->
             ( model, Cmd.none, Audio.cmdNone )
+
+
+renderModel : Input userdata scenemsg -> Model userdata scenemsg -> Cmd WorldEvent -> Cmd WorldEvent
+renderModel input model oldcmd =
+    let
+        sceneView =
+            (unroll model.env.commonData).view { globalData = model.env.globalData, commonData = () }
+
+        gcView =
+            viewModelList model.env model.globalComponents
+    in
+    Cmd.batch
+        [ oldcmd
+        , input.config.ports.setView <|
+            REGL.render <|
+                REGL.group []
+                    ((postProcess sceneView <| combinePP model.globalComponents)
+                        :: gcView
+                    )
+        ]
+
+
+postProcess : Renderable -> List (Renderable -> Renderable) -> Renderable
+postProcess x xs =
+    List.foldl (\le uni -> le uni) x xs

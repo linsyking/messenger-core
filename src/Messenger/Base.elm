@@ -53,7 +53,7 @@ type WorldEvent
     | WindowVisibility Visibility
     | SoundLoaded String (Result Audio.LoadError Audio.Source)
     -- | TextureLoaded String (Maybe Texture)
-    | REGLRecv (Maybe REGL.Texture)
+    | REGLRecv (Maybe REGL.REGLRecvMsg)
     | WMouseDown Int ( Float, Float )
     | WMouseUp Int ( Float, Float )
     | MouseMove ( Float, Float )
