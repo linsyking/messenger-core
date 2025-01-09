@@ -20,7 +20,7 @@ import Messenger.Model exposing (Model)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
 import Messenger.UI.Input exposing (Input)
-import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig)
+import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig, resourceNum)
 import REGL
 import Task
 
@@ -90,6 +90,7 @@ init input flags =
             { emptyInternalData
                 | virtualWidth = config.virtualSize.width
                 , virtualHeight = config.virtualSize.height
+                , totResNum = resourceNum input.resources
             }
 
         initGlobalData =

@@ -9,12 +9,14 @@ module Scenes.Home.Model exposing (scene)
 import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
+import Lib.Resources exposing (resources)
 import Lib.UserData exposing (UserData)
-import Messenger.Base exposing (UserEvent(..))
+import Messenger.Base exposing (UserEvent(..), loadedResourceNum)
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions exposing (fadeIn, fadeOut)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
+import Messenger.UserConfig exposing (resourceNum)
 import REGL
 import REGL.BuiltinPrograms as P
 
@@ -60,7 +62,7 @@ view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear Color.lightYellow
-        , P.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "arial" Color.black
+        , P.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "firacode" Color.black
         ]
 
 

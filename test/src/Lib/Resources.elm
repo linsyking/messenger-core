@@ -12,6 +12,7 @@ module Lib.Resources exposing (resources)
 import Dict exposing (Dict)
 import Messenger.UserConfig exposing (Resources)
 import REGL
+import REGL.Program exposing (REGLProgram)
 
 
 {-| Resources
@@ -20,7 +21,7 @@ resources : Resources
 resources =
     { allTexture = allTexture
     , allAudio = allAudio
-    , allFont = []
+    , allFont = allFont
     , allProgram = []
     }
 
@@ -57,3 +58,14 @@ allAudio =
     Dict.fromList
         [ ( "test", "assets/test.ogg" )
         ]
+
+
+allFont : List ( String, String, String )
+allFont =
+    [ ( "firacode", "assets/FiraCode-Regular.png", "assets/FiraCode-Regular.json" )
+    ]
+
+
+allProgram : List ( String, REGLProgram )
+allProgram =
+    []

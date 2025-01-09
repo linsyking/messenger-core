@@ -11,9 +11,11 @@ Record all the global components to load at the beginning here.
 
 -}
 
+import Color
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.GlobalComponents.FPS.Model as FPS
+import Messenger.GlobalComponents.InitScene.Model as InitScene
 import Messenger.Scene.Scene exposing (GlobalComponentStorage)
 
 
@@ -22,4 +24,5 @@ import Messenger.Scene.Scene exposing (GlobalComponentStorage)
 allGlobalComponents : List (GlobalComponentStorage UserData SceneMsg)
 allGlobalComponents =
     [ FPS.genGC (FPS.InitOption 20) Nothing
+    , InitScene.genGC (InitScene.InitOption Color.blue) Nothing
     ]
