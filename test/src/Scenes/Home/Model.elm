@@ -14,6 +14,7 @@ import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..), loadedResourceNum)
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions exposing (fadeIn, fadeOut)
+import Messenger.Render.Texture exposing (renderSprite)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Messenger.UserConfig exposing (resourceNum)
@@ -63,6 +64,7 @@ view env data =
     REGL.group []
         [ P.clear Color.lightYellow
         , P.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "firacode" Color.black
+        , renderSprite env.globalData.internalData ( 100, 200 ) ( 0, 200 ) "ship"
         ]
 
 

@@ -13,7 +13,7 @@ import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.GlobalComponents.Transition.Base exposing (nullTransition)
 import Messenger.GlobalComponents.Transition.Model exposing (genMixedTransitionSOM, genSequentialTransitionSOM)
-import Messenger.GlobalComponents.Transition.Transitions exposing (fadeImgMix, fadeIn, fadeInWithRenderable, fadeMix, fadeOut, fadeOutImg)
+import Messenger.GlobalComponents.Transition.Transitions exposing (fadeImgMix, fadeIn, fadeInImg, fadeInWithRenderable, fadeMix, fadeOut, fadeOutImg)
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
 import Quantity
@@ -57,14 +57,14 @@ update env msg data =
 
         KeyDown 52 ->
             ( data
-            , [ genMixedTransitionSOM ( fadeImgMix "mask", Duration.seconds 1 ) ( "Home", Nothing )
+            , [ genMixedTransitionSOM ( fadeImgMix "mask" False, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
 
         KeyDown 53 ->
             ( data
-            , [ genSequentialTransitionSOM ( fadeOutImg "mask", Duration.seconds 1 ) ( fadeIn, Duration.seconds 1 ) ( "Home", Nothing )
+            , [ genSequentialTransitionSOM ( fadeOutImg "mask" False, Duration.seconds 1 ) ( fadeInImg "mask" True, Duration.seconds 1 ) ( "Home", Nothing )
               ]
             , env
             )
@@ -80,7 +80,7 @@ comment =
 2: Fade out black + Fade in black, sequential
 3: null + Fade in with Renderable, sequential
 4: Clock, mixed
-5: Clock + Fade in black, sequential
+5: Clock x 2, sequential
 """
 
 
