@@ -42,7 +42,7 @@ view env data =
                         (\x ->
                             List.map
                                 (\y ->
-                                    P.centeredTexture ( toFloat x * 20 + toFloat time, toFloat y * 20 + 20 ) ( 20, 20 ) 0 "ship"
+                                    P.centeredTexture ( toFloat x * 20 + toFloat time, toFloat y * 20 ) ( 20, 20 ) 0 "ship"
                                 )
                                 (List.range 0 50)
                         )

@@ -63,7 +63,7 @@ view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear Color.lightYellow
-        , P.textbox ( 0, 1080 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "firacode" Color.black
+        , P.textbox ( 0, 30 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "firacode" Color.black
         , renderSprite env.globalData.internalData ( 100, 200 ) ( 0, 200 ) "ship"
         ]
 
