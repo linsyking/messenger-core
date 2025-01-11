@@ -37,17 +37,17 @@ renderSprite gd position size name =
 
 renderSpriteAutoHelper : ( Float, Float ) -> ( Float, Float ) -> Texture -> Renderable
 renderSpriteAutoHelper ( newx, newy ) ( w, h ) t =
-    if w > 0 && h > 0 then
+    if w /= 0 && h /= 0 then
         P.rectTexture ( newx, newy ) ( w, h ) t.name
 
-    else if w > 0 && h <= 0 then
+    else if w /= 0 && h == 0 then
         P.rectTexture ( newx, newy ) ( w, w / toFloat t.width * toFloat t.height ) t.name
 
-    else if w <= 0 && h > 0 then
+    else if w == 0 && h /= 0 then
         P.rectTexture ( newx, newy ) ( h / toFloat t.height * toFloat t.width, h ) t.name
 
     else
-        -- All <= 0
+        -- All == 0
         P.rectTexture ( newx, newy ) ( toFloat t.width, toFloat t.height ) t.name
 
 

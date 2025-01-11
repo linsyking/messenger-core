@@ -16,7 +16,7 @@ module Messenger.Coordinate.Coordinates exposing
 
 This module deals with the coordinate transformation.
 
-This module is very important because it can calculate the correct position of the point you want to draw.
+Normally, users do not need to use this module directly, as Messenger will handle the coordinate transformation for you.
 
 @docs fixedPosToReal
 @docs posToReal, posToVirtual
@@ -46,9 +46,7 @@ floatpairadd ( x, y ) ( z, w ) =
     ( x + z, y + w )
 
 
-{-| fixedPosToReal
-
-Same as posToReal, but add the initial position of canvas. That is to say, the function returns the actual coordinate of the point **on the whole screen** of your computer, so it is dependent on the location of your browser windows.
+{-| Same as posToReal, but add the initial position of canvas. That is to say, the function returns the actual coordinate of the point **on the whole screen** of your computer, so it is dependent on the location of your browser windows.
 
 Example: If your screen is 2560\*1440, the virtual canvas size is 1920\*1080 and the actual window size 960\*540 at the center of screen, then the function will map (600,300) to (2560/2-960/2+(960/1920)\*600,1440/2-540/2+(540/1080)\*300) = (1100,600)
 
@@ -58,13 +56,11 @@ fixedPosToReal gd ( x, y ) =
     floatpairadd (posToReal gd ( x, y )) ( gd.startLeft, gd.startTop )
 
 
-{-| posToReal
-
-Transform from the virtual coordinate system to the real pixel system.
+{-| Transform from the virtual coordinate system to the real pixel system.
 
 For example, if you virtual canvas is 1920\*1080 but your real window is 960\*540, then the function will map a point at (1200,600) to (600,300).
 
-Usage : posToReal gd ( x, y ) where (x,y) is the virtual coordinates and gd the internal data.
+Usage : `posToReal gd ( x, y )` where (x,y) is the virtual coordinates and gd the internal data.
 
 The function returns the position in real canvas.
 
@@ -83,7 +79,7 @@ posToReal gd ( x, y ) =
 
 {-| Inverse of posToReal. This is helpful if you need to render sprite with real coordinates.
 
-Usage : posToReal gd ( x, y ) where (x,y) is the real coordinates and gd the internal data.
+Usage : `posToReal gd ( x, y )` where (x,y) is the real coordinates and gd the internal data.
 The function returns the coordinate in virtual coordinate system.
 
 -}
@@ -99,14 +95,12 @@ posToVirtual gd ( x, y ) =
     ( gd.virtualWidth * (x / realWidth), gd.virtualHeight * (y / realHeight) )
 
 
-{-| widthToReal
-
-Use this if you want to draw something based on the length. It turns the virtual length to real length.
+{-| Use this if you want to draw something based on the length. It turns the virtual length to real length.
 For example, if the actual window is 960\*540 and the virtual one is 1920\*1080, then the function will map 300(virtual length) to 150(real length)
 
   - Note: In the case the actual width-length ratio of the window is different from the virtual ratio, the zooming ratio is calculated based on the WIDTH ratio between the real and virtual canvas size.
 
-Usage: lengthToReal gd x
+Usage: `lengthToReal gd x`
 
   - gd is the internal data.
   - x is the length in virtual coordinate system.
@@ -122,7 +116,7 @@ lengthToReal gd x =
 {-| The inverse function of widthToReal. Turns the length in real length to virtual length.
 
   - Note: In the case the actual width-length ratio of the window is different from the virtual ratio, the zooming ratio is calculated based on the WIDTH ratio between the real and virtual canvas size.
-    Usage: lengthToReal gd x
+    Usage: `lengthToReal gd x`
 
   - gd is the internal data.
 
@@ -136,7 +130,7 @@ fromRealLength gd x =
     gd.virtualWidth * (x / gd.realWidth)
 
 
-{-| maxHandW
+{-| Used internally.
 -}
 maxHandW : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
 maxHandW vsize ( w, h ) =
@@ -147,7 +141,10 @@ maxHandW vsize ( w, h ) =
         ( w, w / plScale vsize )
 
 
-{-| getStartPoint
+{-| Get the start point of the virtual canvas in the real canvas.
+
+Used internally.
+
 -}
 getStartPoint : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
 getStartPoint vsize ( w, h ) =
@@ -167,7 +164,7 @@ getStartPoint vsize ( w, h ) =
 
 {-| judgeMouseRect
 Judge whether the mouse position is in the rectangle.
-Usage: judgeMouseRect ( mx, my ) ( x, y ) ( w, h )
+Usage: `judgeMouseRect ( mx, my ) ( x, y ) ( w, h )`
 
   - (mx,my) is the coordinate of the mouse, which you can get easily from globalData.
   - (x,y) is the starting point(left-top corner) of the desired rectangle.
