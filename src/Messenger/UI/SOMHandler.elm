@@ -18,6 +18,7 @@ import Messenger.Recursion exposing (removeObjects, updateObjectsWithTarget)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..))
 import Messenger.UserConfig exposing (UserConfig)
+import REGL
 
 
 {-| Handle a list of Scene Output Message.
@@ -141,3 +142,12 @@ handleSOM config scenes som model =
                     { model | env = { env | globalData = { gd | internalData = { gdid | audioRepo = newAR } } } }
             in
             ( newModel, [], [] )
+
+        SOMChangeFPS fps ->
+            ( model
+            , [ REGL.configREGL
+                    (REGL.REGLConfig fps)
+                    config.ports.execREGLCmd
+              ]
+            , []
+            )

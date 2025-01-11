@@ -19,7 +19,7 @@ import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPo
 import Messenger.GeneralModel exposing (filterSOM, viewModelList)
 import Messenger.Model exposing (Model, resetSceneStartTime, updateSceneTime)
 import Messenger.Recursion exposing (updateObjects)
-import Messenger.Resources.Base exposing (saveSprite)
+import Messenger.Resources.Base exposing (resourceNum, saveSprite)
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.Input exposing (Input)
@@ -32,7 +32,7 @@ import Set
 -}
 gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate input evnt model =
-    if loadedResourceNum model.env.globalData < model.env.globalData.internalData.totResNum then
+    if loadedResourceNum model.env.globalData < resourceNum input.resources then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 
@@ -134,7 +134,7 @@ update input audiodata msg model =
                             Dict.insert name ( sound, Audio.length audiodata sound ) ar.audio
 
                         newEnv =
-                            { env | globalData = { gd | internalData = { gdid | audioRepo = { ar | audio = ard } } } }
+                            { env | globalData = { gd | internalData = { gdid | audioRepo = { ar | audio = ard }, loadedResNum = gdid.loadedResNum + 1 } } }
                     in
                     ( { model | env = newEnv }
                     , Cmd.none
@@ -310,7 +310,7 @@ update input audiodata msg model =
                         newgd =
                             let
                                 newIT =
-                                    { gdid | sprites = saveSprite gdid.sprites t.name t }
+                                    { gdid | sprites = saveSprite gdid.sprites t.name t, loadedResNum = gdid.loadedResNum + 1 }
                             in
                             { gd | internalData = newIT }
 
@@ -324,7 +324,7 @@ update input audiodata msg model =
                         newgd =
                             let
                                 newIT =
-                                    { gdid | loadedFontNum = gdid.loadedFontNum + 1 }
+                                    { gdid | loadedResNum = gdid.loadedResNum + 1 }
                             in
                             { gd | internalData = newIT }
 
@@ -338,7 +338,7 @@ update input audiodata msg model =
                         newgd =
                             let
                                 newIT =
-                                    { gdid | loadedProgramNum = gdid.loadedProgramNum + 1 }
+                                    { gdid | loadedResNum = gdid.loadedResNum + 1 }
                             in
                             { gd | internalData = newIT }
 

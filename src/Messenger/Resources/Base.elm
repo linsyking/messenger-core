@@ -1,6 +1,7 @@
 module Messenger.Resources.Base exposing
     ( saveSprite
     , igetSprite
+    , ResourceDef(..), ResourceDefs, resourceNum
     )
 
 {-|
@@ -20,11 +21,13 @@ After the resources are loaded, we can get those data from globaldata.sprites.
 
 @docs saveSprite
 @docs igetSprite
+@docs ResourceDef, ResourceDefs, resourceNum
 
 -}
 
 import Dict exposing (Dict)
 import REGL exposing (Texture)
+import REGL.Program exposing (REGLProgram)
 
 
 {-| Save the sprite.
@@ -39,3 +42,21 @@ saveSprite dst name text =
 igetSprite : String -> Dict String Texture -> Maybe Texture
 igetSprite name dst =
     Dict.get name dst
+
+
+type ResourceDef
+    = TextureRes ( String, Maybe REGL.TextureOptions )
+    | AudioRes String
+    | FontRes ( String, String )
+    | ProgramRes REGLProgram
+
+
+type alias ResourceDefs =
+    List ( String, ResourceDef )
+
+
+{-| The number of sprites in the game.
+-}
+resourceNum : ResourceDefs -> Int
+resourceNum =
+    List.length

@@ -19,7 +19,6 @@ We only use it in the main update.
 
 -}
 
-import Browser.Events exposing (Visibility(..))
 import Messenger.Base exposing (Env)
 import Messenger.Scene.Scene exposing (AbstractGlobalComponent, MAbstractScene)
 

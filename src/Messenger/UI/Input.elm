@@ -9,15 +9,16 @@ module Messenger.UI.Input exposing (Input)
 
 -}
 
+import Messenger.Resources.Base exposing (ResourceDefs)
 import Messenger.Scene.Scene exposing (AllScenes, GlobalComponentStorage)
-import Messenger.UserConfig exposing (Resources, UserConfig)
+import Messenger.UserConfig exposing (UserConfig)
 
 
 {-| The input to the Messenger UI.
 -}
 type alias Input userdata scenemsg =
     { config : UserConfig userdata scenemsg
-    , resources : Resources
+    , resources : ResourceDefs
     , scenes : AllScenes userdata scenemsg
     , globalComponents : List (GlobalComponentStorage userdata scenemsg)
     }

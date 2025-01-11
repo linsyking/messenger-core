@@ -176,6 +176,7 @@ type SceneOutputMsg scenemsg userdata
     | SOMLoadGC (GlobalComponentStorage userdata scenemsg)
     | SOMUnloadGC GCTarget
     | SOMCallGC ( GCTarget, GCMsg )
+    | SOMChangeFPS REGL.TimeInterval
 
 
 {-| The type used to store the scene data.

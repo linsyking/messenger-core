@@ -1,7 +1,5 @@
 module Messenger.UserConfig exposing
     ( UserConfig, PortDefs
-    , Resources
-    , resourceNum
     , EnabledBuiltinProgram(..)
     )
 
@@ -11,20 +9,15 @@ module Messenger.UserConfig exposing
 # User Configuration
 
 @docs UserConfig, PortDefs
-@docs Resources
-@docs resourceNum
 @docs EnabledBuiltinProgram
 
 -}
 
 import Audio
-import Browser.Events exposing (Visibility(..))
-import Dict exposing (Dict)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Messenger.Base exposing (UserViewGlobalData, WorldEvent)
 import REGL
-import REGL.Program
 
 
 {-| Enabled Builtin Program
@@ -86,29 +79,6 @@ type alias UserConfig userdata scenemsg =
     , enabledProgram : EnabledBuiltinProgram
     , fboNum : Int
     }
-
-
-{-| Resources
-
-  - `allTexture` stores all the texture assets users will use in the game. The path is based on the project folder.
-    **format: Dict name path**
-  - `allAudio` stores all the audio assets users will use in the game. **format: Dict name path**
-  - Note: You don't have to deal with them, messenger will generate them for you in resource.elm
-
--}
-type alias Resources =
-    { allTexture : Dict String ( String, Maybe REGL.TextureOptions )
-    , allAudio : Dict String String
-    , allFont : List ( String, String, String )
-    , allProgram : List ( String, REGL.Program.REGLProgram )
-    }
-
-
-{-| The number of sprites in the game.
--}
-resourceNum : Resources -> Int
-resourceNum resources =
-    Dict.size resources.allTexture + Dict.size resources.allAudio + List.length resources.allFont + List.length resources.allProgram
 
 
 {-| The ports that the user must provide to the messenger.

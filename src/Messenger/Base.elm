@@ -158,7 +158,7 @@ type alias UserViewGlobalData userdata =
 -}
 loadedResourceNum : GlobalData userdata -> Int
 loadedResourceNum globalData =
-    Dict.size globalData.internalData.sprites + Dict.size globalData.internalData.audioRepo.audio + globalData.internalData.loadedFontNum + globalData.internalData.loadedProgramNum
+    globalData.internalData.loadedResNum
 
 
 {-| Empty InternalData
@@ -174,8 +174,7 @@ emptyInternalData =
     , virtualWidth = 0
     , virtualHeight = 0
     , audioRepo = emptyRepo
-    , loadedFontNum = 0
-    , loadedProgramNum = 0
+    , loadedResNum = 0
     , totResNum = 0
     }
 
@@ -269,8 +268,7 @@ type alias InternalData =
     , startLeft : Float
     , startTop : Float
     , sprites : Dict String REGL.Texture
-    , loadedFontNum : Int
-    , loadedProgramNum : Int
+    , loadedResNum : Int
     , totResNum : Int
     , virtualWidth : Float
     , virtualHeight : Float

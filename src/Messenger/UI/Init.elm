@@ -13,14 +13,13 @@ Initialize the game
 
 import Audio exposing (AudioCmd)
 import Browser.Dom exposing (getViewport)
-import Browser.Events exposing (Visibility(..))
-import Dict
 import Messenger.Base exposing (Env, Flags, GlobalData, UserEvent, WorldEvent(..), emptyInternalData, userGlobalDataToGlobalData)
 import Messenger.Model exposing (Model)
+import Messenger.Resources.Base exposing (ResourceDef(..), resourceNum)
 import Messenger.Scene.Loader exposing (loadSceneByName)
 import Messenger.Scene.Scene exposing (AbstractScene(..), MAbstractScene, SceneOutputMsg)
 import Messenger.UI.Input exposing (Input)
-import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig, resourceNum)
+import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig)
 import REGL
 import Task
 
@@ -100,11 +99,16 @@ init input flags =
             { initGlobalData | currentTimeStamp = flags.timeStamp, internalData = newIT, currentScene = config.initScene }
 
         audioLoad =
-            List.map
-                (\( name, url ) ->
-                    Audio.loadAudio (SoundLoaded name) url
+            List.filterMap
+                (\( key, res ) ->
+                    case res of
+                        AudioRes url ->
+                            Just <| Audio.loadAudio (SoundLoaded key) url
+
+                        _ ->
+                            Nothing
                 )
-                (Dict.toList resources.allAudio)
+                resources
 
         gcs =
             List.map (\gc -> gc (Env newgd ms.env.commonData)) input.globalComponents
@@ -115,30 +119,23 @@ init input flags =
         newEnv2 =
             { env2 | globalData = newgd }
 
-        loadtexturecmds =
-            List.map
-                (\key ->
-                    let
-                        ( url, opts ) =
-                            Maybe.withDefault ( "", Nothing ) (Dict.get key resources.allTexture)
-                    in
-                    REGL.loadTexture key url opts
-                )
-                (Dict.keys resources.allTexture)
+        resloadcmds =
+            List.filterMap
+                (\( key, res ) ->
+                    case res of
+                        TextureRes ( url, opts ) ->
+                            Just <| REGL.loadTexture key url opts
 
-        loadfontcmds =
-            List.map
-                (\( key, url1, url2 ) ->
-                    REGL.loadMSDFFont key url1 url2
-                )
-                resources.allFont
+                        FontRes ( url1, url2 ) ->
+                            Just <| REGL.loadMSDFFont key url1 url2
 
-        loadprograms =
-            List.map
-                (\( key, program ) ->
-                    REGL.createREGLProgram key program
+                        ProgramRes program ->
+                            Just <| REGL.createREGLProgram key program
+
+                        _ ->
+                            Nothing
                 )
-                resources.allProgram
+                resources
     in
     ( { ms | env = newEnv2, globalComponents = gcs }
     , Cmd.batch <|
@@ -147,7 +144,7 @@ init input flags =
                     REGL.startREGL (REGL.REGLStartConfig config.virtualSize.width config.virtualSize.height config.fboNum (bulitinPrograms config.enabledProgram))
                         :: REGL.configREGL
                             (REGL.REGLConfig config.timeInterval)
-                        :: (loadtexturecmds ++ loadfontcmds ++ loadprograms)
+                        :: resloadcmds
                )
     , Audio.cmdBatch audioLoad
     )
