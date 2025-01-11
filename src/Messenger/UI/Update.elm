@@ -24,7 +24,6 @@ import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (unroll)
 import Messenger.UI.Input exposing (Input)
 import Messenger.UI.SOMHandler exposing (handleSOMs)
-import Messenger.UserConfig exposing (resourceNum)
 import REGL exposing (Renderable)
 import Set
 
@@ -33,7 +32,7 @@ import Set
 -}
 gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate input evnt model =
-    if loadedResourceNum model.env.globalData < resourceNum input.resources then
+    if loadedResourceNum model.env.globalData < model.env.globalData.internalData.totResNum then
         -- Still loading assets
         ( model, Cmd.none, Audio.cmdNone )
 
