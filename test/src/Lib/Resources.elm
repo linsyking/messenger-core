@@ -34,8 +34,8 @@ Example:
 -}
 allTexture : ResourceDefs
 allTexture =
-    [ ( "ship", TextureRes ( "assets/enemy.png", Nothing ) )
-    , ( "mask", TextureRes ( "assets/mask.jpg", Nothing ) )
+    [ ( "ship", TextureRes "assets/enemy.png" Nothing )
+    , ( "mask", TextureRes "assets/mask.jpg" Nothing )
     ]
 
 
@@ -52,7 +52,7 @@ allAudio =
 
 allFont : ResourceDefs
 allFont =
-    [ ( "firacode", FontRes ( "assets/FiraCode-Regular.png", "assets/FiraCode-Regular.json" ) )
+    [ ( "firacode", FontRes "assets/FiraCode-Regular.png" "assets/FiraCode-Regular.json" )
     ]
 
 

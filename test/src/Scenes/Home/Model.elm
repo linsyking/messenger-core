@@ -11,7 +11,7 @@ import Duration
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData)
 import Messenger.Base exposing (UserEvent(..))
-import Messenger.GlobalComponents.InitScene.Model as InitScene
+import Messenger.GlobalComponents.AssetLoading.Model as InitScene
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions exposing (fadeIn, fadeOut)
 import Messenger.Render.Texture exposing (renderSprite)
@@ -71,7 +71,7 @@ update env msg data =
 
         KeyDown 54 ->
             ( data
-            , [ SOMLoadResource "sq" (TextureRes ( "assets/sq.jpg", Nothing ))
+            , [ SOMLoadResource "sq" (TextureRes "assets/sq.jpg" Nothing)
               , SOMLoadGC (InitScene.genGC Nothing)
               ]
             , env
@@ -89,6 +89,7 @@ prompt =
 3. Audio Test
 4. Change FPS to 16ms per frame
 5. Change FPS to Animation Frame
+6. Load a new image (along with the asset loading GC)
 """
 
 
@@ -98,6 +99,7 @@ view env data =
         [ P.clear Color.lightYellow
         , P.textbox ( 0, 30 ) 50 prompt "firacode" Color.black
         , renderSprite env.globalData.internalData ( 1200, 0 ) ( 0, 200 ) "ship"
+        , renderSprite env.globalData.internalData ( 1500, 300 ) ( 0, 200 ) "sq"
         ]
 
 
