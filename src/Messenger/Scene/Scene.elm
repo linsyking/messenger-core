@@ -152,17 +152,22 @@ to send to a scene when switching scenes.
 
   - `SOMChangeScene (Maybe scenemsg) name` is used to change to a target scene by giving the initial message and name of the scene.
       - Note: initial message is defined in Scene.elm or Scenebase.elm, depending on whether you use sceneproto or not.
-  - `SOMPlayAudio channel name option` is used to play an audio resource by giving **channel name option**
-      - Note: See the docs in Audio.elm for more information on options.
-  - `SOMStopAudio` is used to stop a playing audio by giving the desired AudioTarget(see the docs on AudioTarget)
-  - `SOMSetVolume` is used to set the volume with a value **from 0 to 1**
   - `SOMAlert` makes an alert
   - `SOMPrompt name title` makes a prompt with name and title. This means the system will eject a some textbox with the given title and name.
       - Note: The returning message from the user will be given as a worldevent.
+  - `SOMPlayAudio channel name option` is used to play an audio resource by giving **channel name option**
+      - Note: See the docs in Audio.elm for more information on options.
+  - `SOMStopAudio` is used to stop a playing audio by giving the desired AudioTarget(see the docs on AudioTarget)
+  - `SOMTransformAudio` is used to transform a playing audio (e.g., adding some effects).
+  - `SOMSetVolume` is used to set the volume with a value **from 0 to 1**
   - `SOMSaveGlobalData` saves the global by encode function given in UserConfig
       - Note: At the beginning of the game messenger will load the stored data into userdata (which is also the only chance to load it)
-        We urge you to store these data elsewhere and use userData as a local storage "in game", and only update the userData whenever the user save data.
-  - The GC section is under construction.
+  - `SOMLoadGC` is used to load a global component by giving the GC.
+  - `SOMUnloadGC` is used to unload a global component by giving the target.
+  - `SOMCallGC` is used to call a global component by giving the target and message.
+  - `SOMChangeFPS` is used to change the FPS by giving the time interval.
+  - `SOMLoadResource` is used to load a resource by giving the name and resource definition.
+      - Note: The result of the loading will be in globaldata.internaldata. No user event will be triggered.
 
 -}
 type SceneOutputMsg scenemsg userdata
@@ -170,8 +175,8 @@ type SceneOutputMsg scenemsg userdata
     | SOMAlert String
     | SOMPrompt String String
     | SOMPlayAudio Int String AudioOption
-    | SOMTransformAudio AudioTarget (Audio -> Audio)
     | SOMStopAudio AudioTarget
+    | SOMTransformAudio AudioTarget (Audio -> Audio)
     | SOMSetVolume Float
     | SOMSaveGlobalData
     | SOMLoadGC (GlobalComponentStorage userdata scenemsg)
@@ -194,7 +199,7 @@ type alias AllScenes userdata scenemsg =
     Dict.Dict String (SceneStorage userdata scenemsg)
 
 
-{-| Messsenger MsgBase
+{-| Messenger MsgBase
 This message base make concrete MMsg type from abstract Msg type. By using MMsgBase, messenger can know what is SOMMsg and make reaction to it accordingly.
 Users should use Msg at most of the time.
 -}
