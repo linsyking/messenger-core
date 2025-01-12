@@ -88,11 +88,22 @@ update env msg data =
             ( data, [], env )
 
 
+prompt =
+    """Mode:
+1: Play once
+2. Play once with 0.5 speed and some offset
+3. Play loop with 1 to 2 seconds
+4. Play loop with 1 to the end
+5. Scale audio to 0.5 and loop (volume x 0.5)
+6. Audio fading out and in
+"""
+
+
 view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear (Color.rgb 1.0 0.0 0.0)
-        , P.textbox ( 0, 30 ) 50 "Mode:\n1: Play once\n2. Play once with 0.5 speed and some offset\n3. Play loop with 1 to 2 seconds\n4. Play loop with 1 to the end\n5. Scale audio to 0.5\n6. Audio fading out and in" "arial" Color.black
+        , P.textbox ( 0, 30 ) 50 prompt "arial" Color.black
         ]
 
 
