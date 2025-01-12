@@ -103,7 +103,7 @@ view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear (Color.rgb 1.0 0.0 0.0)
-        , P.textbox ( 0, 30 ) 50 prompt "arial" Color.black
+        , P.textbox ( 0, 30 ) 50 prompt "firacode" Color.black
         ]
 
 

@@ -88,8 +88,8 @@ view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear Color.lightGreen
-        , P.textbox ( 0, 30 ) 40 comment "arial" Color.black
-        , P.textbox ( 0, 900 ) 30 (fromInt env.globalData.sceneStartFrame) "arial" Color.black
+        , P.textbox ( 0, 30 ) 40 comment "firacode" Color.black
+        , P.textbox ( 0, 900 ) 30 (fromInt env.globalData.sceneStartFrame) "firacode" Color.black
         ]
 
 
