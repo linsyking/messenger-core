@@ -22,6 +22,6 @@ import Messenger.Scene.Scene exposing (GlobalComponentStorage)
 -}
 allGlobalComponents : List (GlobalComponentStorage UserData SceneMsg)
 allGlobalComponents =
-    [ FPS.genGC (FPS.InitOption 20) Nothing
+    [ FPS.genGC (FPS.InitOption 20 "firacode") Nothing
     , AssetLoading.genGC Nothing
     ]
