@@ -1,7 +1,7 @@
 module Messenger.Base exposing
     ( WorldEvent(..)
     , UserEvent(..)
-    , GlobalData, InternalData, loadedResourceNum
+    , GlobalData, InternalData
     , Env
     , Flags
     , removeCommonData, addCommonData
@@ -18,7 +18,7 @@ Some Basic Data Types for the game
 
 @docs WorldEvent
 @docs UserEvent
-@docs GlobalData, InternalData, loadedResourceNum
+@docs GlobalData, InternalData
 @docs Env
 @docs Flags
 @docs removeCommonData, addCommonData
@@ -152,13 +152,6 @@ type alias UserViewGlobalData userdata =
     , canvasAttributes : List (Html.Attribute WorldEvent)
     , userData : userdata
     }
-
-
-{-| Get the number of loaded resources.
--}
-loadedResourceNum : GlobalData userdata -> Int
-loadedResourceNum globalData =
-    globalData.internalData.loadedResNum
 
 
 {-| Empty InternalData

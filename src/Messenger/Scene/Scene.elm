@@ -49,6 +49,7 @@ import Json.Decode
 import Messenger.Audio.Base exposing (AudioOption, AudioTarget)
 import Messenger.Base exposing (Env, UserEvent)
 import Messenger.GeneralModel exposing (AbstractGeneralModel, ConcreteGeneralModel, Msg, MsgBase)
+import Messenger.Resources.Base exposing (ResourceDef)
 import REGL exposing (Renderable)
 
 
@@ -177,6 +178,7 @@ type SceneOutputMsg scenemsg userdata
     | SOMUnloadGC GCTarget
     | SOMCallGC ( GCTarget, GCMsg )
     | SOMChangeFPS REGL.TimeInterval
+    | SOMLoadResource String ResourceDef
 
 
 {-| The type used to store the scene data.

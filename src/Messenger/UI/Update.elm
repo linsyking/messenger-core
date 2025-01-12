@@ -13,7 +13,7 @@ Update the game
 
 import Audio exposing (AudioCmd, AudioData)
 import Dict
-import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, loadedResourceNum, removeCommonData)
+import Messenger.Base exposing (UserEvent(..), WorldEvent(..), addCommonData, removeCommonData)
 import Messenger.Component.GlobalComponent exposing (combinePP, filterAliveGC)
 import Messenger.Coordinate.Coordinates exposing (fromMouseToVirtual, getStartPoint, maxHandW)
 import Messenger.GeneralModel exposing (filterSOM, viewModelList)
@@ -32,8 +32,8 @@ import Set
 -}
 gameUpdate : Input userdata scenemsg -> UserEvent -> Model userdata scenemsg -> ( Model userdata scenemsg, Cmd WorldEvent, AudioCmd WorldEvent )
 gameUpdate input evnt model =
-    if loadedResourceNum model.env.globalData < resourceNum input.resources then
-        -- Still loading assets
+    if model.env.globalData.internalData.loadedResNum < resourceNum input.resources then
+        -- Still loading assets (only possible when the game is just started)
         ( model, Cmd.none, Audio.cmdNone )
 
     else

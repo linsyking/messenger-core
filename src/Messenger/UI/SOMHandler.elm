@@ -15,6 +15,7 @@ import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.GeneralModel exposing (filterSOM)
 import Messenger.Model exposing (Model, resetSceneStartTime)
 import Messenger.Recursion exposing (removeObjects, updateObjectsWithTarget)
+import Messenger.Resources.Base exposing (ResourceDef(..))
 import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..))
 import Messenger.UserConfig exposing (UserConfig)
@@ -151,3 +152,33 @@ handleSOM config scenes som model =
               ]
             , []
             )
+
+        SOMLoadResource key res ->
+            let
+                nm =
+                    { model | env = { env | globalData = { gd | internalData = { gdid | totResNum = gdid.totResNum + 1 } } } }
+            in
+            case res of
+                AudioRes url ->
+                    ( nm
+                    , []
+                    , [ Audio.loadAudio (SoundLoaded key) url ]
+                    )
+
+                TextureRes ( url, opts ) ->
+                    ( nm
+                    , [ REGL.loadTexture key url opts config.ports.execREGLCmd ]
+                    , []
+                    )
+
+                FontRes ( url1, url2 ) ->
+                    ( nm
+                    , [ REGL.loadMSDFFont key url1 url2 config.ports.execREGLCmd ]
+                    , []
+                    )
+
+                ProgramRes program ->
+                    ( nm
+                    , [ REGL.createREGLProgram key program config.ports.execREGLCmd ]
+                    , []
+                    )
