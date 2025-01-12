@@ -9,43 +9,34 @@ module Lib.Resources exposing (resources)
 
 -}
 
-import Dict exposing (Dict)
-import Messenger.UserConfig exposing (Resources)
-import REGL
-import REGL.Program exposing (REGLProgram)
+import Messenger.Resources.Base exposing (ResourceDef(..), ResourceDefs)
 
 
 {-| Resources
 -}
-resources : Resources
+resources : ResourceDefs
 resources =
-    { allTexture = allTexture
-    , allAudio = allAudio
-    , allFont = allFont
-    , allProgram = []
-    }
+    allTexture ++ allAudio ++ allFont ++ allProgram
 
 
 {-| allTexture
 
 A list of all the textures.
 
-Add your textures here. Don't worry if your list is too long. You can split those resources according to their usage.
+Add your textures here. Don't worry if your list is too long.
 
 Example:
 
-    Dict.fromList
-        [ ( "ball", "assets/img/ball.png" )
-        , ( "car", "assets/img/car.jpg" )
+        [ ( "ball", TextureRes "assets/img/ball.png" )
+        , ( "car", TextureRes "assets/img/car.jpg" )
         ]
 
 -}
-allTexture : Dict String ( String, Maybe REGL.TextureOptions )
+allTexture : ResourceDefs
 allTexture =
-    Dict.fromList
-        [ ( "ship", ( "assets/enemy.png", Nothing ) )
-        , ( "mask", ( "assets/mask.jpg", Nothing ) )
-        ]
+    [ ( "ship", TextureRes ( "assets/enemy.png", Nothing ) )
+    , ( "mask", TextureRes ( "assets/mask.jpg", Nothing ) )
+    ]
 
 
 {-| All audio assets.
@@ -53,19 +44,18 @@ allTexture =
 The format is the same with `allTexture`.
 
 -}
-allAudio : Dict.Dict String String
+allAudio : ResourceDefs
 allAudio =
-    Dict.fromList
-        [ ( "test", "assets/test.ogg" )
-        ]
-
-
-allFont : List ( String, String, String )
-allFont =
-    [ ( "firacode", "assets/FiraCode-Regular.png", "assets/FiraCode-Regular.json" )
+    [ ( "test", AudioRes "assets/test.ogg" )
     ]
 
 
-allProgram : List ( String, REGLProgram )
+allFont : ResourceDefs
+allFont =
+    [ ( "firacode", FontRes ( "assets/FiraCode-Regular.png", "assets/FiraCode-Regular.json" ) )
+    ]
+
+
+allProgram : ResourceDefs
 allProgram =
     []

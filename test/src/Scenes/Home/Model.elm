@@ -9,15 +9,15 @@ module Scenes.Home.Model exposing (scene)
 import Color
 import Duration
 import Lib.Base exposing (SceneMsg)
-import Lib.Resources exposing (resources)
 import Lib.UserData exposing (UserData)
-import Messenger.Base exposing (UserEvent(..), loadedResourceNum)
+import Messenger.Base exposing (UserEvent(..))
+import Messenger.GlobalComponents.InitScene.Model as InitScene
 import Messenger.GlobalComponents.Transition.Model exposing (genSequentialTransitionSOM)
 import Messenger.GlobalComponents.Transition.Transitions exposing (fadeIn, fadeOut)
 import Messenger.Render.Texture exposing (renderSprite)
+import Messenger.Resources.Base exposing (ResourceDef(..))
 import Messenger.Scene.RawScene exposing (RawSceneInit, RawSceneUpdate, RawSceneView, genRawScene)
 import Messenger.Scene.Scene exposing (MConcreteScene, SceneOutputMsg(..), SceneStorage)
-import Messenger.UserConfig exposing (resourceNum)
 import REGL
 import REGL.BuiltinPrograms as P
 
@@ -55,16 +55,49 @@ update env msg data =
             , env
             )
 
+        KeyDown 52 ->
+            ( data
+            , [ SOMChangeFPS (REGL.Millisecond 16)
+              ]
+            , env
+            )
+
+        KeyDown 53 ->
+            ( data
+            , [ SOMChangeFPS REGL.AnimationFrame
+              ]
+            , env
+            )
+
+        KeyDown 54 ->
+            ( data
+            , [ SOMLoadResource "sq" (TextureRes ( "assets/sq.jpg", Nothing ))
+              , SOMLoadGC (InitScene.genGC Nothing)
+              ]
+            , env
+            )
+
         _ ->
             ( data, [], env )
+
+
+prompt : String
+prompt =
+    """Menu
+1. Transition Test
+2. Rendering Stress Test
+3. Audio Test
+4. Change FPS to 16ms per frame
+5. Change FPS to Animation Frame
+"""
 
 
 view : RawSceneView UserData Data
 view env data =
     REGL.group []
         [ P.clear Color.lightYellow
-        , P.textbox ( 0, 30 ) 50 "Menu\n1. Transition Test\n2. Rendering Stress Test\n3. Audio Test" "firacode" Color.black
-        , renderSprite env.globalData.internalData ( 100, 200 ) ( 0, 200 ) "ship"
+        , P.textbox ( 0, 30 ) 50 prompt "firacode" Color.black
+        , renderSprite env.globalData.internalData ( 1200, 0 ) ( 0, 200 ) "ship"
         ]
 
 

@@ -45,9 +45,9 @@ igetSprite name dst =
 
 
 type ResourceDef
-    = TextureRes ( String, Maybe REGL.TextureOptions )
+    = TextureRes String (Maybe REGL.TextureOptions)
     | AudioRes String
-    | FontRes ( String, String )
+    | FontRes String String
     | ProgramRes REGLProgram
 
 

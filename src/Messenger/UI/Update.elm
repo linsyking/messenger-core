@@ -319,12 +319,12 @@ update input audiodata msg model =
                     in
                     ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
-                Just (REGL.REGLFontLoaded _) ->
+                Just (REGL.REGLFontLoaded font) ->
                     let
                         newgd =
                             let
                                 newIT =
-                                    { gdid | loadedResNum = gdid.loadedResNum + 1 }
+                                    { gdid | fonts = Set.insert font gdid.fonts, loadedResNum = gdid.loadedResNum + 1 }
                             in
                             { gd | internalData = newIT }
 
@@ -333,12 +333,12 @@ update input audiodata msg model =
                     in
                     ( { model | env = newEnv }, Cmd.none, Audio.cmdNone )
 
-                Just (REGL.REGLProgramCreated _) ->
+                Just (REGL.REGLProgramCreated prog) ->
                     let
                         newgd =
                             let
                                 newIT =
-                                    { gdid | loadedResNum = gdid.loadedResNum + 1 }
+                                    { gdid | programs = Set.insert prog gdid.programs, loadedResNum = gdid.loadedResNum + 1 }
                             in
                             { gd | internalData = newIT }
 

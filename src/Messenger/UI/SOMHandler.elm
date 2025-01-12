@@ -10,6 +10,7 @@ module Messenger.UI.SOMHandler exposing (handleSOMs, handleSOM)
 -}
 
 import Audio exposing (AudioCmd)
+import Dict
 import Messenger.Audio.Internal exposing (playAudio, stopAudio, updateAudio)
 import Messenger.Base exposing (WorldEvent(..), globalDataToUserGlobalData)
 import Messenger.GeneralModel exposing (filterSOM)
@@ -20,6 +21,7 @@ import Messenger.Scene.Loader exposing (existScene, loadSceneByName)
 import Messenger.Scene.Scene exposing (AllScenes, SceneOutputMsg(..))
 import Messenger.UserConfig exposing (UserConfig)
 import REGL
+import Set
 
 
 {-| Handle a list of Scene Output Message.
@@ -160,25 +162,55 @@ handleSOM config scenes som model =
             in
             case res of
                 AudioRes url ->
-                    ( nm
-                    , []
-                    , [ Audio.loadAudio (SoundLoaded key) url ]
-                    )
+                    case Dict.get key gdid.audioRepo.audio of
+                        Just _ ->
+                            ( model
+                            , []
+                            , []
+                            )
 
-                TextureRes ( url, opts ) ->
-                    ( nm
-                    , [ REGL.loadTexture key url opts config.ports.execREGLCmd ]
-                    , []
-                    )
+                        Nothing ->
+                            ( nm
+                            , []
+                            , [ Audio.loadAudio (SoundLoaded key) url ]
+                            )
 
-                FontRes ( url1, url2 ) ->
-                    ( nm
-                    , [ REGL.loadMSDFFont key url1 url2 config.ports.execREGLCmd ]
-                    , []
-                    )
+                TextureRes url opts ->
+                    case Dict.get key gdid.sprites of
+                        Just _ ->
+                            ( model
+                            , []
+                            , []
+                            )
+
+                        Nothing ->
+                            ( nm
+                            , [ REGL.loadTexture key url opts config.ports.execREGLCmd ]
+                            , []
+                            )
+
+                FontRes url1 url2 ->
+                    if Set.member key gdid.fonts then
+                        ( model
+                        , []
+                        , []
+                        )
+
+                    else
+                        ( nm
+                        , [ REGL.loadMSDFFont key url1 url2 config.ports.execREGLCmd ]
+                        , []
+                        )
 
                 ProgramRes program ->
-                    ( nm
-                    , [ REGL.createREGLProgram key program config.ports.execREGLCmd ]
-                    , []
-                    )
+                    if Set.member key gdid.programs then
+                        ( model
+                        , []
+                        , []
+                        )
+
+                    else
+                        ( nm
+                        , [ REGL.createREGLProgram key program config.ports.execREGLCmd ]
+                        , []
+                        )

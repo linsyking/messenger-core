@@ -123,10 +123,10 @@ init input flags =
             List.filterMap
                 (\( key, res ) ->
                     case res of
-                        TextureRes ( url, opts ) ->
+                        TextureRes url opts ->
                             Just <| REGL.loadTexture key url opts
 
-                        FontRes ( url1, url2 ) ->
+                        FontRes url1 url2 ->
                             Just <| REGL.loadMSDFFont key url1 url2
 
                         ProgramRes program ->

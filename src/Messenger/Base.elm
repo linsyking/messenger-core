@@ -169,6 +169,8 @@ emptyInternalData =
     , audioRepo = emptyRepo
     , loadedResNum = 0
     , totResNum = 0
+    , fonts = Set.empty
+    , programs = Set.empty
     }
 
 
@@ -263,6 +265,8 @@ type alias InternalData =
     , sprites : Dict String REGL.Texture
     , loadedResNum : Int
     , totResNum : Int
+    , fonts : Set String
+    , programs : Set String
     , virtualWidth : Float
     , virtualHeight : Float
     , audioRepo : AudioRepo
