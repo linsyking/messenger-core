@@ -1,5 +1,18 @@
 # Changelog
 
+## [15.0.0] *Breaking Change* - 7 January 2025
+
+### Features
+
+- Switched to elm-regl rendering backend with WebGL support
+- Add many API docs
+
+## [14.0.0]
+
+### Features
+
+- Add more features to audio
+
 ## [13.0.0] *Breaking Change* - 21 June 2024
 
 ### Features
