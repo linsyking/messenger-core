@@ -3,7 +3,7 @@
     "name": "linsyking/messenger-core",
     "summary": "Core library for Messenger.",
     "license": "BSD-3-Clause",
-    "version": "16.0.0",
+    "version": "16.1.0",
     "exposed-modules": {
         "Base": [
             "Messenger.Base",
@@ -25,7 +25,9 @@
             "Messenger.Component.Component",
             "Messenger.Component.GlobalComponent",
             "Messenger.Audio.Base",
-            "Messenger.Audio.Audio"
+            "Messenger.Audio.Audio",
+            "Messenger.Resources.Base",
+            "Messenger.Render.Texture"
         ]
     },
     "elm-version": "0.19.0 <= v < 0.20.0",

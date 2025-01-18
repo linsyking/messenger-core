@@ -44,6 +44,8 @@ igetSprite name dst =
     Dict.get name dst
 
 
+{-| Definition for a resource.
+-}
 type ResourceDef
     = TextureRes String (Maybe REGL.TextureOptions)
     | AudioRes String
@@ -51,6 +53,8 @@ type ResourceDef
     | ProgramRes REGLProgram
 
 
+{-| A list of resource definitions.
+-}
 type alias ResourceDefs =
     List ( String, ResourceDef )
 
