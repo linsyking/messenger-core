@@ -1,5 +1,13 @@
 # Changelog
 
+## [16.1.0]
+
+### Features
+
+- Add resource loading SOMs
+- Add changeFPS SOM
+- Texture rendering APIs
+
 ## [15.0.0] *Breaking Change* - 7 January 2025
 
 ### Features
