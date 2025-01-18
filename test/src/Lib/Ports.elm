@@ -51,13 +51,21 @@ port prompt : { name : String, title : String } -> Cmd msg
 port promptReceiver : ({ name : String, result : String } -> msg) -> Sub msg
 
 
+{-| Port to set view
+-}
 port setView : Encode.Value -> Cmd msg
 
 
+{-| Port to execute REGL command
+-}
 port execREGLCmd : Encode.Value -> Cmd msg
 
 
+{-| Port to receive REGL command result
+-}
 port recvREGLCmd : (Encode.Value -> msg) -> Sub msg
 
 
+{-| Port to update REGL
+-}
 port reglupdate : (Float -> msg) -> Sub msg

@@ -7,6 +7,7 @@ module MainConfig exposing
     , timeInterval
     , virtualSize
     , fboNum
+    , enabledBuiltinPrograms
     )
 
 {-|
@@ -22,12 +23,14 @@ module MainConfig exposing
 @docs timeInterval
 @docs virtualSize
 @docs fboNum
+@docs enabledBuiltinPrograms
 
 -}
 
 import Lib.Base exposing (SceneMsg)
 import Lib.UserData exposing (UserData, decodeUserData, encodeUserData)
 import Messenger.Base exposing (UserViewGlobalData)
+import Messenger.UserConfig exposing (EnabledBuiltinProgram(..))
 import REGL
 
 
@@ -103,3 +106,10 @@ saveGlobalData globalData =
 fboNum : Int
 fboNum =
     5
+
+
+{-| Builtin programs that are enabled.
+-}
+enabledBuiltinPrograms : EnabledBuiltinProgram
+enabledBuiltinPrograms =
+    AllBuiltinProgram

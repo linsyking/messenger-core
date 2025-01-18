@@ -16,7 +16,7 @@ import Lib.Base exposing (SceneMsg)
 import Lib.Ports exposing (alert, audioPortFromJS, audioPortToJS, execREGLCmd, prompt, promptReceiver, recvREGLCmd, reglupdate, sendInfo, setView)
 import Lib.Resources exposing (resources)
 import Lib.UserData exposing (UserData)
-import MainConfig exposing (debug, fboNum, initGlobalData, initScene, initSceneMsg, saveGlobalData, timeInterval, virtualSize)
+import MainConfig exposing (debug, enabledBuiltinPrograms, fboNum, initGlobalData, initScene, initSceneMsg, saveGlobalData, timeInterval, virtualSize)
 import Messenger.UI exposing (Output, genMain)
 import Messenger.UserConfig exposing (EnabledBuiltinProgram(..), UserConfig)
 import Scenes.AllScenes exposing (allScenes)
@@ -47,7 +47,7 @@ userConfig =
         , execREGLCmd = execREGLCmd
         , recvREGLCmd = recvREGLCmd
         }
-    , enabledProgram = AllBuiltinProgram
+    , enabledProgram = enabledBuiltinPrograms
     , fboNum = fboNum
     }
 

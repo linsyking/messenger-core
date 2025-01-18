@@ -27,8 +27,8 @@ Add your textures here. Don't worry if your list is too long.
 
 Example:
 
-        [ ( "ball", TextureRes "assets/img/ball.png" )
-        , ( "car", TextureRes "assets/img/car.jpg" )
+        [ ( "ball", TextureRes "assets/img/ball.png" Nothing )
+        , ( "car", TextureRes "assets/img/car.jpg" Nothing )
         ]
 
 -}
@@ -41,7 +41,12 @@ allTexture =
 
 {-| All audio assets.
 
-The format is the same with `allTexture`.
+The format is similar to `allTexture`.
+
+Example:
+
+        [ ( "test", AudioRes "assets/test.ogg" )
+        ]
 
 -}
 allAudio : ResourceDefs
@@ -50,12 +55,28 @@ allAudio =
     ]
 
 
+{-| All fonts.
+
+Example:
+
+        [ ( "firacode", FontRes "assets/FiraCode-Regular.png" "assets/FiraCode-Regular.json" )
+        ]
+
+-}
 allFont : ResourceDefs
 allFont =
     [ ( "firacode", FontRes "assets/FiraCode-Regular.png" "assets/FiraCode-Regular.json" )
     ]
 
 
+{-| All programs.
+
+Example:
+
+        [ ( "test", ProgramRes myprogram )
+        ]
+
+-}
 allProgram : ResourceDefs
 allProgram =
     []
