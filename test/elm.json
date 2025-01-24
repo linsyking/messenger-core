@@ -17,7 +17,7 @@
             "elm/random": "1.0.0",
             "elm/time": "1.0.0",
             "ianmackenzie/elm-units": "2.10.0",
-            "linsyking/elm-regl": "4.0.0"
+            "linsyking/elm-regl": "4.1.0"
         },
         "indirect": {
             "elm/url": "1.0.0",
