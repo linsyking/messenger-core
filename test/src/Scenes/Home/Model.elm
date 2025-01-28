@@ -57,7 +57,7 @@ update env msg data =
 
         KeyDown 52 ->
             ( data
-            , [ SOMChangeFPS (REGL.Millisecond 16)
+            , [ SOMChangeFPS (REGL.Millisecond 30)
               ]
             , env
             )
@@ -87,7 +87,7 @@ prompt =
 1. Transition Test
 2. Rendering Stress Test
 3. Audio Test
-4. Change FPS to 16ms per frame
+4. Change FPS to 30ms per frame
 5. Change FPS to Animation Frame
 6. Load a new image (along with the asset loading GC)
 """
